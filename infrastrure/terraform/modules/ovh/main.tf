@@ -7,8 +7,8 @@ terraform {
 }
 
 provider "ovh" {
-  endpoint           = var.ovh_endpoint
-  application_key    = var.ovh_application_key
-  application_secret = var.ovh_application_secret
-  consumer_key       = var.ovh_consumer_key
+  endpoint           = var.endpoint
+  application_key    = var.application_key
+  application_secret = var.application_secret
+  consumer_key       = var.consumer_key
 }
