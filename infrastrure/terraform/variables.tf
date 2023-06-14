@@ -23,3 +23,11 @@ variable "ovh_consumer_key" {
   type        = string
   sensitive   = true
 }
+
+
+# Proxmox
+
+variable "pm_api_url" {
+  description = "Proxmox api url."
+  type        = string
+}

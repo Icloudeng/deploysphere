@@ -1,4 +1,4 @@
 variable "pm_api_url" {
-  description = "PM api url."
+  description = "Proxmox api url."
   type        = string
 }
