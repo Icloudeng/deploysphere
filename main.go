@@ -1,15 +1,18 @@
 package main
 
 import (
-	"net/http"
+	"fmt"
+	"log"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := mux.NewRouter()
+	r := gin.Default()
 
-	r.HandleFunc("/domain", DomaineHandler).Methods("GET")
+	r.GET("/domain", DomaineHandler)
 
-	http.ListenAndServe(":8088", r)
+	fmt.Println("Server running on PORT:", 8088)
+
+	log.Fatal(r.Run(":8088"))
 }

@@ -1,16 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
-func DomaineHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	title := vars["title"]
-	page := vars["page"]
+func DomaineHandler(c *gin.Context) {
+	data := map[string]interface{}{
+		"lang": "GO语言",
+		"tag":  "<br>",
+	}
 
-	fmt.Fprintf(w, "You've requested the book: %s on page %s\n", title, page)
+	// will output : {"lang":"GO\u8bed\u8a00","tag":"\u003cbr\u003e"}
+	c.AsciiJSON(http.StatusOK, data)
 }
