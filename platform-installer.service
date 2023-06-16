@@ -1,0 +1,13 @@
+[Unit]
+Description=Platform Installer
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5s
+ExecStart=/home/ubuntu/platform-installer/platform-installer-linux
+WorkingDirectory=/home/ubuntu/platform-installer
+
+[Install]
+WantedBy=multi-user.target
