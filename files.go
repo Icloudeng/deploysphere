@@ -53,5 +53,9 @@ func (f *file) readFile(filePath string) []byte {
 }
 
 func (f *file) createIfNotExistsWithContent(filePath string, content string) {
-	f.writeInFile(filePath, content)
+	isFileExist := f.createIfNotExists(filePath)
+
+	if !isFileExist {
+		f.writeInFile(filePath, content)
+	}
 }

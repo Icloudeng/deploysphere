@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,14 +31,28 @@ func (s *Handler) provision(c *gin.Context) {
 		return
 	}
 
-	// Working on ovh resource
-	resourceData := ResourceJSONData{}
-	resourceData.ParseOVHresourcesJSON()
-	// Write resource data
-	defer resourceData.WriteOVHresources()
+	go func() {
+		if err := Queue.QueueTask(func(ctx context.Context) error {
+			fmt.Println("Process QueueTask - Create domain Record and apply")
+			// Working on ovh resource
+			resourceData := ResourceJSONData{}
+			resourceData.ParseOVHresourcesJSON()
 
-	// Add domain to the resource
-	resourceData.GetResource().AddDomainZoneRerord(json.Ref, json.Domain)
+			// Add domain to the resource
+			resourceData.GetResource().AddDomainZoneRerord(json.Ref, json.Domain)
+
+			// Execute Terraform
+			defer Tf.apply()
+			defer fmt.Println("Process QueueTask - Terraform apply")
+
+			// Write resource data
+			defer resourceData.WriteOVHresources()
+
+			return nil
+		}); err != nil {
+			panic(err)
+		}
+	}()
 
 	c.AsciiJSON(http.StatusOK, json)
 }
@@ -53,14 +69,28 @@ func (s *Handler) deleteProvision(c *gin.Context) {
 		return
 	}
 
-	// Working on ovh resource
-	resourceData := ResourceJSONData{}
-	resourceData.ParseOVHresourcesJSON()
-	// Write resource data
-	defer resourceData.WriteOVHresources()
+	go func() {
+		if err := Queue.QueueTask(func(ctx context.Context) error {
+			fmt.Println("Process QueueTask - Delete domain Record and apply")
+			// Working on ovh resource
+			resourceData := ResourceJSONData{}
+			resourceData.ParseOVHresourcesJSON()
 
-	// Add domain to the resource
-	resourceData.GetResource().DeleteDomainZoneRerord(data.Ref)
+			// Add domain to the resource
+			resourceData.GetResource().DeleteDomainZoneRerord(data.Ref)
+
+			// Execute Terraform
+			defer Tf.apply()
+			defer fmt.Println("Process QueueTask - Terraform apply")
+
+			// Write resource data
+			defer resourceData.WriteOVHresources()
+
+			return nil
+		}); err != nil {
+			panic(err)
+		}
+	}()
 
 	c.AsciiJSON(http.StatusOK, data)
 }

@@ -13,11 +13,11 @@ import (
 	"github.com/hashicorp/terraform-exec/tfexec"
 )
 
-type Terrafrom struct {
+type terrafrom struct {
 	tk *tfexec.Terraform
 }
 
-var Tf = &Terrafrom{}
+var Tf = &terrafrom{}
 
 func init() {
 	dir, err := os.Getwd()
@@ -57,7 +57,7 @@ func init() {
 	Tf.tk = tf
 }
 
-func (t *Terrafrom) plan() {
+func (t *terrafrom) plan() {
 	tf := t.tk
 	ctx := context.Background()
 
@@ -73,7 +73,7 @@ func (t *Terrafrom) plan() {
 	log.Printf("Terraform plan state: %v", state)
 }
 
-func (t *Terrafrom) apply() {
+func (t *terrafrom) apply() {
 	tf := t.tk
 	ctx := context.Background()
 
@@ -83,10 +83,8 @@ func (t *Terrafrom) apply() {
 
 	err := tf.Apply(ctx, options...)
 	if err != nil {
-		log.Fatalf("error running Show: %s", err)
+		log.Fatalf("Error running Show: %s", err)
 	}
 
-	result := <-ctx.Done()
-
-	log.Printf("Terraform applied! %v", result)
+	log.Printf("********* Terraform applied ! ***********")
 }
