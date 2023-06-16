@@ -20,19 +20,20 @@ type Terrafrom struct {
 var Tf = &Terrafrom{}
 
 func init() {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Cannot the current dir %s", err)
+	}
+
 	installer := &releases.ExactVersion{
-		Product: product.Terraform,
-		Version: version.Must(version.NewVersion("1.5.0")),
+		Product:    product.Terraform,
+		Version:    version.Must(version.NewVersion("1.5.0")),
+		InstallDir: path.Join(dir, "./bin"),
 	}
 
 	execPath, err := installer.Install(context.Background())
 	if err != nil {
 		log.Fatalf("error installing Terraform: %s", err)
-	}
-
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatalf("error get the current dir %s", err)
 	}
 
 	workingDir := path.Join(dir, "infrastrure/terraform")

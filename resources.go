@@ -78,7 +78,20 @@ func (r *ResourceJSONData) WriteOVHresources() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	var isEmpty = true
 
+	for _, res := range r.Resources {
+		if len(res.OVHDomainZoneRecord) == 0 {
+			break
+		} else {
+			isEmpty = false
+		}
+	}
+
+	if isEmpty {
+		File.writeInFile(r.GetOVHfile(), "{}")
+		return
+	}
 	File.writeInFile(r.GetOVHfile(), string(data))
 }
 
@@ -111,8 +124,12 @@ func (r *Resource) AddDomainZoneRerord(ref string, domain *DomainZoneRecord) {
 }
 
 func (r *Resource) DeleteDomainZoneRerord(ref string) {
-	ovh_dzr := r.GetOVHDomainZoneRecord()
-	delete(ovh_dzr, ref)
+	ozr := r.GetOVHDomainZoneRecord()
+	delete(ozr, ref)
+
+	if len(ozr) == 0 {
+		r.OVHDomainZoneRecord = nil
+	}
 }
 
 // Initiliaze some function
