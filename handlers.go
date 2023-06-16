@@ -36,8 +36,5 @@ func (s *Handler) provision(c *gin.Context) {
 
 	// plan, _ := c.Params.Get("plan")
 
-	// if is
-	// Tf.plan()
-
 	c.AsciiJSON(http.StatusOK, &json)
 }
