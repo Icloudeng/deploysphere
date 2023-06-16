@@ -1,3 +1,9 @@
+terraform {
+  backend "http" {
+  }
+}
+
+
 module "ovh" {
   source = "./modules/ovh"
 
