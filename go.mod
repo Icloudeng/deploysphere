@@ -7,7 +7,6 @@ require (
 	github.com/hashicorp/go-version v1.6.0
 	github.com/hashicorp/hc-install v0.5.2
 	github.com/hashicorp/terraform-exec v0.18.1
-	github.com/joho/godotenv v1.5.1
 )
 
 require (

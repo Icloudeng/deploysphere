@@ -16,7 +16,7 @@ func (f *file) checkFileExists(filePath string) bool {
 	return !errors.Is(error, os.ErrNotExist)
 }
 
-func (f *file) createIfNotExists(filePath string) {
+func (f *file) createIfNotExists(filePath string) bool {
 	isFileExist := f.checkFileExists(filePath)
 
 	if !isFileExist {
@@ -26,10 +26,12 @@ func (f *file) createIfNotExists(filePath string) {
 		}
 		defer file.Close()
 	}
+
+	return isFileExist
 }
 
 func (f *file) writeInFile(filePath string, content string) {
-	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,7 +42,16 @@ func (f *file) writeInFile(filePath string, content string) {
 	}
 }
 
+func (f *file) readFile(filePath string) []byte {
+	content, err := os.ReadFile(filePath)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return content
+}
+
 func (f *file) createIfNotExistsWithContent(filePath string, content string) {
-	f.createIfNotExists(filePath)
 	f.writeInFile(filePath, content)
 }

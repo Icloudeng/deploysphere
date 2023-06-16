@@ -11,21 +11,16 @@ type Handler struct{}
 
 var Handlers = Handler{}
 
-// Structs
-type DomainZoneRecord struct {
-	Zone      string `json:"zone" binding:"required"`
-	Subdomain string `json:"subdomain" binding:"required"`
-	Fieldtype string `json:"fieldtype" binding:"required,oneof=A AAAA CNAME DNAME NS MX SPF DKIM DMARC TXT SRV CAA NAPTR LOC SSHFP TLSA"`
-	Ttl       int    `json:"ttl" binding:"required,number,gte=60"`
-	Target    string `json:"target" binding:"required"`
-}
+/**
+Handler methods
+**/
 
+// Store provistion and apply
 type Provision struct {
-	Ref    string            `json:"ref" binding:"required"`
+	Ref    string            `json:"ref" binding:"required,alpha,lowercase"`
 	Domain *DomainZoneRecord `json:"domain" binding:"required,json"`
 }
 
-// Handler methods
 func (s *Handler) provision(c *gin.Context) {
 	var json Provision
 
@@ -34,7 +29,38 @@ func (s *Handler) provision(c *gin.Context) {
 		return
 	}
 
-	// plan, _ := c.Params.Get("plan")
+	// Working on ovh resource
+	resourceData := ResourceJSONData{}
+	resourceData.ParseOVHresourcesJSON()
+	// Write resource data
+	defer resourceData.WriteOVHresources()
 
-	c.AsciiJSON(http.StatusOK, &json)
+	// Add domain to the resource
+	resourceData.GetResource().AddDomainZoneRerord(json.Ref, json.Domain)
+
+	c.AsciiJSON(http.StatusOK, json)
+}
+
+// Delete provistion and apply
+type ProvisionRef struct {
+	Ref string `uri:"ref" binding:"required,alpha,lowercase"`
+}
+
+func (s *Handler) deleteProvision(c *gin.Context) {
+	var data ProvisionRef
+	if err := c.ShouldBindUri(&data); err != nil {
+		c.JSON(400, gin.H{"msg": err})
+		return
+	}
+
+	// Working on ovh resource
+	resourceData := ResourceJSONData{}
+	resourceData.ParseOVHresourcesJSON()
+	// Write resource data
+	defer resourceData.WriteOVHresources()
+
+	// Add domain to the resource
+	resourceData.GetResource().DeleteDomainZoneRerord(data.Ref)
+
+	c.AsciiJSON(http.StatusOK, data)
 }
