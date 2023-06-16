@@ -1,4 +1,4 @@
-terraform init \         
+bin/terraform -chdir=infrastrure/terraform init \
     -backend-config="address=https://hub.smatflow.net/api/v4/projects/20/terraform/state/platform-installer" \
     -backend-config="lock_address=https://hub.smatflow.net/api/v4/projects/20/terraform/state/platform-installer/lock" \
     -backend-config="unlock_address=https://hub.smatflow.net/api/v4/projects/20/terraform/state/platform-installer/lock" \
