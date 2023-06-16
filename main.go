@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -10,9 +9,8 @@ import (
 func main() {
 	r := gin.Default()
 
-	r.GET("/domain", DomaineHandler)
+	r.POST("/provision", Handlers.provision)
 
-	fmt.Println("Server running on PORT:", 8088)
-
+	log.Println("Server running on PORT: ", 8088)
 	log.Fatal(r.Run(":8088"))
 }
