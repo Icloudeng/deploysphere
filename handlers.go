@@ -53,7 +53,7 @@ func (s *Handler) provision(c *gin.Context) {
 			resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
 
 			// Terraform Apply changes
-			// defer Tf.apply()
+			defer Tf.Apply()
 			return nil
 		}); err != nil {
 			panic(err)
@@ -82,7 +82,7 @@ func (s *Handler) deleteProvision(c *gin.Context) {
 			resources.DeleteProxmoxResource(data.Ref)
 
 			// Terraform Apply changes
-			// defer Tf.apply()
+			defer Tf.Apply()
 			return nil
 		}); err != nil {
 			panic(err)

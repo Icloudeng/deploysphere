@@ -55,7 +55,7 @@ func init() {
 	Tf.tk = tf
 }
 
-func (t *terrafrom) plan() {
+func (t *terrafrom) Plan() {
 	tf := t.tk
 	ctx := context.Background()
 
@@ -71,7 +71,7 @@ func (t *terrafrom) plan() {
 	log.Printf("Terraform plan state: %v", state)
 }
 
-func (t *terrafrom) apply() {
+func (t *terrafrom) Apply() {
 	tf := t.tk
 	ctx := context.Background()
 
