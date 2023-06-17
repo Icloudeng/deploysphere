@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	"smatflow/platform-installer/resources"
+	"smatflow/platform-installer/structs"
 )
 
 // Handler top lever
@@ -13,14 +15,11 @@ type Handler struct{}
 
 var Handlers = Handler{}
 
-/**
-Handler methods
-**/
-
 // Store provistion and apply
 type Provision struct {
-	Ref    string            `json:"ref" binding:"required,alpha,lowercase"`
-	Domain *DomainZoneRecord `json:"domain" binding:"required,json"`
+	Ref    string                    `json:"ref" binding:"required,alpha,lowercase"`
+	Domain *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
+	Vm     *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
 }
 
 func (s *Handler) provision(c *gin.Context) {
@@ -33,20 +32,10 @@ func (s *Handler) provision(c *gin.Context) {
 
 	go func() {
 		if err := Queue.QueueTask(func(ctx context.Context) error {
-			fmt.Println("Process QueueTask - Create domain Record and apply")
 			// Working on ovh resource
-			resourceData := ResourceJSONData{}
-			resourceData.ParseOVHresourcesJSON()
-
-			// Add domain to the resource
-			resourceData.GetResource().AddDomainZoneRerord(json.Ref, json.Domain)
-
+			resources.CreateOrWriteOvhResource(json.Ref, *json.Domain)
 			// Execute Terraform
 			defer Tf.apply()
-			defer fmt.Println("Process QueueTask - Terraform apply")
-
-			// Write resource data
-			defer resourceData.WriteOVHresources()
 
 			return nil
 		}); err != nil {
@@ -71,20 +60,10 @@ func (s *Handler) deleteProvision(c *gin.Context) {
 
 	go func() {
 		if err := Queue.QueueTask(func(ctx context.Context) error {
-			fmt.Println("Process QueueTask - Delete domain Record and apply")
 			// Working on ovh resource
-			resourceData := ResourceJSONData{}
-			resourceData.ParseOVHresourcesJSON()
-
-			// Add domain to the resource
-			resourceData.GetResource().DeleteDomainZoneRerord(data.Ref)
-
+			resources.DeleteOvhResource(data.Ref)
 			// Execute Terraform
 			defer Tf.apply()
-			defer fmt.Println("Process QueueTask - Terraform apply")
-
-			// Write resource data
-			defer resourceData.WriteOVHresources()
 
 			return nil
 		}); err != nil {

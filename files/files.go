@@ -1,4 +1,4 @@
-package main
+package files
 
 import (
 	"errors"
@@ -6,18 +6,14 @@ import (
 	"os"
 )
 
-type file struct{}
-
-var File = file{}
-
-func (f *file) checkFileExists(filePath string) bool {
+func checkFileExists(filePath string) bool {
 	_, error := os.Stat(filePath)
 	//return !os.IsNotExist(err)
 	return !errors.Is(error, os.ErrNotExist)
 }
 
-func (f *file) createIfNotExists(filePath string) bool {
-	isFileExist := f.checkFileExists(filePath)
+func createIfNotExists(filePath string) bool {
+	isFileExist := checkFileExists(filePath)
 
 	if !isFileExist {
 		file, err := os.Create(filePath)
@@ -30,7 +26,7 @@ func (f *file) createIfNotExists(filePath string) bool {
 	return isFileExist
 }
 
-func (f *file) writeInFile(filePath string, content string) {
+func WriteInFile(filePath string, content string) {
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		log.Fatal(err)
@@ -42,7 +38,7 @@ func (f *file) writeInFile(filePath string, content string) {
 	}
 }
 
-func (f *file) readFile(filePath string) []byte {
+func ReadFile(filePath string) []byte {
 	content, err := os.ReadFile(filePath)
 
 	if err != nil {
@@ -52,10 +48,10 @@ func (f *file) readFile(filePath string) []byte {
 	return content
 }
 
-func (f *file) createIfNotExistsWithContent(filePath string, content string) {
-	isFileExist := f.createIfNotExists(filePath)
+func CreateIfNotExistsWithContent(filePath string, content string) {
+	isFileExist := createIfNotExists(filePath)
 
 	if !isFileExist {
-		f.writeInFile(filePath, content)
+		WriteInFile(filePath, content)
 	}
 }

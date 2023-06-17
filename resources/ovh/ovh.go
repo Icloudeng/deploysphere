@@ -1,10 +1,13 @@
-package main
+package ovh
 
 import (
 	"encoding/json"
 	"log"
 	"os"
 	"path"
+
+	files "smatflow/platform-installer/files"
+	structs "smatflow/platform-installer/structs"
 )
 
 type ResourceJSONData struct {
@@ -15,7 +18,7 @@ type Resource struct {
 	OVHDomainZoneRecord []OVHDomainZoneRecord `json:"ovh_domain_zone_record"`
 }
 
-type OVHDomainZoneRecord map[string]*DomainZoneRecord
+type OVHDomainZoneRecord map[string]*structs.DomainZoneRecord
 
 // Ovh domain record add resource
 func (j *ResourceJSONData) GetResource() *Resource {
@@ -38,35 +41,19 @@ func (j *ResourceJSONData) GetOVHfile() string {
 	return path.Join(pwd, "infrastrure/terraform/modules/ovh", "resource_auto.tf.json")
 }
 
-func (j *ResourceJSONData) GetPromoxfile() string {
-	pwd, err := os.Getwd()
-	if err != nil {
-		log.Fatalf("Cannot get the current dir %s", err)
-	}
-	return path.Join(pwd, "infrastrure/terraform/modules/proxmox", "resource_auto.tf.json")
-}
-
 func (r *ResourceJSONData) InitResourcesFiles() {
 	// Create file if not exist
 	for _, file := range r.GetFiles() {
-		File.createIfNotExistsWithContent(file, "{}")
+		files.CreateIfNotExistsWithContent(file, "{}")
 	}
 }
 
-func (r *ResourceJSONData) GetFiles() [2]string {
-	return [...]string{r.GetOVHfile(), r.GetPromoxfile()}
+func (r *ResourceJSONData) GetFiles() [1]string {
+	return [...]string{r.GetOVHfile()}
 }
 
 func (r *ResourceJSONData) ParseOVHresourcesJSON() error {
-	err := json.Unmarshal(File.readFile(r.GetOVHfile()), &r)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (r *ResourceJSONData) ParseProxmoxResourcesJSON() error {
-	err := json.Unmarshal(File.readFile(r.GetPromoxfile()), &r)
+	err := json.Unmarshal(files.ReadFile(r.GetOVHfile()), &r)
 	if err != nil {
 		return err
 	}
@@ -89,19 +76,10 @@ func (r *ResourceJSONData) WriteOVHresources() {
 	}
 
 	if isEmpty {
-		File.writeInFile(r.GetOVHfile(), "{}")
+		files.WriteInFile(r.GetOVHfile(), "{}")
 		return
 	}
-	File.writeInFile(r.GetOVHfile(), string(data))
-}
-
-func (r *ResourceJSONData) WriteProxmoxResources() {
-	data, err := json.Marshal(r)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	File.writeInFile(r.GetPromoxfile(), string(data))
+	files.WriteInFile(r.GetOVHfile(), string(data))
 }
 
 // Resource methods
@@ -112,7 +90,7 @@ func (r *Resource) GetOVHDomainZoneRecord() OVHDomainZoneRecord {
 	return nil
 }
 
-func (r *Resource) AddDomainZoneRerord(ref string, domain *DomainZoneRecord) {
+func (r *Resource) AddDomainZoneRerord(ref string, domain *structs.DomainZoneRecord) {
 	ovh_dzr := r.GetOVHDomainZoneRecord()
 
 	if ovh_dzr == nil {
@@ -130,11 +108,4 @@ func (r *Resource) DeleteDomainZoneRerord(ref string) {
 	if len(ozr) == 0 {
 		r.OVHDomainZoneRecord = nil
 	}
-}
-
-// Initiliaze some function
-func init() {
-	resource := &ResourceJSONData{}
-	// Create file id not exist yet
-	resource.InitResourcesFiles()
 }
