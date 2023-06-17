@@ -2,9 +2,8 @@
 - name: Install FreeIPA
   hosts: all
   become: true
-  gather_facts: false
+  gather_facts: true
   vars:
-    ansible_user: root
     root_path: "/home/installer"
 
   tasks:
@@ -17,10 +16,16 @@
       set_fact:
         decoded_metadata: "{{ lookup('pipe', 'echo $PLATFORM_INSTALLER_METADATA | base64 -d') }}"
 
+    - debug:
+        var: decoded_metadata
+
     - name: Extract domain key and hostname
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
         hostname: "{{ decoded_metadata | json_query('hostname') }}"
+
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/lock-status.yaml
 
     # Install Docker
     - include_tasks: ../../tasks/docker.yaml

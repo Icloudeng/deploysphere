@@ -39,7 +39,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # # Check if the arguments was provided
-if [ -z "$platform" ] || [ -z "$vm_ip"] || [ -z "$ansible_user" ]; then
+if [ -z "$ansible_user" ] || [ -z "$platform" ] || [ -z "$vm_ip" ]; then
     echo "Platform, vmip and ansible-user arguments are required. Usage: $0 --platform <platform> --vmip <vmip> --ansible-user <ansible-user>"
     exit 1
 fi
@@ -92,9 +92,11 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 
 # Run Ansible playbook
 if [ -f "./private-key.pem" ]; then
-    ansible-playbook -u "$ansible_user" -i "$vm_ip" --private-key "./private-key.pem" "$playbook_path"
+    chmod 600 ./private-key.pem
+    ansible-playbook -u "$ansible_user" -i "$vm_ip," --private-key "./private-key.pem" "$playbook_path"
 else
-    ansible-playbook -u "$ansible_user" -i "$vm_ip" "$playbook_path"
+    echo ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path"
+    ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path"
 fi
 
 # Deactivate the virtual environment

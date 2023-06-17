@@ -16,6 +16,8 @@ var IGNORE_CHANGES []string = []string{
 	"qemu_os",
 	"sshkeys",
 	"ipconfig0",
+	"vmid",
+	"clone",
 }
 
 type ProxmoxVmQemu struct {
@@ -41,7 +43,7 @@ type ProxmoxVmQemu struct {
 	Network   []*PmVmQemuNetwork     `json:"network"`
 	Lifecycle []*PmResourceLifecycle `json:"lifecycle"`
 
-	Provisioner [2]interface{} `json:"provisioner"`
+	Provisioner [1]interface{} `json:"provisioner"`
 }
 
 type PmResourceLifecycle struct {
@@ -111,7 +113,7 @@ func newProxmoxResourceLifecycle() *PmResourceLifecycle {
 	return &lifecycle
 }
 
-func newProxmoxProvisioner(platform Platform) [2]interface{} {
+func newProxmoxProvisioner(platform Platform) [1]interface{} {
 	// Provisioner local-exec
 	local_exec := &PmLocalExecProvisioner{}
 
@@ -136,13 +138,13 @@ func newProxmoxProvisioner(platform Platform) [2]interface{} {
 	}
 
 	// Provisioner remote-exec
-	remote_exec := &PmRemoteExecProvisioner{}
-	remote_exec.RemoteExec[0] = &PmRemoteExec{
-		// Sample message to display vm
-		Inline: &[]string{"Cool, we are ready for provisioning"},
-	}
+	// remote_exec := &PmRemoteExecProvisioner{}
+	// remote_exec.RemoteExec[0] = &PmRemoteExec{
+	// 	// Sample message to display vm
+	// 	Inline: &[]string{"Cool, we are ready for provisioning"},
+	// }
 
-	return [2]interface{}{local_exec, remote_exec}
+	return [1]interface{}{local_exec}
 }
 
 func ResetUnmutableProxmoxVmQemu(pm *ProxmoxVmQemu, platform Platform) {

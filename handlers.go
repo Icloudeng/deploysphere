@@ -19,7 +19,7 @@ var Handlers = Handler{}
 // Store provistion and apply
 
 type Provision struct {
-	Ref      string                    `json:"ref" binding:"required,alpha,lowercase"`
+	Ref      string                    `json:"ref" binding:"required,ascii,lowercase"`
 	Domain   *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
 	Vm       *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
 	Platform *structs.Platform         `json:"platform"`

@@ -1,0 +1,15 @@
+- name: Check dpkg lock status
+  shell: |
+    while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
+      echo "Waiting for other processes to release dpkg lock..."
+      sleep 1
+    done
+  register: dpkg_lock_status
+  changed_when: false
+  retries: 10
+  delay: 2
+
+- name: Display lock status
+  debug:
+    msg: "All processes unable to acquire dpkg lock have finished."
+  when: dpkg_lock_status.stdout == ""

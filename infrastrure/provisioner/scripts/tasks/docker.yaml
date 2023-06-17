@@ -5,11 +5,16 @@
     name: "{{ item }}"
     state: present
   loop:
+    - uidmap
     - apt-transport-https
     - ca-certificates
     - curl
-    - gnupg
+    - gnupg-agent
     - software-properties-common
+    - python3-pip
+    - virtualenv
+    - python3-setuptools
+    - lsb-release
 
 - name: Add Docker GPG key
   become: true
