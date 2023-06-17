@@ -123,6 +123,7 @@ func NewProxmoxVmQemu() *ProxmoxVmQemu {
 }
 
 func ResetUnmutableProxmoxVmQemu(pm *ProxmoxVmQemu) {
+	pm.Lifecycle = nil
 	pm.Lifecycle = append(pm.Lifecycle, newProxmoxResourceLifecycle())
 
 	pm.Provisioner = newProxmoxProvisioner()
