@@ -4,7 +4,17 @@ import (
 	"errors"
 	"log"
 	"os"
+	"path"
 )
+
+func GetPwd() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Cannot the current dir %s", err)
+	}
+
+	return dir
+}
 
 func checkFileExists(filePath string) bool {
 	_, error := os.Stat(filePath)
@@ -54,4 +64,22 @@ func CreateIfNotExistsWithContent(filePath string, content string) {
 	if !isFileExist {
 		WriteInFile(filePath, content)
 	}
+}
+
+func ExistsProvisionerPlaformReadDir(platform string) bool {
+	pwd := GetPwd()
+
+	entries, err := os.ReadDir(path.Join(pwd, "infrastrure/provisioner/scripts/platforms"))
+	if err != nil {
+		log.Panicf("failed reading directory: %s", err)
+	}
+
+	exists := false
+	for _, v := range entries {
+		if v.Name() == platform && v.IsDir() {
+			exists = true
+		}
+	}
+
+	return exists
 }

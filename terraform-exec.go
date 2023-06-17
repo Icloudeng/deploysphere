@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"path"
+	"smatflow/platform-installer/files"
 
 	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/hc-install/product"
@@ -20,15 +20,12 @@ type terrafrom struct {
 var Tf = &terrafrom{}
 
 func init() {
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatalf("Cannot the current dir %s", err)
-	}
+	pwd := files.GetPwd()
 
 	installer := &releases.ExactVersion{
 		Product:    product.Terraform,
 		Version:    version.Must(version.NewVersion("1.5.0")),
-		InstallDir: path.Join(dir, "./bin"),
+		InstallDir: path.Join(pwd, "./bin"),
 	}
 
 	execPath, err := installer.Install(context.Background())
@@ -36,7 +33,8 @@ func init() {
 		log.Fatalf("error installing Terraform: %s", err)
 	}
 
-	workingDir := path.Join(dir, "infrastrure/terraform")
+	workingDir := path.Join(pwd, "infrastrure/terraform")
+
 	tf, err := tfexec.NewTerraform(workingDir, execPath)
 	if err != nil {
 		log.Fatalf("error running NewTerraform: %s", err)

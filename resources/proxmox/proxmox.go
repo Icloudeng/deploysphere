@@ -3,7 +3,6 @@ package proxmox
 import (
 	"encoding/json"
 	"log"
-	"os"
 	"path"
 
 	files "smatflow/platform-installer/files"
@@ -33,10 +32,8 @@ func (j *ResourceJSONData) GetResource() *Resource {
 }
 
 func (j *ResourceJSONData) GetFile() string {
-	pwd, err := os.Getwd()
-	if err != nil {
-		log.Fatalf("Cannot get the current dir %s", err)
-	}
+	pwd := files.GetPwd()
+
 	return path.Join(pwd, "infrastrure/terraform/modules/proxmox", "resource_auto.tf.json")
 }
 

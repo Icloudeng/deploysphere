@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"smatflow/platform-installer/files"
 	"smatflow/platform-installer/resources"
 	"smatflow/platform-installer/structs"
 )
@@ -33,6 +34,14 @@ func (s *Handler) provision(c *gin.Context) {
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Chech if platform the password corresponse to an existing platform folder
+	if len(json.Platform.Name) > 0 {
+		if !files.ExistsProvisionerPlaformReadDir(json.Platform.Name) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Cannot found the correspoding platform"})
+			return
+		}
 	}
 
 	go func() {
