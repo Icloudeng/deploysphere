@@ -102,6 +102,7 @@ func (r *Resource) AddProxmoxVmQemu(ref string, vm *structs.ProxmoxVmQemu) {
 
 func (r *Resource) DeleteProxmoxVmQemu(ref string) {
 	ozr := r.GetProxmoxVmQemu()
+
 	delete(ozr, ref)
 
 	if len(ozr) == 0 {

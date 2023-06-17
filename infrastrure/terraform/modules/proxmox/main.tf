@@ -13,6 +13,7 @@ provider "proxmox" {
   pm_api_token_secret = var.pm_api_token_secret
 
   # Other logs
+  pm_timeout    = "3600"
   pm_log_enable = true
   pm_log_file   = "terraform-plugin-proxmox.log"
   pm_debug      = true

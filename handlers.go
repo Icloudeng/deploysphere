@@ -30,17 +30,21 @@ func (s *Handler) provision(c *gin.Context) {
 		return
 	}
 
-	// go func() {
-	// 	if err := Queue.QueueTask(func(ctx context.Context) error {
-	// 		// Working on ovh resource
-	// 		resources.CreateOrWriteOvhResource(json.Ref, *json.Domain)
-	// 		// Execute Terraform
-	// 		defer Tf.apply()
-	// 		return nil
-	// 	}); err != nil {
-	// 		panic(err)
-	// 	}
-	// }()
+	go func() {
+		if err := Queue.QueueTask(func(ctx context.Context) error {
+			// Reset unmutable vm fields
+			structs.ResetUnmutableProxmoxVmQemu(json.Vm)
+			// Create or update resources
+			resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
+			resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
+
+			// Terraform Apply changes
+			defer Tf.apply()
+			return nil
+		}); err != nil {
+			panic(err)
+		}
+	}()
 
 	c.AsciiJSON(http.StatusOK, json)
 }
@@ -59,9 +63,10 @@ func (s *Handler) deleteProvision(c *gin.Context) {
 
 	go func() {
 		if err := Queue.QueueTask(func(ctx context.Context) error {
-			// Working on ovh resource
+			// Remove resources
 			resources.DeleteOvhResource(data.Ref)
-			// Execute Terraform
+			resources.DeleteProxmoxResource(data.Ref)
+			// Terraform Apply changes
 			defer Tf.apply()
 
 			return nil
