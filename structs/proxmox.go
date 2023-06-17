@@ -1,5 +1,11 @@
 package structs
 
+import (
+	b64 "encoding/base64"
+	"encoding/json"
+	"fmt"
+)
+
 // Attribute to Ignored changes Terraform Lifecycle
 var IGNORE_CHANGES []string = []string{
 	"network",
@@ -43,8 +49,10 @@ type PmResourceLifecycle struct {
 }
 
 type PmVmQemuNetwork struct {
-	Bridge string `json:"bridge" binding:"required"`
-	Model  string `json:"model" binding:"required,oneof=e1000 e1000-82540em e1000-82544gc e1000-82545em i82551 i82557b i82559er ne2k_isa ne2k_pci pcnet rtl8139 virtio vmxnet3"`
+	Bridge  string `json:"bridge" binding:"required"`
+	Model   string `json:"model" binding:"required,oneof=e1000 e1000-82540em e1000-82544gc e1000-82545em i82551 i82557b i82559er ne2k_isa ne2k_pci pcnet rtl8139 virtio vmxnet3"`
+	Macaddr string `json:"macaddr"`
+	Tag     int    `json:"tag" binding:"number"`
 }
 
 // local-exec
@@ -66,37 +74,6 @@ type PmRemoteExecProvisioner struct {
 	RemoteExec [1]*PmRemoteExec `json:"remote-exec"`
 }
 
-func newProxmoxProvisioner() [2]interface{} {
-	// Provisioner local-exec
-	local_exec := &PmLocalExecProvisioner{}
-	local_exec.LocalExec[0] = &PmLocalExec{
-		// Run our ansible scripts here
-		Command: "echo deployed....",
-		// Relative to platform-installer/infrastrure/terraform
-		WorkingDir: "../provisioner",
-	}
-
-	// Provisioner remote-exec
-	remote_exec := &PmRemoteExecProvisioner{}
-	remote_exec.RemoteExec[0] = &PmRemoteExec{
-		// Sample message to display vm
-		Inline: &[]string{"Cool, we are ready for provisioning"},
-	}
-
-	return [2]interface{}{local_exec, remote_exec}
-}
-
-func newProxmoxResourceLifecycle() *PmResourceLifecycle {
-	lifecycle := PmResourceLifecycle{}
-
-	lifecycle.IgnoreChanges = append(
-		lifecycle.IgnoreChanges,
-		IGNORE_CHANGES...,
-	)
-
-	return &lifecycle
-}
-
 func NewProxmoxVmQemu() *ProxmoxVmQemu {
 	pm := ProxmoxVmQemu{
 		Vmid:      0,
@@ -115,16 +92,55 @@ func NewProxmoxVmQemu() *ProxmoxVmQemu {
 	pm.Network = append(pm.Network, &PmVmQemuNetwork{
 		Bridge: "vmbr0",
 		Model:  "virtio",
+		Tag:    -1,
 	})
 
-	ResetUnmutableProxmoxVmQemu(&pm)
+	ResetUnmutableProxmoxVmQemu(&pm, Platform{})
 
 	return &pm
 }
 
-func ResetUnmutableProxmoxVmQemu(pm *ProxmoxVmQemu) {
+func newProxmoxResourceLifecycle() *PmResourceLifecycle {
+	lifecycle := PmResourceLifecycle{}
+
+	lifecycle.IgnoreChanges = append(
+		lifecycle.IgnoreChanges,
+		IGNORE_CHANGES...,
+	)
+
+	return &lifecycle
+}
+
+func newProxmoxProvisioner(platform Platform) [2]interface{} {
+	// Provisioner local-exec
+	local_exec := &PmLocalExecProvisioner{}
+
+	if len(platform.Name) > 0 {
+		name := platform.Name
+		metadata, _ := json.Marshal(platform.Metadata)
+		metadatab64 := b64.StdEncoding.EncodeToString(metadata)
+
+		local_exec.LocalExec[0] = &PmLocalExec{
+			// Run our ansible scripts here
+			Command: fmt.Sprintf("chmod +x ansible_setup.sh && ./installer.sh --ansible-user ${self.ciuser} --vmip ${self.default_ipv4_address} --platform %s --metadata %s", name, metadatab64),
+			// Relative to platform-installer/infrastrure/terraform
+			WorkingDir: "../provisioner",
+		}
+	}
+
+	// Provisioner remote-exec
+	remote_exec := &PmRemoteExecProvisioner{}
+	remote_exec.RemoteExec[0] = &PmRemoteExec{
+		// Sample message to display vm
+		Inline: &[]string{"Cool, we are ready for provisioning"},
+	}
+
+	return [2]interface{}{local_exec, remote_exec}
+}
+
+func ResetUnmutableProxmoxVmQemu(pm *ProxmoxVmQemu, platform Platform) {
 	pm.Lifecycle = nil
 	pm.Lifecycle = append(pm.Lifecycle, newProxmoxResourceLifecycle())
 
-	pm.Provisioner = newProxmoxProvisioner()
+	pm.Provisioner = newProxmoxProvisioner(platform)
 }

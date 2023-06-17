@@ -1,0 +1,42 @@
+---
+- name: Install FreeIPA
+  hosts: all
+  become: true
+  remote_user: root
+  gather_facts: false
+  vars:
+    ansible_user: root
+    root_path: "/home/installer"
+
+  tasks:
+    - name: Create root path
+      file:
+        state: directory
+        path: "{{ root_path }}"
+
+    - name: Decode base64 PLATFORM_INSTALLER_METADATA
+      set_fact:
+        decoded_metadata: "{{ lookup('pipe', 'echo $PLATFORM_INSTALLER_METADATA | base64 -d') }}"
+
+    - name: Extract domain key and hostname
+      set_fact:
+        domain: "{{ decoded_metadata | json_query('domain') }}"
+        hostname: "{{ decoded_metadata | json_query('hostname') }}"
+
+    # Install Docker
+    - include_tasks: ../../tasks/docker.yaml
+
+    - name: Copy Docker file
+      ansible.builtin.copy:
+        src: "docker-compose.yaml"
+        dest: "{{ root_path }}/docker-compose.yaml"
+        force: yes
+
+    - name: Install FreeIPA using Docker Compose
+      become: true
+      command: docker compose up -d
+      args:
+        chdir: "{{ root_path }}"
+      environment:
+        DOMAIN: "{{ domain }}"
+        HOSTNAME: "{{ hostname }}"

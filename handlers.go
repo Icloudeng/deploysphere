@@ -16,10 +16,12 @@ type Handler struct{}
 var Handlers = Handler{}
 
 // Store provistion and apply
+
 type Provision struct {
-	Ref    string                    `json:"ref" binding:"required,alpha,lowercase"`
-	Domain *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
-	Vm     *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
+	Ref      string                    `json:"ref" binding:"required,alpha,lowercase"`
+	Domain   *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
+	Vm       *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
+	Platform *structs.Platform         `json:"platform" binding:"json"`
 }
 
 func (s *Handler) provision(c *gin.Context) {
@@ -33,13 +35,13 @@ func (s *Handler) provision(c *gin.Context) {
 	go func() {
 		if err := Queue.QueueTask(func(ctx context.Context) error {
 			// Reset unmutable vm fields
-			structs.ResetUnmutableProxmoxVmQemu(json.Vm)
+			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform)
 			// Create or update resources
 			resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
 			resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
 
 			// Terraform Apply changes
-			defer Tf.apply()
+			// defer Tf.apply()
 			return nil
 		}); err != nil {
 			panic(err)
@@ -66,9 +68,9 @@ func (s *Handler) deleteProvision(c *gin.Context) {
 			// Remove resources
 			resources.DeleteOvhResource(data.Ref)
 			resources.DeleteProxmoxResource(data.Ref)
-			// Terraform Apply changes
-			defer Tf.apply()
 
+			// Terraform Apply changes
+			// defer Tf.apply()
 			return nil
 		}); err != nil {
 			panic(err)
