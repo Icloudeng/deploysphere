@@ -19,9 +19,21 @@ func main() {
 		return
 	}
 
-	r.POST("/provision", Handlers.provision)
-	r.DELETE("/provision/:ref", Handlers.deleteProvision)
+	api := r.Group("/")
+	api.POST("/provision", Handlers.provision)
+	api.DELETE("/provision/:ref", Handlers.deleteProvision)
 
 	log.Println("Server running on PORT: ", port)
 	log.Fatal(r.Run(":" + strconv.Itoa(*port)))
 }
+
+// func basicAuth(c *gin.Context) {
+// 	// Get the Basic Authentication credentials
+// 	username, password, hasAuth := c.Request.BasicAuth()
+// 	if hasAuth && username == "testuser" && password == "testpass" {
+// 		c.Next()
+// 	} else {
+// 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Authentication required"})
+// 		return
+// 	}
+// }
