@@ -60,8 +60,28 @@ else
     exit 1
 fi
 
+# Check the operating system
+if [ -f "/etc/os-release" ]; then
+    # Source the OS release file
+    . /etc/os-release
+fi
+
+# Check if the OS is Ubuntu
+if [ "$ID" == "ubuntu" ]; then
+    echo "This script is only supported on Ubuntu OS."
+    # Check if pip is installed
+    if ! command -v pip &>/dev/null; then
+        echo "pip is not installed. Installing pip..."
+        sudo apt update
+        sudo apt install -y python3-pip
+    else
+        echo "pip is already installed."
+    fi
+fi
+
 # Check if the Ansible playbook script exists
 playbook_path="./scripts/platforms/$platform/playbook.yaml"
+
 if [ -f "$playbook_path" ]; then
     echo "Ansible playbook script found: $playbook_path"
 else
