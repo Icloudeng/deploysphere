@@ -21,14 +21,17 @@ type Provision struct {
 	Ref      string                    `json:"ref" binding:"required,alpha,lowercase"`
 	Domain   *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
 	Vm       *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
-	Platform *structs.Platform         `json:"platform" binding:"json"`
+	Platform *structs.Platform         `json:"platform"`
 }
 
 func (s *Handler) provision(c *gin.Context) {
-	json := Provision{Vm: structs.NewProxmoxVmQemu()}
+	json := Provision{
+		Vm:       structs.NewProxmoxVmQemu(),
+		Platform: &structs.Platform{Metadata: &map[string]interface{}{}},
+	}
 
 	if err := c.ShouldBindJSON(&json); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -59,7 +62,7 @@ type ProvisionRef struct {
 func (s *Handler) deleteProvision(c *gin.Context) {
 	var data ProvisionRef
 	if err := c.ShouldBindUri(&data); err != nil {
-		c.JSON(400, gin.H{"msg": err})
+		c.AbortWithStatusJSON(400, gin.H{"msg": err})
 		return
 	}
 

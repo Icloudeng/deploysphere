@@ -1,6 +1,6 @@
 package structs
 
 type Platform struct {
-	Name     string       `json:"name" binding:"required"`
-	Metadata *interface{} `json:"metadata" binding:"json"`
+	Name     string                  `json:"name"`
+	Metadata *map[string]interface{} `json:"metadata"`
 }
