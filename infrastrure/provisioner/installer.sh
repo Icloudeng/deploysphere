@@ -77,10 +77,10 @@ source .venv/bin/activate
 export PLATFORM_INSTALLER_METADATA="$metadata"
 
 # Upgrade pip
-python -m pip install --upgrade pip
+$python_command -m pip install --upgrade pip
 
 # Check if Ansible is already installed
-if python -c "import ansible" &>/dev/null; then
+if $python_command -c "import ansible" &>/dev/null; then
     echo "Ansible is already installed."
 else
     # Install Ansible in the virtual environment
