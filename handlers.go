@@ -65,7 +65,7 @@ func (s *Handler) provision(c *gin.Context) {
 
 // Delete provistion and apply
 type ProvisionRef struct {
-	Ref string `uri:"ref" binding:"required,alpha,lowercase"`
+	Ref string `uri:"ref" binding:"required,ascii,lowercase"`
 }
 
 func (s *Handler) deleteProvision(c *gin.Context) {
