@@ -23,25 +23,24 @@ type Provision struct {
 }
 
 func (s *Handler) provision(c *gin.Context) {
-	var json Provision
+	json := Provision{Vm: structs.NewProxmoxVmQemu()}
 
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	go func() {
-		if err := Queue.QueueTask(func(ctx context.Context) error {
-			// Working on ovh resource
-			resources.CreateOrWriteOvhResource(json.Ref, *json.Domain)
-			// Execute Terraform
-			defer Tf.apply()
-
-			return nil
-		}); err != nil {
-			panic(err)
-		}
-	}()
+	// go func() {
+	// 	if err := Queue.QueueTask(func(ctx context.Context) error {
+	// 		// Working on ovh resource
+	// 		resources.CreateOrWriteOvhResource(json.Ref, *json.Domain)
+	// 		// Execute Terraform
+	// 		defer Tf.apply()
+	// 		return nil
+	// 	}); err != nil {
+	// 		panic(err)
+	// 	}
+	// }()
 
 	c.AsciiJSON(http.StatusOK, json)
 }

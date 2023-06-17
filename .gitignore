@@ -1,3 +1,5 @@
 .env
 platform-installer-*
 .DS_Store
+*.log
+tmp
