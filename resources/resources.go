@@ -8,9 +8,9 @@ import (
 func CreateOrWriteOvhResource(ref string, domain structs.DomainZoneRecord) {
 	// Working on ovh resource
 	ovh_resource := ovh.ResourceJSONData{}
-	ovh_resource.ParseOVHresourcesJSON()
+	ovh_resource.ParseResourcesJSON()
 	// Write resource data
-	defer ovh_resource.WriteOVHresources()
+	defer ovh_resource.WriteResources()
 
 	// Add domain to the resource
 	ovh_resource.GetResource().AddDomainZoneRerord(ref, &domain)
@@ -20,9 +20,9 @@ func CreateOrWriteOvhResource(ref string, domain structs.DomainZoneRecord) {
 func DeleteOvhResource(ref string) {
 	// Working on ovh resource
 	ovh_resource := ovh.ResourceJSONData{}
-	ovh_resource.ParseOVHresourcesJSON()
+	ovh_resource.ParseResourcesJSON()
 	// Write resource data
-	defer ovh_resource.WriteOVHresources()
+	defer ovh_resource.WriteResources()
 
 	// Add domain to the resource
 	ovh_resource.GetResource().DeleteDomainZoneRerord(ref)
