@@ -24,6 +24,10 @@
         domain: "{{ decoded_metadata | json_query('domain') }}"
         hostname: "{{ decoded_metadata | json_query('hostname') }}"
 
+    - name: Sleep for 30 seconds and continue with play
+      wait_for:
+        timeout: 30
+
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/lock-status.yaml
 
