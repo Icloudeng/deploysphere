@@ -60,23 +60,11 @@ else
     exit 1
 fi
 
-# Check the operating system
-if [ -f "/etc/os-release" ]; then
-    # Source the OS release file
-    . /etc/os-release
-fi
-
 # Check if the OS is Ubuntu
-if [ "$ID" == "ubuntu" ]; then
-    echo "This script is only supported on Ubuntu OS."
+if ["$(uname)" == "Linux"]; then
     # Check if pip is installed
-    if ! command -v pip &>/dev/null; then
-        echo "pip is not installed. Installing pip..."
-        sudo apt update
-        sudo apt install -y python3-pip
-    else
-        echo "pip is already installed."
-    fi
+    sudo apt-get update
+    sudo apt-get -y install python3-venv python3-pip
 fi
 
 # Check if the Ansible playbook script exists
@@ -91,6 +79,12 @@ fi
 
 # Create Python virtual environment
 $python_command -m venv .venv
+
+if [ ! -f ".venv/bin/activate" ]; then
+    echo "Venv script not found"
+    exit 1
+fi
+
 source .venv/bin/activate
 
 # Set PLATFORM_INSTALLER_METADATA environment variable
