@@ -61,7 +61,7 @@ else
 fi
 
 # Check if the OS is Ubuntu
-if [[ "$(uname)" != "Linux" ]]; then
+if [[ "$(uname)" == "Linux" ]]; then
     # Check if pip is installed
     sudo apt-get update
     sudo apt-get -y install python3-venv python3-pip

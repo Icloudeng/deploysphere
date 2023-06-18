@@ -16,17 +16,16 @@ type Handler struct{}
 
 var Handlers = Handler{}
 
-// Store provistion and apply
-
-type Provision struct {
+// Store resources and apply
+type Resources struct {
 	Ref      string                    `json:"ref" binding:"required,ascii,lowercase"`
 	Domain   *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
 	Vm       *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
 	Platform *structs.Platform         `json:"platform"`
 }
 
-func (s *Handler) provision(c *gin.Context) {
-	json := Provision{
+func (s *Handler) createResources(c *gin.Context) {
+	json := Resources{
 		Vm:       structs.NewProxmoxVmQemu(),
 		Platform: &structs.Platform{Metadata: &map[string]interface{}{}},
 	}
@@ -49,27 +48,27 @@ func (s *Handler) provision(c *gin.Context) {
 			// Reset unmutable vm fields
 			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform)
 			// Create or update resources
-			resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
+			// resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
 			resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
 
 			// Terraform Apply changes
-			defer Tf.Apply()
+			// defer Tf.Apply()
 			return nil
 		}); err != nil {
 			panic(err)
 		}
 	}()
 
-	c.AsciiJSON(http.StatusOK, json)
+	c.JSON(http.StatusOK, json)
 }
 
-// Delete provistion and apply
-type ProvisionRef struct {
+// Delete resources and apply
+type ResourcesRef struct {
 	Ref string `uri:"ref" binding:"required,ascii,lowercase"`
 }
 
-func (s *Handler) deleteProvision(c *gin.Context) {
-	var data ProvisionRef
+func (s *Handler) deleteResources(c *gin.Context) {
+	var data ResourcesRef
 	if err := c.ShouldBindUri(&data); err != nil {
 		c.AbortWithStatusJSON(400, gin.H{"msg": err})
 		return
@@ -89,5 +88,17 @@ func (s *Handler) deleteProvision(c *gin.Context) {
 		}
 	}()
 
-	c.AsciiJSON(http.StatusOK, data)
+	c.JSON(http.StatusOK, data)
+}
+
+// Get resources state from terraform
+func (s *Handler) getResourcesState(c *gin.Context) {
+	state := Tf.Show()
+
+	if state == nil {
+		c.JSON(http.StatusOK, struct{}{})
+		return
+	}
+
+	c.JSON(http.StatusOK, state)
 }

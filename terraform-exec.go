@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"path"
 	"smatflow/platform-installer/files"
@@ -11,6 +10,7 @@ import (
 	"github.com/hashicorp/hc-install/product"
 	"github.com/hashicorp/hc-install/releases"
 	"github.com/hashicorp/terraform-exec/tfexec"
+	tfjson "github.com/hashicorp/terraform-json"
 )
 
 type terrafrom struct {
@@ -45,13 +45,6 @@ func init() {
 		log.Fatalf("error running Init: %s", err)
 	}
 
-	state, err := tf.Show(context.Background())
-	if err != nil {
-		log.Fatalf("error running Show: %s", err)
-	}
-
-	fmt.Printf("Terraform initialized %v", &state)
-
 	Tf.tk = tf
 }
 
@@ -69,6 +62,19 @@ func (t *terrafrom) Plan() {
 	}
 
 	log.Printf("Terraform plan state: %v", state)
+}
+
+func (t *terrafrom) Show() *tfjson.StateModule {
+	tf := t.tk
+	ctx := context.Background()
+
+	state, err := tf.Show(ctx)
+
+	if err != nil || state == nil || state.Values == nil {
+		return nil
+	}
+
+	return state.Values.RootModule
 }
 
 func (t *terrafrom) Apply() {

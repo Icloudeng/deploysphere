@@ -12,7 +12,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	port := flag.Int("port", 8088, "Server port")
+	port := strconv.Itoa(*flag.Int("port", 8088, "Server port"))
 	init := flag.Bool("init", false, "Only initialize packackges")
 	flag.Parse()
 
@@ -21,11 +21,16 @@ func main() {
 	}
 
 	api := r.Group("/", basicAuth)
-	api.POST("/provision", Handlers.provision)
-	api.DELETE("/provision/:ref", Handlers.deleteProvision)
 
+	api.POST("/resources", Handlers.createResources)
+
+	api.DELETE("/resources/:ref", Handlers.deleteResources)
+
+	api.GET("/resources/state", Handlers.getResourcesState)
+
+	// Start server
 	log.Println("Server running on PORT: ", port)
-	log.Fatal(r.Run(":" + strconv.Itoa(*port)))
+	log.Fatal(r.Run(":" + port))
 }
 
 func basicAuth(c *gin.Context) {
