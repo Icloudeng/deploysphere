@@ -28,3 +28,7 @@ vet:
 
 lint:
 	golangci-lint run --enable-all
+
+prod-build:
+	make build
+	sudo systemctl restart platform-installer

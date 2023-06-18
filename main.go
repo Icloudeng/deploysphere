@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +20,7 @@ func main() {
 		return
 	}
 
-	api := r.Group("/")
+	api := r.Group("/", basicAuth)
 	api.POST("/provision", Handlers.provision)
 	api.DELETE("/provision/:ref", Handlers.deleteProvision)
 
@@ -27,13 +28,14 @@ func main() {
 	log.Fatal(r.Run(":" + strconv.Itoa(*port)))
 }
 
-// func basicAuth(c *gin.Context) {
-// 	// Get the Basic Authentication credentials
-// 	username, password, hasAuth := c.Request.BasicAuth()
-// 	if hasAuth && username == "testuser" && password == "testpass" {
-// 		c.Next()
-// 	} else {
-// 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Authentication required"})
-// 		return
-// 	}
-// }
+func basicAuth(c *gin.Context) {
+	// Get the Basic Authentication credentials
+	username, password, hasAuth := c.Request.BasicAuth()
+
+	if hasAuth && LDAPExistBindUser(username, password) {
+		c.Next()
+	} else {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Authentication required"})
+		return
+	}
+}
