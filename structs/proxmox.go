@@ -39,6 +39,7 @@ type ProxmoxVmQemu struct {
 	Sockets int    `json:"sockets" binding:"number,min=1,max=10"` //CPU
 	Cpu     string `json:"cpu"`                                   //CPU
 	Numa    bool   `json:"numa" binding:"boolean"`
+	Tags    string `json:"tags"`
 
 	Network   []*PmVmQemuNetwork     `json:"network"`
 	Lifecycle []*PmResourceLifecycle `json:"lifecycle"`
@@ -89,6 +90,7 @@ func NewProxmoxVmQemu() *ProxmoxVmQemu {
 		Sockets:   1,
 		Cpu:       "host",
 		Numa:      true,
+		Tags:      "platform-installer",
 	}
 
 	pm.Network = append(pm.Network, &PmVmQemuNetwork{
