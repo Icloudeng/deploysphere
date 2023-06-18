@@ -28,6 +28,7 @@ type ProxmoxVmQemu struct {
 	Clone       string `json:"clone" binding:"required"`
 
 	FullClone bool `json:"full_clone" binding:"boolean"`
+	// OS_Network_Config string `json:"os_network_config"`
 
 	OsType string `json:"os_type" binding:"oneof=ubuntu centos cloud-init"`
 	OnBoot bool   `json:"onboot"  binding:"boolean"`
