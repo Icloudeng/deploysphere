@@ -102,7 +102,8 @@ else
     pip install ansible jmespath
 fi
 
-export ANSIBLE_HOST_KEY_CHECKING=False
+export ANSIBLE_HOST_KEY_CHECKING="False"
+export ANSIBLE_CONFIG="$(pwd)/ansible.cfg"
 
 # Run Ansible playbook
 if [ -f "./private-key.pem" ]; then

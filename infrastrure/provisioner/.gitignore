@@ -2,3 +2,4 @@ venv
 .venv
 test.sh
 *-key.pem
+ansible_log.txt
