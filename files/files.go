@@ -83,3 +83,21 @@ func ExistsProvisionerPlaformReadDir(platform string) bool {
 
 	return exists
 }
+
+func ReadProvisionerPlaforms() []string {
+	pwd := GetPwd()
+	entries, err := os.ReadDir(path.Join(pwd, "infrastrure/provisioner/scripts/platforms"))
+	if err != nil {
+		log.Panicf("failed reading directory: %s", err)
+	}
+
+	var platforms []string
+
+	for _, v := range entries {
+		if v.IsDir() {
+			platforms = append(platforms, v.Name())
+		}
+	}
+
+	return platforms
+}

@@ -8,6 +8,8 @@ import (
 
 	"smatflow/platform-installer/files"
 	"smatflow/platform-installer/resources"
+	"smatflow/platform-installer/resources/ovh"
+	"smatflow/platform-installer/resources/proxmox"
 	"smatflow/platform-installer/structs"
 )
 
@@ -48,11 +50,11 @@ func (s *Handler) createResources(c *gin.Context) {
 			// Reset unmutable vm fields
 			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform)
 			// Create or update resources
-			// resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
+			resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
 			resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
 
 			// Terraform Apply changes
-			// defer Tf.Apply()
+			defer Tf.Apply()
 			return nil
 		}); err != nil {
 			panic(err)
@@ -101,4 +103,20 @@ func (s *Handler) getResourcesState(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, state)
+}
+
+func (s *Handler) getResources(c *gin.Context) {
+	res := struct {
+		Proxmox *proxmox.Resource
+		Domain  *ovh.Resource
+	}{
+		Proxmox: resources.GetProxmoxResource(),
+		Domain:  resources.GetOvhResource(),
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (s *Handler) getPlatforms(c *gin.Context) {
+	c.JSON(http.StatusOK, files.ReadProvisionerPlaforms())
 }

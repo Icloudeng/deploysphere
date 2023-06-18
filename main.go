@@ -22,11 +22,15 @@ func main() {
 
 	api := r.Group("/", basicAuth)
 
+	api.GET("/resources", Handlers.getResources)
+
 	api.POST("/resources", Handlers.createResources)
 
 	api.DELETE("/resources/:ref", Handlers.deleteResources)
 
 	api.GET("/resources/state", Handlers.getResourcesState)
+
+	api.GET("/platforms", Handlers.getPlatforms)
 
 	// Start server
 	log.Println("Server running on PORT: ", port)

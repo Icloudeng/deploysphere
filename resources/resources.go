@@ -6,6 +6,14 @@ import (
 	"smatflow/platform-installer/structs"
 )
 
+func GetOvhResource() *ovh.Resource {
+	// Working on ovh resource
+	ovh_resource := ovh.ResourceJSONData{}
+	ovh_resource.ParseResourcesJSON()
+
+	return ovh_resource.GetResource()
+}
+
 /** OVH Domain creation resource functions **/
 func CreateOrWriteOvhResource(ref string, domain *structs.DomainZoneRecord) {
 	// Working on ovh resource
@@ -26,6 +34,14 @@ func DeleteOvhResource(ref string) {
 
 	// Add domain to the resource
 	ovh_resource.GetResource().DeleteDomainZoneRerord(ref)
+}
+
+func GetProxmoxResource() *proxmox.Resource {
+	// Working on ovh resource
+	proxmox_resource := proxmox.ResourceJSONData{}
+	proxmox_resource.ParseResourcesJSON()
+
+	return proxmox_resource.GetResource()
 }
 
 /** Promox resource functions **/
