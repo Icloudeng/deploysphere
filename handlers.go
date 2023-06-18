@@ -49,7 +49,7 @@ func (s *Handler) provision(c *gin.Context) {
 			// Reset unmutable vm fields
 			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform)
 			// Create or update resources
-			// resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
+			resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
 			resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
 
 			// Terraform Apply changes
