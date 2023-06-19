@@ -94,25 +94,55 @@ export PLATFORM_INSTALLER_METADATA="$metadata"
 $python_command -m pip install --upgrade pip
 
 # Check if Ansible is already installed
-if $python_command -c "import ansible" &>/dev/null; then
+if $python_command -c "import ansible, jmespath, telegram, dotenv" &>/dev/null; then
     echo "Ansible is already installed."
 else
     # Install Ansible in the virtual environment
     echo "Ansible was not found, start installing..."
-    pip install ansible jmespath
+    pip install ansible jmespath python-telegram-bot python-dotenv
 fi
 
 export ANSIBLE_HOST_KEY_CHECKING="False"
 export ANSIBLE_CONFIG="$(pwd)/ansible.cfg"
 
+ansible_log_file="ansible_log.txt"
+
+# Create ansible log file if not exists
+if [[ ! -f $ansible_log_file ]]; then
+    touch "$ansible_log_file"
+    echo "Created $ansible_log_file file."
+fi
+
+# Get the last total ansible logs file line number
+logs_lines=$(wc -l <$ansible_log_file | tr -d '[:space:]')
+
 # Run Ansible playbook
 if [ -f "./private-key.pem" ]; then
     chmod 600 ./private-key.pem
     ansible-playbook -u "$ansible_user" -i "$vm_ip," --private-key "./private-key.pem" "$playbook_path"
+    # Capture the exit code of the Ansible playbook command
+    playbook_result=$?
 else
     echo ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path"
     ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path"
+    # Capture the exit code of the Ansible playbook command
+    playbook_result=$?
 fi
+
+# Get the ansible logs content from last run and pipe it to base64
+ansible_logs=$(tail -n +$logs_lines $ansible_log_file | base64)
+
+# Send notification accordingly
+if [ $playbook_result -eq 0 ]; then
+    echo "Playbook succeeded!"
+    ran_status="succeeded"
+else
+    echo "Playbook failed!"
+    ran_status="failed"
+fi
+
+# Execute python notifier script
+$python_command notifier/notifier.py "$ansible_logs" "$ran_status" "$platform" "$vm_ip"
 
 # Deactivate the virtual environment
 deactivate
