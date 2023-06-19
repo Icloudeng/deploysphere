@@ -1,10 +1,10 @@
-package main
+package terraform
 
 import (
 	"context"
 	"log"
 	"path"
-	"smatflow/platform-installer/files"
+	"smatflow/platform-installer/lib/files"
 
 	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/hc-install/product"
@@ -13,11 +13,11 @@ import (
 	tfjson "github.com/hashicorp/terraform-json"
 )
 
-type terrafrom struct {
+type Terrafrom struct {
 	tk *tfexec.Terraform
 }
 
-var Tf = &terrafrom{}
+var Tf = &Terrafrom{}
 
 func init() {
 	pwd := files.GetPwd()
@@ -48,7 +48,7 @@ func init() {
 	Tf.tk = tf
 }
 
-func (t *terrafrom) Plan() {
+func (t *Terrafrom) Plan() {
 	tf := t.tk
 	ctx := context.Background()
 
@@ -64,7 +64,7 @@ func (t *terrafrom) Plan() {
 	log.Printf("Terraform plan state: %v", state)
 }
 
-func (t *terrafrom) Show() *tfjson.StateModule {
+func (t *Terrafrom) Show() *tfjson.StateModule {
 	tf := t.tk
 	ctx := context.Background()
 
@@ -77,7 +77,7 @@ func (t *terrafrom) Show() *tfjson.StateModule {
 	return state.Values.RootModule
 }
 
-func (t *terrafrom) Apply() {
+func (t *Terrafrom) Apply() {
 	tf := t.tk
 	ctx := context.Background()
 

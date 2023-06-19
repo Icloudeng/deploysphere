@@ -1,9 +1,9 @@
 package resources
 
 import (
-	"smatflow/platform-installer/resources/ovh"
-	"smatflow/platform-installer/resources/proxmox"
-	"smatflow/platform-installer/structs"
+	"smatflow/platform-installer/lib/resources/ovh"
+	"smatflow/platform-installer/lib/resources/proxmox"
+	"smatflow/platform-installer/lib/structs"
 )
 
 func GetOvhResource() *ovh.Resource {

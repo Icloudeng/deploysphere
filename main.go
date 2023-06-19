@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"smatflow/platform-installer/lib"
+	"smatflow/platform-installer/lib/handlers"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,15 +25,27 @@ func main() {
 
 	api := r.Group("/", basicAuth)
 
-	api.GET("/resources", Handlers.getResources)
+	// Resources
+	api.GET("/resources", handlers.GetResources)
 
-	api.POST("/resources", Handlers.createResources)
+	api.POST("/resources", handlers.CreateResources)
 
-	api.DELETE("/resources/:ref", Handlers.deleteResources)
+	api.DELETE("/resources/:ref", handlers.DeleteResources)
 
-	api.GET("/resources/state", Handlers.getResourcesState)
+	api.GET("/resources/state", handlers.GetResourcesState)
 
-	api.GET("/platforms", Handlers.getPlatforms)
+	// Platforms
+	api.GET("/platforms", handlers.GetPlatforms)
+
+	// Domain
+	api.POST("/domain", handlers.CreateDomain)
+
+	api.DELETE("/domain", handlers.DeleteDomain)
+
+	//VM
+	api.POST("/vm", handlers.CreateVm)
+
+	api.DELETE("/vm", handlers.DeleteVm)
 
 	// Start server
 	log.Println("Server running on PORT: ", port)
@@ -41,7 +56,7 @@ func basicAuth(c *gin.Context) {
 	// Get the Basic Authentication credentials
 	username, password, hasAuth := c.Request.BasicAuth()
 
-	if hasAuth && LDAPExistBindUser(username, password) {
+	if hasAuth && lib.LDAPExistBindUser(username, password) {
 		c.Next()
 	} else {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Authentication required"})

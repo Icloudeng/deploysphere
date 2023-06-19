@@ -1,12 +1,11 @@
-package proxmox
+package ovh
 
 import (
 	"encoding/json"
 	"log"
 	"path"
-
-	files "smatflow/platform-installer/files"
-	structs "smatflow/platform-installer/structs"
+	"smatflow/platform-installer/lib/files"
+	"smatflow/platform-installer/lib/structs"
 )
 
 type ResourceJSONData struct {
@@ -14,11 +13,12 @@ type ResourceJSONData struct {
 }
 
 type Resource struct {
-	ProxmoxVmQemu []ProxmoxVmQemu `json:"proxmox_vm_qemu"`
+	OVHDomainZoneRecord []OVHDomainZoneRecord `json:"ovh_domain_zone_record"`
 }
 
-type ProxmoxVmQemu map[string]*structs.ProxmoxVmQemu
+type OVHDomainZoneRecord map[string]*structs.DomainZoneRecord
 
+// Ovh domain record add resource
 func (j *ResourceJSONData) GetResource() *Resource {
 	if len(j.Resources) > 0 {
 		return j.Resources[0]
@@ -34,18 +34,12 @@ func (j *ResourceJSONData) GetResource() *Resource {
 func (j *ResourceJSONData) GetFile() string {
 	pwd := files.GetPwd()
 
-	return path.Join(pwd, "infrastrure/terraform/modules/proxmox", "resource_auto.tf.json")
+	return path.Join(pwd, "infrastrure/terraform/modules/ovh", "resource_auto.tf.json")
 }
 
-func (r *ResourceJSONData) InitResourcesFiles() {
+func (r ResourceJSONData) InitResourcesFiles() {
 	// Create file if not exist
-	for _, file := range r.GetFiles() {
-		files.CreateIfNotExistsWithContent(file, "{}")
-	}
-}
-
-func (r *ResourceJSONData) GetFiles() [1]string {
-	return [...]string{r.GetFile()}
+	files.CreateIfNotExistsWithContent(r.GetFile(), "{}")
 }
 
 func (r *ResourceJSONData) ParseResourcesJSON() error {
@@ -64,7 +58,7 @@ func (r *ResourceJSONData) WriteResources() {
 	var isEmpty = true
 
 	for _, res := range r.Resources {
-		if len(res.ProxmoxVmQemu) == 0 {
+		if len(res.OVHDomainZoneRecord) == 0 {
 			break
 		} else {
 			isEmpty = false
@@ -79,30 +73,29 @@ func (r *ResourceJSONData) WriteResources() {
 }
 
 // Resource methods
-func (r *Resource) GetProxmoxVmQemu() ProxmoxVmQemu {
-	if len(r.ProxmoxVmQemu) > 0 {
-		return r.ProxmoxVmQemu[0]
+func (r *Resource) GetOVHDomainZoneRecord() OVHDomainZoneRecord {
+	if len(r.OVHDomainZoneRecord) > 0 {
+		return r.OVHDomainZoneRecord[0]
 	}
 	return nil
 }
 
-func (r *Resource) AddProxmoxVmQemu(ref string, vm *structs.ProxmoxVmQemu) {
-	pm := r.GetProxmoxVmQemu()
+func (r *Resource) AddDomainZoneRerord(ref string, domain *structs.DomainZoneRecord) {
+	ovh_dzr := r.GetOVHDomainZoneRecord()
 
-	if pm == nil {
-		r.ProxmoxVmQemu = append(r.ProxmoxVmQemu, ProxmoxVmQemu{ref: vm})
+	if ovh_dzr == nil {
+		r.OVHDomainZoneRecord = append(r.OVHDomainZoneRecord, OVHDomainZoneRecord{ref: domain})
 		return
 	}
 
-	pm[ref] = vm
+	ovh_dzr[ref] = domain
 }
 
-func (r *Resource) DeleteProxmoxVmQemu(ref string) {
-	ozr := r.GetProxmoxVmQemu()
-
+func (r *Resource) DeleteDomainZoneRerord(ref string) {
+	ozr := r.GetOVHDomainZoneRecord()
 	delete(ozr, ref)
 
 	if len(ozr) == 0 {
-		r.ProxmoxVmQemu = nil
+		r.OVHDomainZoneRecord = nil
 	}
 }

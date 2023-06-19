@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"context"
@@ -6,17 +6,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"smatflow/platform-installer/files"
-	"smatflow/platform-installer/resources"
-	"smatflow/platform-installer/resources/ovh"
-	"smatflow/platform-installer/resources/proxmox"
-	"smatflow/platform-installer/structs"
+	"smatflow/platform-installer/lib"
+	"smatflow/platform-installer/lib/files"
+	"smatflow/platform-installer/lib/resources"
+	"smatflow/platform-installer/lib/resources/ovh"
+	"smatflow/platform-installer/lib/resources/proxmox"
+	"smatflow/platform-installer/lib/structs"
+	"smatflow/platform-installer/lib/terraform"
 )
-
-// Handler top lever
-type Handler struct{}
-
-var Handlers = Handler{}
 
 // Store resources and apply
 type Resources struct {
@@ -26,7 +23,7 @@ type Resources struct {
 	Platform *structs.Platform         `json:"platform"`
 }
 
-func (s *Handler) createResources(c *gin.Context) {
+func CreateResources(c *gin.Context) {
 	json := Resources{
 		Vm:       structs.NewProxmoxVmQemu(),
 		Platform: &structs.Platform{Metadata: &map[string]interface{}{}},
@@ -46,7 +43,7 @@ func (s *Handler) createResources(c *gin.Context) {
 	}
 
 	go func() {
-		if err := Queue.QueueTask(func(ctx context.Context) error {
+		if err := lib.Queue.QueueTask(func(ctx context.Context) error {
 			// Reset unmutable vm fields
 			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform)
 			// Create or update resources
@@ -54,7 +51,7 @@ func (s *Handler) createResources(c *gin.Context) {
 			resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
 
 			// Terraform Apply changes
-			defer Tf.Apply()
+			defer terraform.Tf.Apply()
 			return nil
 		}); err != nil {
 			panic(err)
@@ -69,7 +66,7 @@ type ResourcesRef struct {
 	Ref string `uri:"ref" binding:"required,ascii,lowercase"`
 }
 
-func (s *Handler) deleteResources(c *gin.Context) {
+func DeleteResources(c *gin.Context) {
 	var data ResourcesRef
 	if err := c.ShouldBindUri(&data); err != nil {
 		c.AbortWithStatusJSON(400, gin.H{"msg": err})
@@ -77,13 +74,13 @@ func (s *Handler) deleteResources(c *gin.Context) {
 	}
 
 	go func() {
-		if err := Queue.QueueTask(func(ctx context.Context) error {
+		if err := lib.Queue.QueueTask(func(ctx context.Context) error {
 			// Remove resources
 			resources.DeleteOvhResource(data.Ref)
 			resources.DeleteProxmoxResource(data.Ref)
 
 			// Terraform Apply changes
-			defer Tf.Apply()
+			defer terraform.Tf.Apply()
 			return nil
 		}); err != nil {
 			panic(err)
@@ -94,8 +91,8 @@ func (s *Handler) deleteResources(c *gin.Context) {
 }
 
 // Get resources state from terraform
-func (s *Handler) getResourcesState(c *gin.Context) {
-	state := Tf.Show()
+func GetResourcesState(c *gin.Context) {
+	state := terraform.Tf.Show()
 
 	if state == nil {
 		c.JSON(http.StatusOK, struct{}{})
@@ -105,7 +102,7 @@ func (s *Handler) getResourcesState(c *gin.Context) {
 	c.JSON(http.StatusOK, state)
 }
 
-func (s *Handler) getResources(c *gin.Context) {
+func GetResources(c *gin.Context) {
 	res := struct {
 		Proxmox *proxmox.Resource
 		Domain  *ovh.Resource
@@ -117,6 +114,6 @@ func (s *Handler) getResources(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (s *Handler) getPlatforms(c *gin.Context) {
+func GetPlatforms(c *gin.Context) {
 	c.JSON(http.StatusOK, files.ReadProvisionerPlaforms())
 }
