@@ -50,13 +50,12 @@ async def send_notification(encode_message: str, m_type: str, platform: str, ip:
     try:
         emoji = '❌' if m_type == "failed" else '✅'
         decoded_message = get_message_content(encode_message)
-        content = f"```bash\n##########################\n{decoded_message}\n########################```"
+        content = f"##########################\n{decoded_message}\n########################"
         details = f"Platform: {platform}\nMachine IP: {ip}"
-        text = f"{emoji} *{m_type.title()}*\n\n{details}\n\n{content}"
+        text = f"{emoji} {m_type.title()}\n\n{details}\n\n{content}"
         await bot.send_message(
             chat_id=chat_id,
-            text=text,
-            parse_mode=telegram.constants.ParseMode.MARKDOWN_V2
+            text=text
         )
     except:
         print("Failed to send notication")
