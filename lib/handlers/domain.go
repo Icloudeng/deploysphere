@@ -12,7 +12,7 @@ import (
 )
 
 type Domain struct {
-	Ref    string                    `json:"ref" binding:"required,ascii,lowercase"`
+	Ref    string                    `json:"ref" binding:"required,ascii"`
 	Domain *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
 }
 

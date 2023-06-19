@@ -13,7 +13,7 @@ import (
 )
 
 type Vm struct {
-	Ref      string                 `json:"ref" binding:"required,ascii,lowercase"`
+	Ref      string                 `json:"ref" binding:"required,ascii"`
 	Vm       *structs.ProxmoxVmQemu `json:"vm" binding:"required,json"`
 	Platform *structs.Platform      `json:"platform"`
 }

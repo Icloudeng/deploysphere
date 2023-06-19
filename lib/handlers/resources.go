@@ -17,7 +17,7 @@ import (
 
 // Store resources and apply
 type Resources struct {
-	Ref      string                    `json:"ref" binding:"required,ascii,lowercase"`
+	Ref      string                    `json:"ref" binding:"required,ascii"`
 	Domain   *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
 	Vm       *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
 	Platform *structs.Platform         `json:"platform"`
@@ -63,7 +63,7 @@ func CreateResources(c *gin.Context) {
 
 // Delete resources and apply
 type ResourcesRef struct {
-	Ref string `uri:"ref" binding:"required,ascii,lowercase"`
+	Ref string `uri:"ref" binding:"required,ascii"`
 }
 
 func DeleteResources(c *gin.Context) {
