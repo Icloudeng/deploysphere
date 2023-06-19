@@ -49,8 +49,8 @@ async def send_notification(encode_message: str, m_type: str, platform: str, ip:
     decoded_message = None
     try:
         emoji = '❌' if m_type == "failed" else '✅'
-        decoded_message = get_message_content(encode_message)
-        content = f"##########################\n{decoded_message}\n########################"
+        decoded_message = get_message_content(encode_message).replace("--", "")
+        content = f"##########################\n{decoded_message[-4096:]}\n########################"
         details = f"Platform: {platform}\nMachine IP: {ip}"
         text = f"{emoji} {m_type.title()}\n\n{details}\n\n{content}"
         await bot.send_message(

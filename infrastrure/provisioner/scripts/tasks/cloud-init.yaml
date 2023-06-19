@@ -1,3 +1,17 @@
+- name: Check status file
+  stat:
+    path: /var/lib/cloud/instance/boot-finished
+  register: status_file
+
+- name: Wait for cloud-init logs
+  wait_for:
+    path: /var/log/cloud-init.log
+    search_regex: "Cloud-init .* finished"
+  register: logs_finished
+  until: logs_finished is succeeded
+  retries: 10
+  delay: 10
+
 - name: Check dpkg lock status
   shell: |
     while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
