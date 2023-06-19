@@ -39,12 +39,12 @@ func main() {
 	// Domain
 	api.POST("/domain", handlers.CreateDomain)
 
-	api.DELETE("/domain", handlers.DeleteDomain)
+	api.DELETE("/domain/:ref", handlers.DeleteDomain)
 
 	//VM
 	api.POST("/vm", handlers.CreateVm)
 
-	api.DELETE("/vm", handlers.DeleteVm)
+	api.DELETE("/vm/:ref", handlers.DeleteVm)
 
 	// Start server
 	log.Println("Server running on PORT: ", port)
