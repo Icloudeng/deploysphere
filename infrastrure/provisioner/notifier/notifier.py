@@ -50,12 +50,12 @@ async def send_notification(encode_message: str, m_type: str, platform: str, ip:
     try:
         emoji = '❌' if m_type == "failed" else '✅'
         decoded_message = get_message_content(encode_message).replace("--", "")
-        content = f"##########################\n{decoded_message[-4096:]}\n########################"
+        content = f"##########################\n{decoded_message}\n########################"
         details = f"Platform: {platform}\nMachine IP: {ip}"
         text = f"{emoji} {m_type.title()}\n\n{details}\n\n{content}"
         await bot.send_message(
             chat_id=chat_id,
-            text=text
+            text=text[-4096:]
         )
     except:
         print("Failed to send notication")
