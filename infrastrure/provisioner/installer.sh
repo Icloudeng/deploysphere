@@ -123,7 +123,6 @@ if [ -f "./private-key.pem" ]; then
     # Capture the exit code of the Ansible playbook command
     playbook_result=$?
 else
-    echo ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path"
     ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path"
     # Capture the exit code of the Ansible playbook command
     playbook_result=$?
