@@ -3,8 +3,10 @@ package main
 import (
 	"flag"
 	"log"
+	"net/http"
 	"strconv"
 
+	"smatflow/platform-installer/lib"
 	"smatflow/platform-installer/lib/handlers"
 
 	"github.com/gin-gonic/gin"
@@ -21,8 +23,7 @@ func main() {
 		return
 	}
 
-	// api := r.Group("/", basicAuth)
-	api := r.Group("/")
+	api := r.Group("/", basicAuth)
 
 	// Resources
 	api.GET("/resources", handlers.GetResources)
@@ -51,14 +52,14 @@ func main() {
 	log.Fatal(r.Run(":" + port))
 }
 
-// func basicAuth(c *gin.Context) {
-// 	// Get the Basic Authentication credentials
-// 	username, password, hasAuth := c.Request.BasicAuth()
+func basicAuth(c *gin.Context) {
+	// Get the Basic Authentication credentials
+	username, password, hasAuth := c.Request.BasicAuth()
 
-// 	if hasAuth && lib.LDAPExistBindUser(username, password) {
-// 		c.Next()
-// 	} else {
-// 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Authentication required"})
-// 		return
-// 	}
-// }
+	if hasAuth && lib.LDAPExistBindUser(username, password) {
+		c.Next()
+	} else {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Authentication required"})
+		return
+	}
+}
