@@ -35,11 +35,8 @@ func CreateResources(c *gin.Context) {
 	}
 
 	// Chech if platform the password corresponse to an existing platform folder
-	if len(json.Platform.Name) > 0 {
-		if !files.ExistsProvisionerPlaformReadDir(json.Platform.Name) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Cannot found the correspoding platform"})
-			return
-		}
+	if !validatePlatform(c, *json.Platform) {
+		return
 	}
 
 	go func() {

@@ -84,6 +84,11 @@ func ExistsProvisionerPlaformReadDir(platform string) bool {
 	return exists
 }
 
+func ReadPlatformMetadataFields() []byte {
+	pwd := GetPwd()
+	return ReadFile(path.Join(pwd, "infrastrure/provisioner/scripts/metadata-required.json"))
+}
+
 func ReadProvisionerPlaforms() []string {
 	pwd := GetPwd()
 	entries, err := os.ReadDir(path.Join(pwd, "infrastrure/provisioner/scripts/platforms"))

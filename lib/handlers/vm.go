@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"smatflow/platform-installer/lib"
 	"smatflow/platform-installer/lib/files"
@@ -30,11 +31,8 @@ func CreateVm(c *gin.Context) {
 	}
 
 	// Chech if platform the password corresponse to an existing platform folder
-	if len(json.Platform.Name) > 0 {
-		if !files.ExistsProvisionerPlaformReadDir(json.Platform.Name) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Cannot found the correspoding platform"})
-			return
-		}
+	if !validatePlatform(c, *json.Platform) {
+		return
 	}
 
 	go func() {
@@ -75,4 +73,31 @@ func DeleteVm(c *gin.Context) {
 	}()
 
 	c.JSON(http.StatusOK, data)
+}
+
+func validatePlatform(c *gin.Context, platform structs.Platform) bool {
+	if len(platform.Name) > 0 {
+		// Check if plaform has provisionner script
+		if !files.ExistsProvisionerPlaformReadDir(platform.Name) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Cannot found the correspoding platform"})
+			return false
+		}
+
+		// Check if platform meta fields exist
+		requriedFields := files.ReadPlatformMetadataFields()
+		meta := structs.PlatformMetadataFields{}
+		json.Unmarshal(requriedFields, &meta)
+
+		metadata := *platform.Metadata
+
+		if values, found := meta[platform.Name]; found {
+			for _, val := range values {
+				if _, exists := metadata[val]; !exists {
+					return false
+				}
+			}
+		}
+	}
+
+	return true
 }
