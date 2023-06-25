@@ -91,6 +91,29 @@ def find_existing_proxy_host(domain: str, url: str):
     return None
 
 
+def find_existing_certificate(domain: str, url: str):
+    res = requests.get(
+        f"{url}/api/nginx/certificates",
+        headers=headers
+    )
+    if res.status_code != 200:
+        return None
+    # Check for the API Schema
+    # (https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/backend/schema/endpoints/certificates.json)
+
+    data: List[Any] = res.json()
+
+    for phost in data:
+        domains: List[str] = phost.domain_names
+        try:
+            domains.index(domain)
+            return phost
+        except:
+            continue
+
+    return None
+
+
 def get_platform_schema(platform: str):
     data: dict[str, Any] = {}
     with open("scripts/platform-schemas.json", "r") as file:
@@ -100,6 +123,10 @@ def get_platform_schema(platform: str):
 
 
 def create_domain_certificate(domain: str, url: str):
+    certificate = find_existing_certificate(domain, url)
+    if certificate:
+        return certificate
+
     body = {
         "domain_names": [domain],
         "meta": {
