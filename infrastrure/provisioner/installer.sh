@@ -1,6 +1,7 @@
 #!/bin/bash
 
 MY_DIR=$(dirname $0)
+PROXY_MANAGER="nginx" # nginx | treafik
 
 # Default values
 ansible_user=""
@@ -92,11 +93,21 @@ else
     ran_status="failed"
 fi
 
+# Create domain mapping with (nginx|treafik)
+if [ "$ran_status" == "succeeded" ]; then
+
+    if [ "$PROXY_MANAGER" == "nginx" ]; then
+        # Execute Nginx Proxy Manager (Domain mapping)
+        $python_command lib/nginx_pm.py --action "create" --metadata "$metadata" --platform "$platform" --ip "$vm_ip"
+    elif [ "$PROXY_MANAGER" == "treafik" ]; then
+
+        echo "Proxy manager with treafik"
+    fi
+
+fi
+
 # Execute python notifier script
 $python_command lib/notifier.py --logs "$ansible_logs" --status "$ran_status" --platform "$platform" --ip "$vm_ip"
-
-# Execute Nginx Proxy Manager (Domain mapping)
-$python_command lib/nginx_pm.py --action "create" --metadata "$metadata" --platform "$platform" --status "$ran_status" --ip "$vm_ip"
 
 # Deactivate the virtual environment
 deactivate

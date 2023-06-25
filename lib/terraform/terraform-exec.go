@@ -13,6 +13,8 @@ import (
 	tfjson "github.com/hashicorp/terraform-json"
 )
 
+const WORKING_DIR = "infrastrure/terraform"
+
 type Terrafrom struct {
 	tk *tfexec.Terraform
 }
@@ -33,9 +35,7 @@ func init() {
 		log.Fatalf("error installing Terraform: %s", err)
 	}
 
-	workingDir := path.Join(pwd, "infrastrure/terraform")
-
-	tf, err := tfexec.NewTerraform(workingDir, execPath)
+	tf, err := tfexec.NewTerraform(path.Join(pwd, WORKING_DIR), execPath)
 	if err != nil {
 		log.Fatalf("error running NewTerraform: %s", err)
 	}

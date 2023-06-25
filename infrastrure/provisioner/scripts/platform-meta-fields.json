@@ -4,5 +4,7 @@
         "ipa_hostname",
         "domain"
     ],
-    "erpnext": []
+    "erpnext": [
+        "domain"
+    ]
 }

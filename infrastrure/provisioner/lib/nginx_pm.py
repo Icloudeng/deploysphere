@@ -12,6 +12,19 @@ headers = {
 }
 
 DOMAIN_KEY = "domain"
+SSL_PROVIDER = "letsencrypt"
+
+
+def clean_domain(url: str):
+    if url.startswith("http://"):
+        url = url[len("http://"):]
+    elif url.startswith("https://"):
+        url = url[len("https://"):]
+
+    if url.endswith("/"):
+        url = url[:-1]
+
+    return url
 
 
 def get_api_token() -> (tuple[None, None] | tuple[str, str]):
@@ -24,7 +37,7 @@ def get_api_token() -> (tuple[None, None] | tuple[str, str]):
 
     res = requests.post(
         f"{url}/api/tokens",
-        data={"identity": email, "secret": password},
+        json={"identity": email, "secret": password},
         headers=headers
     )
     if res.status_code != 200:
@@ -42,7 +55,9 @@ def get_api_token() -> (tuple[None, None] | tuple[str, str]):
 def get_decoded_domain(metadata: str) -> str | None:
     decoded_bytes = base64.b64decode(metadata)
     data = json.loads(decoded_bytes.decode("utf-8"))
-    return data.get(DOMAIN_KEY, None)
+    domain = data.get(DOMAIN_KEY, None)
+
+    return clean_domain(domain) if domain else None
 
 
 def delete_proxy_hosts(phost: Any, url: str):
@@ -76,15 +91,72 @@ def find_existing_proxy_host(domain: str, url: str):
     return None
 
 
-def get_platform_port(platform: str):
-    data: dict[str, int] = {}
-    with open("scripts/platform-ports.json", "r") as file:
+def get_platform_schema(platform: str):
+    data: dict[str, Any] = {}
+    with open("scripts/platform-schemas.json", "r") as file:
         data = json.loads(file.read())
 
     return data.get(platform)
 
 
-def main(action: str, metadata: str, platform: str, status: str, ip: str):
+def create_domain_certificate(domain: str, url: str):
+    body = {
+        "domain_names": [domain],
+        "meta": {
+            "letsencrypt_email": config.get("ADMIN_SYSTEM_EMAIL", "admin@example.com"),
+            "letsencrypt_agree": True,
+            "dns_challenge": False
+        },
+        "provider": SSL_PROVIDER
+    }
+    # Check for the API Schema
+    # (https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/backend/schema/endpoints/certificates.json)
+    res = requests.post(
+        f"{url}/api/nginx/certificates",
+        json=body,
+        headers=headers
+    )
+
+    if res.status_code != 201 or res.status_code != 200:
+        return None
+
+    return res.json()
+
+
+def create_proxy_host(url: str, domain: str, certificate: Any, platform_schema: Any, ip: str):
+    certificate = certificate if certificate else {}
+    certificate_id = certificate.get("id")
+
+    body = {
+        "domain_names": [domain],
+        "forward_scheme": platform_schema.protocol,
+        "forward_host": ip,
+        "forward_port": platform_schema.port,
+        "block_exploits": True,
+        "allow_websocket_upgrade": True,
+        "access_list_id": "0",
+        "certificate_id": certificate_id if certificate_id else 0,
+        "ssl_forced": True if certificate_id else False,
+        "http2_support":  True if certificate_id else False,
+        "hsts_enabled":  True if certificate_id else False,
+        "meta": {
+            "letsencrypt_agree": False,
+            "dns_challenge": False
+        },
+        "advanced_config": "",
+        "locations": [],
+        "caching_enabled": False,
+        "hsts_subdomains": False
+    }
+
+    requests.post(
+        f"{url}/api/nginx/proxy-hosts",
+        json=body,
+        headers=headers
+    )
+
+
+def main(action: str, metadata: str, platform: str, ip: str):
     url, token = get_api_token()
     if not url or token:
         return
@@ -102,10 +174,22 @@ def main(action: str, metadata: str, platform: str, status: str, ip: str):
         return
 
     # Get platform proxy
-    platform_port = get_platform_port(platform)
+    platform_schema = get_platform_schema(platform)
 
-    if not platform_port:
+    if not platform_schema:
         return
+
+    # Generate domain certificate
+    certificate = create_domain_certificate(domain, url)
+
+    # Finally create the proxy host
+    create_proxy_host(
+        url=url,
+        domain=domain,
+        certificate=certificate,
+        platform_schema=platform_schema,
+        ip=ip
+    )
 
 
 if __name__ == '__main__':
@@ -117,7 +201,6 @@ if __name__ == '__main__':
     )
     parser.add_argument("--metadata", required=True)
     parser.add_argument("--platform", required=False)
-    parser.add_argument("--status", required=False)
     parser.add_argument("--ip", required=False)
     args = parser.parse_args()
 
@@ -126,6 +209,5 @@ if __name__ == '__main__':
         action=args.action,
         metadata=args.metadata,
         platform=args.platform,
-        status=args.status,
         ip=args.ip,
     )
