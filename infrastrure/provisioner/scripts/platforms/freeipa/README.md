@@ -1,8 +1,9 @@
-## Variable Env
+## Variable Env (Platform Metadata)
 
 ```
-DOMAIN=
-HOSTNAME=
+ipa_domain=example.com
+ipa_hostname=ipa.example.com
+domain=ipa.example.com
 ```
 
 ## Defaul FREEIPA Vars

@@ -1,24 +1,9 @@
-import os
 import sys
 import base64
 import asyncio
+import argparse
 import telegram
-from dotenv import dotenv_values
-
-# Get the current working directory
-current_dir = os.getcwd()
-
-# Get the parent folder (1 level up)
-parent_dir = os.path.dirname(current_dir)
-
-# Get the grandparent folder (2 levels up)
-grandparent_dir = os.path.dirname(parent_dir)
-
-# Specify the path to the .env file
-dotenv_path = os.path.join(grandparent_dir, '.env')
-
-
-config = dotenv_values(dotenv_path)
+from .utilities.dotenv import config
 
 
 def get_message_content(base64_content: str):
@@ -40,19 +25,18 @@ def create_bot():
     return bot, chat_id
 
 
-async def send_notification(encode_message: str, m_type: str, platform: str, ip: str):
+async def send_notification(encode_logs: str, status: str, platform: str, ip: str):
     bot, chat_id = create_bot()
     if bot == None:
         print("Invalid BOT Configuration!")
         return
     # Decode message and send
-    decoded_message = None
     try:
-        emoji = '❌' if m_type == "failed" else '✅'
-        decoded_message = get_message_content(encode_message).replace("--", "")
-        content = f"##########################\n{decoded_message[-3500:]}\n########################"
+        emoji = '❌' if status == "failed" else '✅'
+        decoded_logs = get_message_content(encode_logs).replace("--", "")
+        content = f"##########################\n{decoded_logs[-3500:]}\n########################"
         details = f"Platform: {platform}\nMachine IP: {ip}"
-        text = f"{emoji} {m_type.title()}\n\n{details}\n\n{content}"
+        text = f"{emoji} {status.title()}\n\n{details}\n\n{content}"
         await bot.send_message(
             chat_id=chat_id,
             text=text
@@ -62,10 +46,17 @@ async def send_notification(encode_message: str, m_type: str, platform: str, ip:
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--logs", required=True)
+    parser.add_argument("--status", required=True)
+    parser.add_argument("--platform", required=True)
+    parser.add_argument("--ip", required=True)
+    args = parser.parse_args()
+
     # Send notification
     asyncio.run(send_notification(
-        encode_message=sys.argv[1],
-        m_type=sys.argv[2],
-        platform=sys.argv[3],
-        ip=sys.argv[4]
+        encode_logs=args.logs,
+        status=args.status,
+        platform=args.platform,
+        ip=args.ip
     ))

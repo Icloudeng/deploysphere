@@ -1,5 +1,7 @@
 #!/bin/bash
 
+MY_DIR=$(dirname $0)
+
 # Default values
 ansible_user=""
 platform=""
@@ -44,29 +46,6 @@ if [ -z "$ansible_user" ] || [ -z "$platform" ] || [ -z "$vm_ip" ]; then
     exit 1
 fi
 
-# Check if Python or Python 3 is installed
-if command -v python &>/dev/null; then
-    echo "Python is installed."
-    python_version=$(python --version 2>&1)
-    echo "Python version: $python_version"
-    python_command="python"
-elif command -v python3 &>/dev/null; then
-    echo "Python 3 is installed."
-    python_version=$(python3 --version 2>&1)
-    echo "Python 3 version: $python_version"
-    python_command="python3"
-else
-    echo "Python or Python 3 is not installed. Please install Python and try again."
-    exit 1
-fi
-
-# Check if the OS is Ubuntu
-if [[ "$(uname)" == "Linux" ]]; then
-    # Check if pip is installed
-    sudo apt-get update
-    sudo apt-get -y install python3-venv python3-pip
-fi
-
 # Check if the Ansible playbook script exists
 playbook_path="./scripts/platforms/$platform/playbook.yaml"
 
@@ -77,53 +56,26 @@ else
     exit 1
 fi
 
-# Create Python virtual environment
-$python_command -m venv .venv
-
-if [ ! -f ".venv/bin/activate" ]; then
-    echo "Venv script not found"
-    exit 1
-fi
-
-source .venv/bin/activate
-
-# Set PLATFORM_INSTALLER_METADATA environment variable
-export PLATFORM_INSTALLER_METADATA="$metadata"
-
-# Upgrade pip
-$python_command -m pip install --upgrade pip
-
-# Check if Ansible is already installed
-if $python_command -c "import ansible, jmespath, telegram, dotenv" &>/dev/null; then
-    echo "Ansible is already installed."
-else
-    # Install Ansible in the virtual environment
-    echo "Ansible was not found, start installing..."
-    pip install ansible jmespath python-telegram-bot python-dotenv
-fi
-
-export ANSIBLE_HOST_KEY_CHECKING="False"
-export ANSIBLE_CONFIG="$(pwd)/ansible.cfg"
-
-ansible_log_file="ansible_log.txt"
-
-# Create ansible log file if not exists
-if [[ ! -f $ansible_log_file ]]; then
-    touch "$ansible_log_file"
-    echo "Created $ansible_log_file file."
-fi
+# Include python command and activate python venv
+source $MY_DIR/bash/ansible_init.sh
 
 # Get the last total ansible logs file line number
 logs_lines=$(wc -l <$ansible_log_file | tr -d '[:space:]')
 
+# Read variables from /root/.env variable and pass them to extra variable
+getenv="$python_command lib/getenv.py"
+
+################ Ansible extra-vars ################
+ansible_extra_vars="platform_metadata=$metadata"
+
 # Run Ansible playbook
 if [ -f "./private-key.pem" ]; then
     chmod 600 ./private-key.pem
-    ansible-playbook -u "$ansible_user" -i "$vm_ip," --private-key "./private-key.pem" "$playbook_path"
+    ansible-playbook -u "$ansible_user" -i "$vm_ip," --private-key "./private-key.pem" "$playbook_path" --extra-vars "$ansible_extra_vars"
     # Capture the exit code of the Ansible playbook command
     playbook_result=$?
 else
-    ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path"
+    ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path" --extra-vars "$ansible_extra_vars"
     # Capture the exit code of the Ansible playbook command
     playbook_result=$?
 fi
@@ -141,7 +93,10 @@ else
 fi
 
 # Execute python notifier script
-$python_command notifier/notifier.py "$ansible_logs" "$ran_status" "$platform" "$vm_ip"
+$python_command lib/notifier.py --logs "$ansible_logs" --status "$ran_status" --platform "$platform" --ip "$vm_ip"
+
+# Execute Nginx Proxy Manager (Domain mapping)
+$python_command lib/nginx_pm.py --action "create" --metadata "$metadata" --platform "$platform" --status "$ran_status" --ip "$vm_ip"
 
 # Deactivate the virtual environment
 deactivate

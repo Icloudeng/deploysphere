@@ -12,17 +12,17 @@
         state: directory
         path: "{{ root_path }}"
 
-    - name: Decode base64 PLATFORM_INSTALLER_METADATA
+    - name: Decode base64 platform_metadata variable
       set_fact:
-        decoded_metadata: "{{ lookup('pipe', 'echo $PLATFORM_INSTALLER_METADATA | base64 -d') }}"
+        decoded_metadata: "{{ platform_metadata | b64decode }}"
 
     - debug:
         var: decoded_metadata
 
     - name: Extract domain key and hostname
       set_fact:
-        domain: "{{ decoded_metadata | json_query('domain') }}"
-        hostname: "{{ decoded_metadata | json_query('hostname') }}"
+        ipa_domain: "{{ decoded_metadata | json_query('ipa_domain') }}"
+        ipa_hostname: "{{ decoded_metadata | json_query('ipa_hostname') }}"
 
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
@@ -42,5 +42,5 @@
       args:
         chdir: "{{ root_path }}"
       environment:
-        DOMAIN: "{{ domain }}"
-        HOSTNAME: "{{ hostname }}"
+        DOMAIN: "{{ ipa_domain }}"
+        HOSTNAME: "{{ ipa_hostname }}"
