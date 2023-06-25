@@ -70,14 +70,14 @@ def get_decoded_domain(metadata: str) -> str | None:
 def delete_proxy_hosts(phost: Any, url: str):
     if phost:
         requests.delete(
-            f"{url}/api/nginx/proxy-hosts/{phost.id}",
+            f"{url}/api/nginx/proxy-hosts/{phost.get('id')}",
             headers=headers
         )
 
 
 def find_existing_proxy_host(domain: str, url: str):
     res = requests.get(
-        f"{url}/api/nginx/proxy-hosts",
+        f"{url}/api/nginx/proxy-hosts?query={domain}",
         headers=headers
     )
     if res.status_code != 200:
@@ -101,7 +101,7 @@ def find_existing_proxy_host(domain: str, url: str):
 
 def find_existing_certificate(domain: str, url: str):
     res = requests.get(
-        f"{url}/api/nginx/certificates",
+        f"{url}/api/nginx/certificates?query={domain}",
         headers=headers
     )
     if res.status_code != 200:
