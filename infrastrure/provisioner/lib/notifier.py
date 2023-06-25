@@ -1,9 +1,9 @@
-import sys
 import base64
 import asyncio
 import argparse
 import telegram
-from .utilities.dotenv import config
+from utilities.dotenv import config
+from utilities.logging import logging, bingLoggingConfig
 
 
 def get_message_content(base64_content: str):
@@ -28,7 +28,7 @@ def create_bot():
 async def send_notification(encode_logs: str, status: str, platform: str, ip: str):
     bot, chat_id = create_bot()
     if bot == None:
-        print("Invalid BOT Configuration!")
+        logging.warn("Invalid BOT Configuration!")
         return
     # Decode message and send
     try:
@@ -41,11 +41,13 @@ async def send_notification(encode_logs: str, status: str, platform: str, ip: st
             chat_id=chat_id,
             text=text
         )
-    except:
-        print("Failed to send notication")
+    except Exception as error:
+        logging.error("Failed to send notication", error)
 
 
 if __name__ == '__main__':
+    bingLoggingConfig(prefix="Notifier / ")
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--logs", required=True)
     parser.add_argument("--status", required=True)

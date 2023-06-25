@@ -3,3 +3,5 @@ venv
 test.sh
 *-key.pem
 ansible_log.txt
+*.log
+__pycache__

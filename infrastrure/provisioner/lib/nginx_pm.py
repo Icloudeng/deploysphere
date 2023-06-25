@@ -3,7 +3,8 @@ import base64
 import argparse
 import requests
 from typing import Any, List
-from .utilities.dotenv import config
+from utilities.dotenv import config
+from utilities.logging import logging, bingLoggingConfig
 
 
 headers = {
@@ -33,6 +34,9 @@ def get_api_token() -> (tuple[None, None] | tuple[str, str]):
     password = config.get("NGINX_PM_PASSWORD")
 
     if not url or not email or password:
+        logging.warn(
+            "Cannot read variable env (NGINX_PM_URL, NGINX_PM_EMAIL, NGINX_PM_PASSWORD)"
+        )
         return None, None
 
     res = requests.post(
@@ -41,6 +45,9 @@ def get_api_token() -> (tuple[None, None] | tuple[str, str]):
         headers=headers
     )
     if res.status_code != 200:
+        logging.warn(
+            "Nginx proxy mananger authentication failed"
+        )
         return None, None
 
     json = res.json()
@@ -85,7 +92,8 @@ def find_existing_proxy_host(domain: str, url: str):
         try:
             domains.index(domain)
             return phost
-        except:
+        except Exception as err:
+            logging.error(err)
             continue
 
     return None
@@ -193,17 +201,26 @@ def main(action: str, metadata: str, platform: str, ip: str):
 
     # Check of delete action
     if action == "delete":
+        logging.info(
+            "Deleting... proxy host"
+        )
         delete_proxy_hosts(phost, url)
         return
 
     # If phost exists and has create action then no need go futher
     if phost:
+        logging.info(
+            "Exited proxy host exist while has create action"
+        )
         return
 
     # Get platform proxy
     platform_schema = get_platform_schema(platform)
 
     if not platform_schema:
+        logging.info(
+            "Cannot found the corresponding platform schema"
+        )
         return
 
     # Generate domain certificate
@@ -220,6 +237,8 @@ def main(action: str, metadata: str, platform: str, ip: str):
 
 
 if __name__ == '__main__':
+    bingLoggingConfig(prefix="NGINX PM / ")
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--action",
