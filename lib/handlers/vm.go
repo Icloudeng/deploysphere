@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"smatflow/platform-installer/lib"
 	"smatflow/platform-installer/lib/files"
@@ -93,6 +94,10 @@ func validatePlatform(c *gin.Context, platform structs.Platform) bool {
 		if values, found := meta[platform.Name]; found {
 			for _, val := range values {
 				if _, exists := metadata[val]; !exists {
+					c.AbortWithStatusJSON(
+						http.StatusBadRequest,
+						gin.H{"error": fmt.Sprintf("platform (%s), Metadata field (%s) required", platform.Name, val)},
+					)
 					return false
 				}
 			}
