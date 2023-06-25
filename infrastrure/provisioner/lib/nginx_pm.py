@@ -33,7 +33,7 @@ def get_api_token() -> (tuple[None, None] | tuple[str, str]):
     email = config.get("NGINX_PM_EMAIL")
     password = config.get("NGINX_PM_PASSWORD")
 
-    if not url or not email or password:
+    if not url or not email or not password:
         logging.warn(
             "Cannot read variable env (NGINX_PM_URL, NGINX_PM_EMAIL, NGINX_PM_PASSWORD)"
         )
@@ -88,7 +88,7 @@ def find_existing_proxy_host(domain: str, url: str):
     data: List[Any] = res.json()
 
     for phost in data:
-        domains: List[str] = phost.domain_names
+        domains: List[str] = phost.get('domain_names')
         try:
             domains.index(domain)
             return phost
@@ -112,7 +112,7 @@ def find_existing_certificate(domain: str, url: str):
     data: List[Any] = res.json()
 
     for phost in data:
-        domains: List[str] = phost.domain_names
+        domains: List[str] = phost['domain_names']
         try:
             domains.index(domain)
             return phost
@@ -152,21 +152,21 @@ def create_domain_certificate(domain: str, url: str):
         headers=headers
     )
 
-    if res.status_code != 201 or res.status_code != 200:
-        return None
+    if res.status_code >= 200 and res.status_code < 400:
+        return res.json()
 
-    return res.json()
+    return None
 
 
 def create_proxy_host(url: str, domain: str, certificate: Any, platform_schema: Any, ip: str):
     certificate = certificate if certificate else {}
-    certificate_id = certificate.get("id")
+    certificate_id = certificate.get('id')
 
     body = {
         "domain_names": [domain],
-        "forward_scheme": platform_schema.protocol,
         "forward_host": ip,
-        "forward_port": platform_schema.port,
+        "forward_scheme": platform_schema.get('protocol'),
+        "forward_port": platform_schema.get('port'),
         "block_exploits": True,
         "allow_websocket_upgrade": True,
         "access_list_id": "0",
@@ -193,8 +193,9 @@ def create_proxy_host(url: str, domain: str, certificate: Any, platform_schema: 
 
 def main(action: str, metadata: str, platform: str, ip: str):
     url, token = get_api_token()
-    if not url or token:
+    if not url or not token:
         return
+
     # Decode metade and get the domain value
     domain = get_decoded_domain(metadata)
     phost = find_existing_proxy_host(domain, url)
