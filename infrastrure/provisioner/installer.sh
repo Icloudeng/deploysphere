@@ -67,7 +67,7 @@ logs_lines=$(wc -l <$ansible_log_file | tr -d '[:space:]')
 getenv="$python_command lib/getenv.py"
 
 ################ Ansible extra-vars ################
-ansible_extra_vars="platform_metadata=$metadata"
+ansible_extra_vars="platform_metadata=$metadata platform_name=$platform"
 
 # Run Ansible playbook
 if [ -f "./private-key.pem" ]; then

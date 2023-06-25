@@ -3,26 +3,10 @@
   hosts: all
   become: true
   gather_facts: true
-  vars:
-    root_path: "/home/installer"
 
   tasks:
-    - name: Create root path
-      file:
-        state: directory
-        path: "{{ root_path }}"
-
-    - name: Decode base64 platform_metadata variable
-      set_fact:
-        decoded_metadata: "{{ platform_metadata | b64decode }}"
-
-    - debug:
-        var: decoded_metadata
-
-    - name: Extract domain key and hostname
-      set_fact:
-        ipa_domain: "{{ decoded_metadata | json_query('ipa_domain') }}"
-        ipa_hostname: "{{ decoded_metadata | json_query('ipa_hostname') }}"
+    # Playbook init (with decoded_metadata, set_fact)
+    - include_tasks: ../../tasks/playbook-init.yaml
 
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
@@ -30,17 +14,22 @@
     # Install Docker
     - include_tasks: ../../tasks/docker.yaml
 
+    - name: Extract domain key and hostname
+      set_fact:
+        ipa_domain: "{{ decoded_metadata | json_query('ipa_domain') }}"
+        ipa_hostname: "{{ decoded_metadata | json_query('ipa_hostname') }}"
+
     - name: Copy Docker file
       ansible.builtin.copy:
         src: "docker-compose.yaml"
-        dest: "{{ root_path }}/docker-compose.yaml"
+        dest: "{{ project_path }}/docker-compose.yaml"
         force: yes
 
     - name: Install FreeIPA using Docker Compose
       become: true
       command: docker compose up -d
       args:
-        chdir: "{{ root_path }}"
+        chdir: "{{ project_path }}"
       environment:
         DOMAIN: "{{ ipa_domain }}"
         HOSTNAME: "{{ ipa_hostname }}"

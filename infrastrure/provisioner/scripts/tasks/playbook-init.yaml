@@ -1,0 +1,17 @@
+- name: Root path
+  set_fact:
+    project_path: "/home/projects/{{ platform_name }}"
+
+- name: Create root path
+  file:
+    state: directory
+    path: "{{ project_path }}"
+    mode: "0777"
+    recurse: yes
+
+- name: Decode base64 platform_metadata variable
+  set_fact:
+    decoded_metadata: "{{ platform_metadata | b64decode }}"
+
+- debug:
+    var: decoded_metadata
