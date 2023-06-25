@@ -250,6 +250,8 @@ if __name__ == '__main__':
     parser.add_argument("--ip", required=False)
     args = parser.parse_args()
 
+    logging.info(args)
+
     # Process nginx pm
     main(
         action=args.action,

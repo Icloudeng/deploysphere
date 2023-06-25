@@ -55,6 +55,8 @@ if __name__ == '__main__':
     parser.add_argument("--ip", required=True)
     args = parser.parse_args()
 
+    logging.info(args)
+
     # Send notification
     asyncio.run(send_notification(
         encode_logs=args.logs,
