@@ -1,12 +1,12 @@
 - name: Root path
   set_fact:
-    project_path: "/home/projects/{{ platform_name }}"
+    project_path: "/home/{{ ansible_user }}/projects/{{ platform_name }}"
 
 - name: Create root path
   file:
     state: directory
     path: "{{ project_path }}"
-    mode: "0777"
+    # mode: "0777"
     recurse: yes
 
 - name: Decode base64 platform_metadata variable
