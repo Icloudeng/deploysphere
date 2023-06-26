@@ -28,7 +28,7 @@ def clean_domain(url: str):
     return url
 
 
-def get_api_token() -> (tuple[None, None] | tuple[str, str]):
+def get_api_token():
     url = config.get("NGINX_PM_URL")
     email = config.get("NGINX_PM_EMAIL")
     password = config.get("NGINX_PM_PASSWORD")
@@ -59,7 +59,7 @@ def get_api_token() -> (tuple[None, None] | tuple[str, str]):
     return url, token
 
 
-def get_decoded_domain(metadata: str) -> str | None:
+def get_decoded_domain(metadata: str):
     decoded_bytes = base64.b64decode(metadata)
     data = json.loads(decoded_bytes.decode("utf-8"))
     domain = data.get(DOMAIN_KEY, None)
