@@ -71,22 +71,18 @@ func DeleteResources(c *gin.Context) {
 		return
 	}
 
-	go func() {
-		if err := lib.Queue.QueueTask(func(ctx context.Context) error {
-			// Remove resources
-			resources.DeleteOvhResource(data.Ref)
-			resources.DeleteProxmoxResource(data.Ref)
+	lib.Queue.QueueTask(func(ctx context.Context) error {
+		// Remove resources
+		resources.DeleteOvhResource(data.Ref)
+		resources.DeleteProxmoxResource(data.Ref)
 
-			// Clean up resource event publish
-			events.Bus.Publish(events.RESOURCES_CLEANUP_EVENT)
+		// Clean up resource event publish
+		events.Bus.Publish(events.RESOURCES_CLEANUP_EVENT)
 
-			// Terraform Apply changes
-			defer terraform.Tf.Apply()
-			return nil
-		}); err != nil {
-			panic(err)
-		}
-	}()
+		// Terraform Apply changes
+		defer terraform.Tf.Apply()
+		return nil
+	})
 
 	c.JSON(http.StatusOK, data)
 }

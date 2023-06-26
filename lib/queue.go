@@ -6,7 +6,7 @@ var Queue *queue.Queue
 
 func init() {
 	// Proccess only one queue
-	Queue = queue.NewPool(1)
+	Queue = queue.NewPool(0)
 
 	Queue.Start()
 }
