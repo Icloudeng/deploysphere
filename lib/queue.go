@@ -14,7 +14,7 @@ func init() {
 	Queue = queue.NewPool(1)
 
 	Queue.QueueTask(func(ctx context.Context) error {
-		fmt.Print("Default queue task")
+		fmt.Println("Default queue task. Done!")
 		return nil
 	})
 }

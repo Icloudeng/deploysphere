@@ -47,6 +47,11 @@ func main() {
 
 	api.DELETE("/vm/:ref", handlers.DeleteVm)
 
+	// Proxy host
+	api.POST("/proxy-host", handlers.CreateProxyHost)
+
+	api.DELETE("/proxy-host", handlers.DeleteProxyHost)
+
 	// Start server
 	log.Println("Server running on PORT: ", port)
 	log.Fatal(r.Run(":" + port))

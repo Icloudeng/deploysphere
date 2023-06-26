@@ -7,6 +7,9 @@ import (
 	"path"
 )
 
+var ProvisionerDir string
+var TerraformDir string
+
 func GetPwd() string {
 	dir, err := os.Getwd()
 	if err != nil {
@@ -67,9 +70,7 @@ func CreateIfNotExistsWithContent(filePath string, content string) {
 }
 
 func ExistsProvisionerPlaformReadDir(platform string) bool {
-	pwd := GetPwd()
-
-	entries, err := os.ReadDir(path.Join(pwd, "infrastrure/provisioner/scripts/platforms"))
+	entries, err := os.ReadDir(path.Join(ProvisionerDir, "scripts/platforms"))
 	if err != nil {
 		log.Panicf("failed reading directory: %s", err)
 	}
@@ -85,13 +86,12 @@ func ExistsProvisionerPlaformReadDir(platform string) bool {
 }
 
 func ReadPlatformMetadataFields() []byte {
-	pwd := GetPwd()
-	return ReadFile(path.Join(pwd, "infrastrure/provisioner/scripts/platform-meta-fields.json"))
+
+	return ReadFile(path.Join(ProvisionerDir, "scripts/platform-meta-fields.json"))
 }
 
 func ReadProvisionerPlaforms() []string {
-	pwd := GetPwd()
-	entries, err := os.ReadDir(path.Join(pwd, "infrastrure/provisioner/scripts/platforms"))
+	entries, err := os.ReadDir(path.Join(ProvisionerDir, "scripts/platforms"))
 	if err != nil {
 		log.Panicf("failed reading directory: %s", err)
 	}
@@ -105,4 +105,10 @@ func ReadProvisionerPlaforms() []string {
 	}
 
 	return platforms
+}
+
+func init() {
+	pwd := GetPwd()
+	ProvisionerDir = path.Join(pwd, "infrastrure/provisioner")
+	TerraformDir = path.Join(pwd, "infrastrure/terraform")
 }

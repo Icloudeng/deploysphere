@@ -32,9 +32,7 @@ func (j *ResourceJSONData) GetResource() *Resource {
 }
 
 func (j *ResourceJSONData) GetFile() string {
-	pwd := files.GetPwd()
-
-	return path.Join(pwd, "infrastrure/terraform/modules/proxmox", "resource_auto.tf.json")
+	return path.Join(files.TerraformDir, "modules/proxmox/resource_auto.tf.json")
 }
 
 func (r *ResourceJSONData) InitResourcesFiles() {

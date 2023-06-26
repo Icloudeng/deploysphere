@@ -1,7 +1,7 @@
 package structs
 
 import (
-	b64 "encoding/base64"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 )
@@ -123,19 +123,19 @@ func newProxmoxProvisioner(platform Platform) [1]interface{} {
 	if len(platform.Name) > 0 {
 		name := platform.Name
 		metadata, _ := json.Marshal(platform.Metadata)
-		metadatab64 := b64.StdEncoding.EncodeToString(metadata)
+		metadatab64 := base64.StdEncoding.EncodeToString(metadata)
 
 		local_exec.LocalExec[0] = &PmLocalExec{
 			// Run our ansible scripts here
 			Command: fmt.Sprintf("chmod +x installer.sh && ./installer.sh --ansible-user ${self.ciuser} --vmip ${self.default_ipv4_address} --platform %s --metadata %s", name, metadatab64),
-			// Relative to platform-installer/infrastrure/terraform
+			// Relative to infrastrure/terraform
 			WorkingDir: "../provisioner",
 		}
 	} else {
 		local_exec.LocalExec[0] = &PmLocalExec{
 			// Run our ansible scripts here
 			Command: "echo hey....",
-			// Relative to platform-installer/infrastrure/terraform
+			// Relative to infrastrure/terraform
 			WorkingDir: "../provisioner",
 		}
 	}
