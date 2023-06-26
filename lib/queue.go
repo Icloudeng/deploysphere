@@ -17,6 +17,4 @@ func init() {
 		fmt.Print("Default queue task")
 		return nil
 	})
-
-	// Queue.Start()
 }
