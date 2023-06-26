@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"smatflow/platform-installer/lib"
+	"smatflow/platform-installer/lib/events"
 	"smatflow/platform-installer/lib/files"
 	"smatflow/platform-installer/lib/resources"
 	"smatflow/platform-installer/lib/resources/ovh"
@@ -75,6 +76,9 @@ func DeleteResources(c *gin.Context) {
 			// Remove resources
 			resources.DeleteOvhResource(data.Ref)
 			resources.DeleteProxmoxResource(data.Ref)
+
+			// Clean up resource event publish
+			events.Bus.Publish(events.RESOURCES_CLEANUP_EVENT)
 
 			// Terraform Apply changes
 			defer terraform.Tf.Apply()
