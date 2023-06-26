@@ -40,21 +40,17 @@ func CreateResources(c *gin.Context) {
 		return
 	}
 
-	go func() {
-		if err := lib.Queue.QueueTask(func(ctx context.Context) error {
-			// Reset unmutable vm fields
-			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform)
-			// Create or update resources
-			resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
-			resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
+	lib.Queue.QueueTask(func(ctx context.Context) error {
+		// Reset unmutable vm fields
+		structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform)
+		// Create or update resources
+		resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
+		resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
 
-			// Terraform Apply changes
-			defer terraform.Tf.Apply()
-			return nil
-		}); err != nil {
-			panic(err)
-		}
-	}()
+		// Terraform Apply changes
+		defer terraform.Tf.Apply()
+		return nil
+	})
 
 	c.JSON(http.StatusOK, json)
 }
@@ -81,6 +77,7 @@ func DeleteResources(c *gin.Context) {
 
 		// Terraform Apply changes
 		defer terraform.Tf.Apply()
+
 		return nil
 	})
 

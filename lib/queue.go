@@ -1,6 +1,11 @@
 package lib
 
-import "github.com/golang-queue/queue"
+import (
+	"context"
+	"fmt"
+
+	"github.com/golang-queue/queue"
+)
 
 var Queue *queue.Queue
 
@@ -8,5 +13,10 @@ func init() {
 	// Proccess only one queue
 	Queue = queue.NewPool(1)
 
-	Queue.Start()
+	Queue.QueueTask(func(ctx context.Context) error {
+		fmt.Print("Default queue task")
+		return nil
+	})
+
+	// Queue.Start()
 }
