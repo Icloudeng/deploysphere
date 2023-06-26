@@ -6,7 +6,6 @@
   file:
     state: directory
     path: "{{ project_path }}"
-    # mode: "0777"
     recurse: yes
 
 - name: Decode base64 platform_metadata variable
