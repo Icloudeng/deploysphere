@@ -34,6 +34,9 @@ async def send_notification(encode_logs: str, status: str, platform: str, ip: st
     try:
         emoji = '❌' if status == "failed" else '✅'
         decoded_logs = get_message_content(encode_logs).replace("--", "")
+        sumzy = decoded_logs.find('============')
+        sumzy = sumzy if sumzy > -1 else 0
+        decoded_logs = decoded_logs[sumzy:]
         content = f"##########################\n{decoded_logs[-3500:]}\n########################"
         details = f"Platform: {platform}\nMachine IP: {ip}"
         text = f"{emoji} {status.title()}\n\n{details}\n\n{content}"
