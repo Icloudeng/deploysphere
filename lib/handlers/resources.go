@@ -72,7 +72,7 @@ func DeleteResources(c *gin.Context) {
 		resources.DeleteProxmoxResource(data.Ref)
 
 		// Clean up resource event publish
-		// lib.BusEvent.Publish(lib.RESOURCES_CLEANUP_EVENT)
+		// lib.BusEvent.Publish(lib.RESOURCES_CLEANUP_EVENT, domain)
 
 		// Terraform Apply changes
 		defer terraform.Tf.Apply()

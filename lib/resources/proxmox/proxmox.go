@@ -104,3 +104,14 @@ func (r *Resource) DeleteProxmoxVmQemu(ref string) {
 		r.ProxmoxVmQemu = nil
 	}
 }
+
+func (r *Resource) GetProxmoxVmQemuStruct(ref string) *structs.ProxmoxVmQemu {
+	ozr := r.GetProxmoxVmQemu()
+
+	found, exist := ozr[ref]
+	if !exist {
+		return nil
+	}
+
+	return found
+}

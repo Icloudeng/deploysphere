@@ -40,7 +40,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # # Check if the arguments was provided
-if [ -z "$metadata" || [ -z "$action" ] ]; then
+if [ -z "$metadata" ] || [ -z "$action" ]; then
     echo "metadata, action argument required. Usage: $0 --action <delete|create> --metadata <metadata>"
     exit 1
 fi
