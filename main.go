@@ -52,6 +52,9 @@ func main() {
 
 	api.DELETE("/proxy-host", handlers.DeleteProxyHost)
 
+	// The Provisioning
+	api.POST("/provisioning", handlers.CreateProvisioning)
+
 	// Start server
 	log.Println("Server running on PORT: ", port)
 	log.Fatal(r.Run(":" + port))
