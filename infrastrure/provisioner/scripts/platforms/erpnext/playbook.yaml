@@ -1,5 +1,31 @@
 ---
-- name: Install ERPNext
+- name: ERPNext
   hosts: all
   become: true
   gather_facts: true
+  vars:
+    mysql_root_password: "{{ platform_name }}"
+    node_version: 18
+    frappe_version: 14
+    installation_type: "manual" #manual or docker
+
+  tasks:
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path)
+    - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Extract domain key and hostname
+      set_fact:
+        domain: "{{ decoded_metadata | json_query('domain') }}"
+
+    - include_tasks: ../../tasks/domain-regex.yaml
+
+    # manual install
+    - include_tasks: manual-install.yaml
+      when: installation_type == "manual"
+
+    # docker install
+    - include_tasks: docker-install.yaml
+      when: installation_type == "docker"

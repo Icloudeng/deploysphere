@@ -1,8 +1,15 @@
+- name: APT | Update & Upgrade
+  become: true
+  apt:
+    upgrade: true
+    update_cache: yes
+
 - name: Root path
   set_fact:
     project_path: "/home/{{ ansible_user }}/projects/{{ platform_name }}"
 
 - name: Create root path
+  become: false
   file:
     state: directory
     path: "{{ project_path }}"
@@ -12,5 +19,14 @@
   set_fact:
     decoded_metadata: "{{ platform_metadata | b64decode }}"
 
-- debug:
+- name: "Var | Debug decoded_metadata"
+  debug:
     var: decoded_metadata
+
+- name: "Var | Debug decoded_metadata"
+  debug:
+    var: decoded_metadata
+
+- name: "Var | Debug random_secret"
+  debug:
+    var: random_secret

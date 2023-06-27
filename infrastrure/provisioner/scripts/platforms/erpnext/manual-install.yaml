@@ -1,0 +1,179 @@
+# Install Python prerequisite
+- name: Install Python prerequisite
+  ansible.builtin.package:
+    name:
+      - python3-dev
+      - python3.10-dev
+      - python3-setuptools
+      - python3-pip
+      - python3-distutils
+      - python3.10-venv
+    state: present
+
+# Install prerequisite
+- name: Install Tools
+  ansible.builtin.package:
+    name:
+      - curl
+      - git
+      - redis-server
+      - software-properties-common
+      - supervisor
+      - nginx
+    state: present
+
+# Install prerequisite
+- name: Install other necessary packages
+  ansible.builtin.package:
+    name:
+      - xvfb
+      - libfontconfig
+      - wkhtmltopdf
+    state: present
+
+# Include task mysql.yaml
+- include_tasks: ../../tasks/mysql.yaml
+  tags: [mysql]
+
+- name: Replace the content MariaDB My-Config
+  copy:
+    src: mysql-my.cnf
+    dest: /etc/mysql/my.cnf
+    force: yes
+
+- name: Restart service MariaDB
+  ansible.builtin.service:
+    name: mysql
+    state: restarted
+
+# Include task mysql.yaml
+- include_tasks: ../../tasks/nodejs.yaml
+  tags: [nodejs]
+
+##################################
+# INSTALL FRAPPE BENCH
+
+- name: Install Frappe Bench
+  pip:
+    name: frappe-bench
+    state: present
+
+- name: Root path
+  set_fact:
+    frappe_path: "{{ project_path }}/frappe-bench"
+
+- name: Frappe | Initialize Frappe Bench
+  become: false
+  shell: "bench init --frappe-branch version-{{ frappe_version }} frappe-bench"
+  args:
+    chdir: "{{ project_path }}"
+    creates: "{{ frappe_path }}"
+
+# # Setup production
+- name: Frappe | Setup Supervisor
+  become: true
+  shell: "bench setup production {{ ansible_user }}"
+  args:
+    chdir: "{{ frappe_path }}"
+    creates: "{{ frappe_path }}/config/supervisor.conf"
+  ignore_errors: true
+
+# # Create a New Site
+- name: Frappe | Create a New Site
+  become: false
+  shell: "bench new-site {{ domain }}"
+  args:
+    chdir: "{{ frappe_path }}"
+    creates: "{{ frappe_path }}/sites/{{ domain }}"
+# - name: Frappe | Download the payments apps.
+#   become: false
+#   shell: "bench get-app payments"
+#   args:
+#     chdir: "{{ frappe_path }}"
+#     creates: "{{ frappe_path }}/apps/payments"
+
+# - name: Frappe | Download the main ERPNext app.
+#   become: false
+#   shell: "bench get-app --branch version-{{ frappe_version }} erpnext"
+#   args:
+#     chdir: "{{ frappe_path }}"
+
+# - name: Frappe | Download the HR & Payroll app.
+#   become: false
+#   shell: "bench get-app hrms"
+#   args:
+#     chdir: "{{ frappe_path }}"
+
+# - name: Frappe | Download the ecommerce integrations apps.
+#   become: false
+#   shell: "bench get-app ecommerce_integrations --branch main"
+#   args:
+#     chdir: "{{ frappe_path }}"
+
+# - name: Frappe | Install the main ERPNext app.
+#   become: false
+#   shell: "bench --site {{ domain }} install-app erpnext"
+#   args:
+#     chdir: "{{ frappe_path }}"
+
+# - name: Frappe | Install the HR & Payroll app.
+#   become: false
+#   shell: "bench --site {{ domain }} install-app hrms"
+#   args:
+#     chdir: "{{ frappe_path }}"
+
+# - name: Frappe | Install the ecommerce integrations apps.
+#   become: false
+#   shell: "bench --site {{ domain }} install-app ecommerce_integrations"
+#   args:
+#     chdir: "{{ frappe_path }}"
+
+# # SETUP PRODUCTION SERVER
+# - name: Frappe | Enable scheduler service.
+#   become: false
+#   shell: "bench --site {{ domain }} enable-scheduler"
+#   args:
+#     executable: /bin/bash
+#     chdir: "{{ frappe_path }}"
+
+# - name: Frappe | Disable maintenance mode.
+#   become: false
+#   shell: "bench --site {{ domain }} set-maintenance-mode off"
+#   args:
+#     executable: /bin/bash
+#     chdir: "{{ frappe_path }}"
+
+# - name: Frappe | Setup production config.
+#   become: true
+#   shell: "bench setup production {{ ansible_user }}"
+#   args:
+#     executable: /bin/bash
+#     chdir: "{{ frappe_path }}"
+
+# - name: Frappe | Setup NGINX web server.
+#   become: false
+#   shell: "bench setup nginx"
+#   args:
+#     executable: /bin/bash
+#     chdir: "{{ frappe_path }}"
+
+# - name: Frappe | Final server setup.
+#   become: true
+#   shell: "supervisorctl restart all"
+#   args:
+#     executable: /bin/bash
+#     chdir: "{{ frappe_path }}"
+
+# - name: Frappe | Final server setup (restart supervisorctl).
+#   become: true
+#   shell: "supervisorctl restart all"
+#   args:
+#     executable: /bin/bash
+#     chdir: "{{ frappe_path }}"
+
+# - name: Frappe | Final server setup (restart supervisorctl).
+#   become: true
+#   shell: "bench setup production {{ ansible_user }}"
+#   args:
+#     executable: /bin/bash
+#     chdir: "{{ frappe_path }}"

@@ -1,15 +1,15 @@
 ---
-- name: Install FreeIPA
+- name: FreeIPA
   hosts: all
   become: true
   gather_facts: true
 
   tasks:
-    # Playbook init (with decoded_metadata, project_path)
-    - include_tasks: ../../tasks/playbook-init.yaml
-
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path)
+    - include_tasks: ../../tasks/playbook-init.yaml
 
     # Install Docker
     - include_tasks: ../../tasks/docker.yaml

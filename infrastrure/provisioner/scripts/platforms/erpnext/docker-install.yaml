@@ -1,0 +1,2 @@
+# Install Docker
+- include_tasks: ../../tasks/docker.yaml

@@ -67,7 +67,7 @@ logs_lines=$(wc -l <$ansible_log_file | tr -d '[:space:]')
 getenv="$python_command lib/getenv.py"
 
 ################ Ansible extra-vars ################
-ansible_extra_vars="platform_metadata=$metadata platform_name=$platform"
+ansible_extra_vars="platform_metadata=$metadata platform_name=$platform random_secret=$random_secret"
 
 # Run Ansible playbook
 if [ -f "./private-key.pem" ]; then
@@ -107,7 +107,8 @@ if [ "$ran_status" == "succeeded" ]; then
 fi
 
 # Execute python notifier script
-$python_command lib/notifier.py --logs "$ansible_logs" --status "$ran_status" --platform "$platform" --ip "$vm_ip"
+installer_details="Platform: $platform\nSecret=$random_secret\nMachine IP: $vm_ip"
+$python_command lib/notifier.py --logs "$ansible_logs" --status "$ran_status" --details "$installer_details"
 
 # Deactivate the virtual environment
 deactivate

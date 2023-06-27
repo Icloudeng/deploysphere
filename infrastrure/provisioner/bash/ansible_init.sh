@@ -53,3 +53,5 @@ if [[ ! -f $ansible_log_file ]]; then
     touch "$ansible_log_file"
     echo "Created $ansible_log_file file."
 fi
+
+random_secret=$($python_command -c 'import secrets; print(secrets.token_hex(16))')

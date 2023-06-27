@@ -25,7 +25,7 @@ def create_bot():
     return bot, chat_id
 
 
-async def send_notification(encode_logs: str, status: str, platform: str, ip: str):
+async def send_notification(encode_logs: str, status: str, installer_details: str):
     bot, chat_id = create_bot()
     if bot == None:
         logging.warn("Invalid BOT Configuration!")
@@ -38,8 +38,7 @@ async def send_notification(encode_logs: str, status: str, platform: str, ip: st
         sumzy = sumzy if sumzy > -1 else 0
         decoded_logs = decoded_logs[sumzy:]
         content = f"##########################\n{decoded_logs[-3500:]}\n########################"
-        details = f"Platform: {platform}\nMachine IP: {ip}"
-        text = f"{emoji} {status.title()}\n\n{details}\n\n{content}"
+        text = f"{emoji} {status.title()}\n\n{installer_details}\n\n{content}"
         await bot.send_message(
             chat_id=chat_id,
             text=text
@@ -54,8 +53,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--logs", required=True)
     parser.add_argument("--status", required=True)
-    parser.add_argument("--platform", required=True)
-    parser.add_argument("--ip", required=True)
+    parser.add_argument("--details", required=False, default="")
     args = parser.parse_args()
 
     logging.info(args)
@@ -64,6 +62,5 @@ if __name__ == '__main__':
     asyncio.run(send_notification(
         encode_logs=args.logs,
         status=args.status,
-        platform=args.platform,
-        ip=args.ip
+        installer_details=args.details,
     ))

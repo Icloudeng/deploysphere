@@ -63,6 +63,12 @@ def get_decoded_domain(metadata: str):
     decoded_bytes = base64.b64decode(metadata)
     data = json.loads(decoded_bytes.decode("utf-8"))
     domain = data.get(DOMAIN_KEY, None)
+    # If mapping was passed then ignore the current mapping processs
+    ignore = data.get("mapping", None) == False or data.get(
+        "mapping", None) == "false"
+
+    if ignore:
+        return None
 
     return clean_domain(domain) if domain else None
 
@@ -192,12 +198,15 @@ def create_proxy_host(url: str, domain: str, certificate: Any, platform_schema: 
 
 
 def main(action: str, metadata: str, platform: str, ip: str):
+    # Decode metade and get the domain value
+    domain = get_decoded_domain(metadata)
+    if not domain:
+        return
+
     url, token = get_api_token()
     if not url or not token:
         return
 
-    # Decode metade and get the domain value
-    domain = get_decoded_domain(metadata)
     phost = find_existing_proxy_host(domain, url)
 
     # Check of delete action
