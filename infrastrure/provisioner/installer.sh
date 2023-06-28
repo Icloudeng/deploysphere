@@ -60,14 +60,18 @@ fi
 # Include python command and activate python venv
 source $MY_DIR/bash/ansible_init.sh
 
-# Get the last total ansible logs file line number
-logs_lines=$(wc -l <$ansible_log_file | tr -d '[:space:]')
-
 # Read variables from /root/.env variable and pass them to extra variable
 getenv="$python_command lib/getenv.py"
 
+# Get the last total ansible logs file line number
+logs_lines=$(wc -l <$ansible_log_file | tr -d '[:space:]')
+
+# Get admin system email
+admin_email=$([ -z "$($getenv ADMIN_SYSTEM_EMAIL)" ] && echo "admin@smatflow.com" || echo "$($getenv ADMIN_SYSTEM_EMAIL)")
+
 ################ Ansible extra-vars ################
-ansible_extra_vars="platform_metadata=$metadata platform_name=$platform random_secret=$random_secret"
+ansible_extra_vars="platform_metadata=$metadata platform_name=$platform"
+ansible_extra_vars+=" random_secret=$random_secret admin_email=$admin_email" # Must start with empty space
 
 # Run Ansible playbook
 if [ -f "./private-key.pem" ]; then

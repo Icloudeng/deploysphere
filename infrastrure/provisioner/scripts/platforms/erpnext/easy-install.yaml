@@ -1,0 +1,13 @@
+- name: Copy easy-install.py
+  tags: [frappe]
+  ansible.builtin.copy:
+    src: easy-install.py
+    dest: "/home/{{ ansible_user }}/easy-install.py"
+    force: yes
+
+- name: Run Easy Install Script
+  tags: [frappe]
+  shell: "python3 easy-install.py --prod --email {{ admin_email }} --sitename {{ domain }}"
+  args:
+    chdir: "/home/{{ ansible_user }}"
+    creates: "/home/{{ ansible_user }}/passwords.txt"

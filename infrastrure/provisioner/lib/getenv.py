@@ -1,5 +1,5 @@
 import sys
-from .utilities.dotenv import config
+from utilities.dotenv import config
 
 
 if __name__ == '__main__':

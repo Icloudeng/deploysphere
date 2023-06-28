@@ -1,2 +1,13 @@
 # Install Docker
 - include_tasks: ../../tasks/docker.yaml
+
+- name: Root path
+  tags: [frappe]
+  set_fact:
+    frappe_path: "{{ project_path }}/frappe-bench"
+
+- name: App Repository | Clone
+  git:
+    repo: "https://github.com/frappe/frappe_docker.git"
+    dest: "{{ frappe_path }}"
+    version: "main"

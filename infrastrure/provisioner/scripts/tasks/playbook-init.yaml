@@ -30,3 +30,7 @@
 - name: "Var | Debug random_secret"
   debug:
     var: random_secret
+
+- name: "Var | Debug admin_email"
+  debug:
+    var: admin_email
