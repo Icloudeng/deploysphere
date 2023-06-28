@@ -62,7 +62,7 @@ source $MY_DIR/bash/ansible_init.sh
 
 # Generate static token based on platform name
 static_secret_name="$platform-$(date +%Y-%m)"
-static_secret=$($python_command -c "import hashlib; print(hashlib.sha256('$static_secret_name'.encode()).hexdigest()[:35])")
+static_secret=$($python_command -c "import hashlib; print(hashlib.sha256('$static_secret_name'.encode()).hexdigest()[:32])")
 
 # Read variables from /root/.env variable and pass them to extra variable
 getenv="$python_command lib/getenv.py"
