@@ -56,7 +56,7 @@ func (t *Terrafrom) Plan() {
 
 	state, err := tf.Plan(ctx, options...)
 	if err != nil {
-		log.Fatalf("error running Show: %s", err)
+		log.Fatalf("error running Show: %s", err.Error())
 	}
 
 	log.Printf("Terraform plan state: %v", state)
@@ -76,9 +76,10 @@ func (t *Terrafrom) Show() *tfjson.StateModule {
 }
 
 func (t *Terrafrom) Apply() {
+	t.Plan()
+
 	tf := t.tk
 	ctx := context.Background()
-
 	options := []tfexec.ApplyOption{
 		tfexec.VarFile("variables.tfvars"),
 	}
