@@ -7,7 +7,6 @@
     mysql_root_password: "{{ platform_name }}"
     node_version: 18
     frappe_version: 14
-    installation_type: "manual" # manual, docker or easy
 
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
@@ -27,14 +26,14 @@
       tags: [init]
 
     # easy install
-    - include_tasks: easy-install.yaml
-      when: installation_type == "easy"
+    # - include_tasks: easy-install.yaml
+    #   when: ansible_python_version is version('3.10.0', '<')
 
     # docker install
     - include_tasks: docker-install.yaml
-      when: installation_type == "docker"
+      when: ansible_python_version is version('3.10.0', '<')
 
     # manual install
     - include_tasks: manual-install.yaml
       tags: [frappe, docker, nodejs, mysql]
-      when: installation_type == "manual"
+      when: ansible_python_version is version('3.10.0', '>=')
