@@ -59,6 +59,7 @@ fi
 
 # Include python command and activate python venv
 source $MY_DIR/bash/ansible_init.sh
+source $MY_DIR/bash/functions.sh
 
 # Generate static token based on platform name
 static_secret_name="$platform-$(date +%Y-%m)"
@@ -90,9 +91,6 @@ else
     playbook_result=$?
 fi
 
-# Get the ansible logs content from last run and pipe it to base64
-ansible_logs=$(tail -n +$logs_lines $ansible_log_file | base64)
-
 # Send notification accordingly
 if [ $playbook_result -eq 0 ]; then
     echo "Playbook succeeded!"
@@ -115,10 +113,14 @@ if [ "$ran_status" == "succeeded" ]; then
 
 fi
 
+# Get the ansible logs content from last run and pipe it to base64
+ansible_logs=$(tail -n +$logs_lines $ansible_log_file)
+ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
+
 # Execute python notifier script
 installer_details="Platform: $platform\nMachine IP: $vm_ip\n"
 installer_details+="Random Secret=$random_secret\nMonthly Static Secret=$static_secret\n"
-$python_command lib/notifier.py --logs "$ansible_logs" --status "$ran_status" --details "$installer_details"
+$python_command lib/notifier.py --logs "$ansible_logs_4096" --status "$ran_status" --details "$installer_details"
 
 # Deactivate the virtual environment
 deactivate
