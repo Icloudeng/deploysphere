@@ -35,13 +35,13 @@ async def send_notification(encode_logs: str, status: str, installer_details: st
         emoji = '❌' if status == "failed" else '✅'
         decoded_logs = get_message_content(encode_logs).replace("--", "")
 
-        sumzy = decoded_logs.find('============')
+        sumzy = decoded_logs.find('========================================')
         sumzy = sumzy if sumzy > -1 else 0
         decoded_logs = decoded_logs[sumzy:]
 
         installer_details = installer_details.replace("\\n", "\n")
 
-        content = f"##########################\n{decoded_logs[-3500:]}\n########################"
+        content = f"##########################\n{decoded_logs[-3000:]}\n########################"
         text = f"{emoji} {status.title()}\n\n{installer_details}\n\n{content}"
         await bot.send_message(
             chat_id=chat_id,
