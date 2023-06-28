@@ -4,10 +4,25 @@
 - name: Root path
   tags: [frappe]
   set_fact:
-    frappe_path: "{{ project_path }}/frappe-bench"
+    frappe_path: "{{ project_path }}/frappe_docker"
 
 - name: App Repository | Clone
+  become: false
   git:
     repo: "https://github.com/frappe/frappe_docker.git"
     dest: "{{ frappe_path }}"
     version: "main"
+    force: yes
+
+- name: App | Replace 8080:8080 -> 80:8080
+  become: false
+  lineinfile:
+    path: "{{ frappe_path }}/pwd.yml"
+    regexp: '      - "8080:8080"'
+    line: '      - "80:8080"'
+
+- name: Install ERPNext
+  become: true
+  command: "docker compose -f pwd.yml up -d"
+  args:
+    chdir: "{{ frappe_path }}"
