@@ -95,7 +95,7 @@
 - name: Frappe | Create new site
   tags: [frappe]
   become: false
-  shell: "bench new-site {{ domain }} --db-root-password {{ mysql_root_password }} --admin-password {{ random_secret }}"
+  shell: "bench new-site {{ domain }} --db-root-password {{ mysql_root_password }} --admin-password {{ static_secret }}"
   args:
     chdir: "{{ frappe_path }}"
     creates: "{{ frappe_path }}/sites/{{ domain }}"
@@ -131,7 +131,7 @@
 - name: Frappe | Create new site
   tags: [frappe]
   become: false
-  shell: "bench new-site {{ domain }} --force --db-root-password {{ mysql_root_password }} --admin-password {{ random_secret }}"
+  shell: "bench new-site {{ domain }} --force --db-root-password {{ mysql_root_password }} --admin-password {{ static_secret }}"
   args:
     chdir: "{{ frappe_path }}"
   when: create_site_result.rc != 0

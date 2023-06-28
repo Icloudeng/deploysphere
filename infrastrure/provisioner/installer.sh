@@ -60,6 +60,10 @@ fi
 # Include python command and activate python venv
 source $MY_DIR/bash/ansible_init.sh
 
+# Generate static token based on platform name
+static_secret_name="$platform-$(date +%Y-%m)"
+static_secret=$($python_command -c "import hashlib; print(hashlib.sha256('$static_secret_name'.encode()).hexdigest()[:35])")
+
 # Read variables from /root/.env variable and pass them to extra variable
 getenv="$python_command lib/getenv.py"
 
@@ -72,6 +76,7 @@ admin_email=$([ -z "$($getenv ADMIN_SYSTEM_EMAIL)" ] && echo "admin@smatflow.com
 ################ Ansible extra-vars ################
 ansible_extra_vars="platform_metadata=$metadata platform_name=$platform"
 ansible_extra_vars+=" random_secret=$random_secret admin_email=$admin_email" # Must start with empty space
+ansible_extra_vars+=" static_secret=$static_secret"                          # Must start with empty space
 
 # Run Ansible playbook
 if [ -f "./private-key.pem" ]; then
@@ -111,7 +116,8 @@ if [ "$ran_status" == "succeeded" ]; then
 fi
 
 # Execute python notifier script
-installer_details="Platform: $platform\nSecret=$random_secret\nMachine IP: $vm_ip"
+installer_details="Platform: $platform\nMachine IP: $vm_ip\n"
+installer_details+="Random Secret=$random_secret\nMonthly Static Secret=$static_secret\n"
 $python_command lib/notifier.py --logs "$ansible_logs" --status "$ran_status" --details "$installer_details"
 
 # Deactivate the virtual environment
