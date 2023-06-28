@@ -49,3 +49,8 @@ lint:
 prod-build:
 	make build
 	sudo systemctl restart platform-installer
+
+
+.PHONY: journal
+journal:
+	sudo journalctl -fu platform-installer
