@@ -23,9 +23,9 @@
   debug:
     var: decoded_metadata
 
-- name: "Var | Debug decoded_metadata"
+- name: "Var | Debug platform_name"
   debug:
-    var: decoded_metadata
+    var: platform_name
 
 - name: "Var | Debug random_secret"
   debug:
