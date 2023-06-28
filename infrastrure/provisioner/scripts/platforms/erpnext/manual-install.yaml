@@ -88,6 +88,7 @@
   args:
     executable: /bin/bash
     chdir: "{{ frappe_path }}"
+    creates: "{{ frappe_path }}/sites/{{ domain }}"
   ignore_errors: true
 
 # Create a New Site
@@ -110,6 +111,7 @@
     executable: /bin/bash
     chdir: "{{ frappe_path }}"
   ignore_errors: true
+  when: create_site_result.rc != 0
 
 - name: Frappe | Bench restart
   tags: [frappe]
@@ -118,10 +120,12 @@
   args:
     chdir: "{{ frappe_path }}"
   ignore_errors: true
+  when: create_site_result.rc != 0
 
 - name: Frappe | Sleep for 10 seconds and continue with play
   wait_for:
     timeout: 10
+  when: create_site_result.rc != 0
 
 # Create a New Site
 - name: Frappe | Create new site
