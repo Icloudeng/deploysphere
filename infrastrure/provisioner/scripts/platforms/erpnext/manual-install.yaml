@@ -187,6 +187,12 @@
   args:
     chdir: "{{ frappe_path }}"
 
+# - name: Frappe | add-to-hosts.
+#   become: false
+#   shell: "bench --site {{ domain }} add-to-hosts"
+#   args:
+#     chdir: "{{ frappe_path }}"
+
 - name: Frappe | Disable maintenance mode.
   become: false
   shell: "bench --site {{ domain }} set-maintenance-mode off"
