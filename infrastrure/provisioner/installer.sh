@@ -111,7 +111,7 @@ if [ "$ran_status" == "succeeded" ]; then
 fi
 
 # Execute python notifier script
-installer_details="Platform: $platform\nSecret=$random_secret\nMachine IP: $vm_ip"
+installer_details=$"Platform: $platform\nSecret=$random_secret\nMachine IP: $vm_ip"
 $python_command lib/notifier.py --logs "$ansible_logs" --status "$ran_status" --details "$installer_details"
 
 # Deactivate the virtual environment
