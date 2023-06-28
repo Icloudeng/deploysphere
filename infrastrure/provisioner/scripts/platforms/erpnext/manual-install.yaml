@@ -133,52 +133,50 @@
   when: create_site_result.rc != 0
 
 # DOWNLOAD APPS
-- name: Frappe | Download the payments apps.
+- name: "Frappe Download App | {{ item.name }}"
   become: false
-  shell: "bench get-app payments"
+  shell: "bench get-app {{ item.source }}"
   args:
     chdir: "{{ frappe_path }}"
-    creates: "{{ frappe_path }}/apps/payments"
-
-- name: Frappe | Download the main ERPNext app.
-  become: false
-  shell: "bench get-app --branch version-{{ frappe_version }} erpnext"
-  args:
-    chdir: "{{ frappe_path }}"
-    creates: "{{ frappe_path }}/apps/erpnext"
-
-- name: Frappe | Download the HR & Payroll app.
-  become: false
-  shell: "bench get-app hrms"
-  args:
-    chdir: "{{ frappe_path }}"
-    creates: "{{ frappe_path }}/apps/hrms"
-
-- name: Frappe | Download the ecommerce integrations apps.
-  become: false
-  shell: "bench get-app ecommerce_integrations --branch main"
-  args:
-    chdir: "{{ frappe_path }}"
-    creates: "{{ frappe_path }}/apps/ecommerce_integrations"
+    creates: "{{ frappe_path }}/apps/{{ item.name }}"
+  loop:
+    - { name: "payments", source: "payments" }
+    - {
+        name: "erpnext",
+        source: "--branch version-{{ frappe_version }} erpnext",
+      }
+    - { name: "hrms", source: "hrms" }
+    - {
+        name: "ecommerce_integrations",
+        source: "ecommerce_integrations --branch main",
+      }
+    - { name: "chat", source: "chat" }
+    - { name: "helpdesk", source: "helpdesk" }
+    # - { name: "lending", source: "lending" }
+    # - { name: "changemakers", source: "changemakers" }
+    # - { name: "healthcare", source: "healthcare" }
+    # - { name: "lms", source: "lms" }
+    # - { name: "insights", source: "https://github.com/frappe/insights" }
+    # - { name: "drive", source: "https://github.com/frappe/drive" }
 
 # INSTALL APPS
-- name: Frappe | Install the main ERPNext app.
+- name: "Frappe Install App | {{ item }}"
   become: false
-  shell: "bench --site {{ domain }} install-app erpnext"
+  shell: "bench --site {{ domain }} install-app {{ item }}"
   args:
     chdir: "{{ frappe_path }}"
-
-- name: Frappe | Install the HR & Payroll app.
-  become: false
-  shell: "bench --site {{ domain }} install-app hrms"
-  args:
-    chdir: "{{ frappe_path }}"
-
-- name: Frappe | Install the ecommerce integrations apps.
-  become: false
-  shell: "bench --site {{ domain }} install-app ecommerce_integrations"
-  args:
-    chdir: "{{ frappe_path }}"
+  loop:
+    - erpnext
+    - hrms
+    - ecommerce_integrations
+    - chat
+    - helpdesk
+    # - lending
+    # - changemakers
+    # - healthcare
+    # - lms
+    # - insights
+    # - drive
 
 # SETUP PRODUCTION SERVER
 - name: Frappe | Enable scheduler service.
