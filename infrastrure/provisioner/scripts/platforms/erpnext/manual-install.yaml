@@ -68,6 +68,13 @@
 - name: Frappe | Initialize Frappe Bench
   tags: [frappe]
   become: false
+  shell: "chmod -R o+rx /home/{{ ansible_user }}"
+  args:
+    chdir: "{{ project_path }}"
+
+- name: Frappe | Initialize Frappe Bench
+  tags: [frappe]
+  become: false
   shell: "bench init --frappe-branch version-{{ frappe_version }} frappe-bench"
   args:
     chdir: "{{ project_path }}"
