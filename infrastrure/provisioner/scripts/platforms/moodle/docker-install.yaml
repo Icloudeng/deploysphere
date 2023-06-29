@@ -16,3 +16,4 @@
     MOODLE_USERNAME: "{{ moodle_username }}"
     MOODLE_EMAIL: "{{ moodle_email }}"
     MOODLE_SITE_NAME: "{{ moodle_site_name }}"
+    MOODLE_PASSWORD: "{{ static_secret }}"
