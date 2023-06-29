@@ -20,7 +20,7 @@
     # Validate domain variables
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
-        domain: "{{ item }}"
+        domain_var: "{{ item }}"
       loop:
         - "{{ domain }}"
         - "{{ ipa_domain }}"

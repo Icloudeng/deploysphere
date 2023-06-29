@@ -26,7 +26,7 @@
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       tags: [init]
       vars:
-        domain: "{{ domain }}"
+        domain_var: "{{ domain }}"
 
     # easy install
     # - include_tasks: easy-install.yaml
