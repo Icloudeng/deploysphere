@@ -15,16 +15,26 @@
 
     - name: Extract Required Variables
       set_fact:
-        zimbra_domain: "{{ decoded_metadata | json_query('zimbra_domain') }}"
-        zimbra_hostname: "{{ decoded_metadata | json_query('zimbra_hostname') }}"
+        zimbra_fqdn: "{{ decoded_metadata | json_query('zimbra_fqdn') }}"
+        zimbra_timezone: "{{ decoded_metadata | json_query('zimbra_timezone') }}"
 
     # Validate domain variables
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
-        domain_var: "{{ item }}"
-      loop:
-        - "{{ zimbra_domain }}"
-        - "{{ zimbra_hostname }}"
+        domain_var: "{{ zimbra_fqdn }}"
 
-    # Zimbra install
-    # - include_tasks: install.yaml
+    # Validate timezone variables
+    - include_tasks: ../../tasks/validator/timezone-regex.yaml
+      vars:
+        timezone_var: "{{ zimbra_timezone }}"
+
+    - name: "Include zimbra"
+      include_role:
+        name: zimbra-single
+        # apply:
+        #   tags:
+        #     - zimbra9
+      vars:
+        zimbra_fqdn: "{{ zimbra_fqdn }}"
+        zimbra_timezone: "{{ zimbra_timezone }}"
+        zimbra_admin_password: "{{ static_secret }}"

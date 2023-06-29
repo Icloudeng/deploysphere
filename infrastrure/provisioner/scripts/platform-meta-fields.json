@@ -14,8 +14,8 @@
         "moodle_site_name"
     ],
     "zimbra": [
-        "zimbra_domain",
-        "zimbra_hostname",
+        "zimbra_fqdn",
+        "zimbra_timezone",
         "ldap",
         "mapping"
     ]

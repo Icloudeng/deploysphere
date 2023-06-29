@@ -1,0 +1,19 @@
+- debug:
+    var: timezone_var
+
+- set_fact:
+    timezone_regex: ([A-Za-z_]+\/[A-Za-z_]+)
+
+- name: Ensure timezone variable is set
+  assert:
+    that:
+      - timezone_var is defined and timezone_var != ''
+    fail_msg: "Timezone variable is not set or is empty."
+    quiet: yes
+
+- name: Ensure timezone variable satisfies timezone regex
+  assert:
+    that:
+      - timezone_var | regex_search(timezone_regex)
+    fail_msg: "Timezone variable does not satisfy the Timezone format."
+    quiet: yes

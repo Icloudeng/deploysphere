@@ -35,12 +35,12 @@ source .venv/bin/activate
 $python_command -m pip install --upgrade pip
 
 # Check if Ansible is already installed
-if $python_command -c "import ansible, jmespath, telegram, dotenv, requests" &>/dev/null; then
+if $python_command -c "import ansible, jmespath, telegram, dotenv, requests, netaddr" &>/dev/null; then
     echo "Ansible is already installed."
 else
     # Install Ansible in the virtual environment
     echo "Ansible was not found, start installing..."
-    pip install ansible jmespath python-telegram-bot python-dotenv requests
+    pip install ansible jmespath python-telegram-bot python-dotenv requests netaddr
 fi
 
 export ANSIBLE_HOST_KEY_CHECKING="False"
