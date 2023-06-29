@@ -12,5 +12,9 @@
         "moodle_username",
         "moodle_email",
         "moodle_site_name"
+    ],
+    "zimbra": [
+        "domain",
+        "mapping"
     ]
 }
