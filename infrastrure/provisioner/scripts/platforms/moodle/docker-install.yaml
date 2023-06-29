@@ -7,14 +7,14 @@
     dest: "{{ project_path }}/docker-compose.yaml"
     force: yes
 
+- name: "Copy .env template"
+  template:
+    src: .env.j2
+    dest: "{{ project_path }}/.env"
+    force: yes
+
 - name: Install Moodle using Docker Compose
   become: true
   command: docker compose up -d
   args:
     chdir: "{{ project_path }}"
-  environment:
-    MOODLE_USERNAME: "{{ moodle_username }}"
-    MOODLE_EMAIL: "{{ moodle_email }}"
-    MOODLE_SITE_NAME: "{{ moodle_site_name }}"
-    MOODLE_PASSWORD: "{{ static_secret }}"
-    MOODLE_DATABASE_PASSWORD: "{{ database_password }}"
