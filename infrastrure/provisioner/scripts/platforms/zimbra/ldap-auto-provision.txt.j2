@@ -1,0 +1,24 @@
+md smatflow.com zimbraAutoProvAccountNameMap "uid"
+md smatflow.com +zimbraAutoProvAttrMap "displayName=Name"
+md smatflow.com zimbraAutoProvAttrMap "cn=cn"
+md smatflow.com +zimbraAutoProvAttrMap "givenName=givenName"
+md smatflow.com +zimbraAutoProvAttrMap "sn=sn"
+md smatflow.com +zimbraAutoProvAttrMap "description=description"
+md smatflow.com zimbraAutoProvAuthMech "LDAP"
+md smatflow.com zimbraAutoProvBatchSize 50
+
+md smatflow.com zimbraAutoProvLdapAdminBindDn "uid=admin,cn=users,cn=accounts,dc=smatflow,dc=com"
+md smatflow.com zimbraAutoProvLdapAdminBindPassword "----------------"
+md smatflow.com zimbraAutoProvLdapBindDn "uid=admin,cn=users,cn=accounts,dc=smatflow,dc=com"
+md smatflow.com zimbraAutoProvLdapSearchBase "cn=users,cn=accounts,dc=smatflow,dc=com"
+md smatflow.com zimbraAutoProvLdapSearchFilter "(uid=%u)"
+md smatflow.com zimbraAutoProvLdapURL "ldap://ipa.smatflow.net:389"
+md smatflow.com zimbraAutoProvMode "EAGER"
+md smatflow.com zimbraAutoProvNotificationBody "Your account has been auto provisioned. Your email address is ${ACCOUNT_ADDRESS}."
+md smatflow.com zimbraAutoProvNotificationFromAddress "admin@smatflow.com"
+md smatflow.com zimbraAutoProvNotificationSubject "New account auto provisioned"
+
+ms mail.smatflow.net zimbraAutoProvPollingInterval "1m"
+ms mail.smatflow.net +zimbraAutoProvScheduledDomains "smatflow.com"
+
+md smatflow.com zimbraAutoProvLastPolledTimestamp ""

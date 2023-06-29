@@ -1,0 +1,30 @@
+---
+- name: Zimbra
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    zimbra_user: "zimbra"
+
+  tasks:
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path)
+    - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Extract Required Variables
+      set_fact:
+        zimbra_domain: "{{ decoded_metadata | json_query('zimbra_domain') }}"
+        zimbra_hostname: "{{ decoded_metadata | json_query('zimbra_hostname') }}"
+
+    # Validate domain variables
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ item }}"
+      loop:
+        - "{{ zimbra_domain }}"
+        - "{{ zimbra_hostname }}"
+
+    # Zimbra install
+    # - include_tasks: install.yaml
