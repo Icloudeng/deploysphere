@@ -48,7 +48,7 @@ async def send_notification(encode_logs: str, status: str, installer_details: st
         installer_details = installer_details.replace("\\n", "\n")
 
         content = f"##########################\n{decoded_logs[-3000:]}\n########################"
-        text = f"{emoji} {status.title()}\n\n{installer_details}\n\n{content}"
+        text = f"\n{emoji} {status.title()}\n\n{installer_details}\n\n{content}"
         await bot.send_message(
             chat_id=chat_id,
             text=text
