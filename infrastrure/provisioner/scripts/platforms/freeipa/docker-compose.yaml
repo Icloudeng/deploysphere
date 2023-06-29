@@ -22,10 +22,10 @@ services:
       - -U
       - --domain=${DOMAIN}
       - --realm=${DOMAIN}
-      - --http-pin=freeipa@123
-      - --dirsrv-pin=freeipa@123
-      - --ds-password=freeipa@123
-      - --admin-password=freeipa@123
+      - --http-pin=${GLOBAL_PASSWORD}
+      - --dirsrv-pin=${GLOBAL_PASSWORD}
+      - --ds-password=${GLOBAL_PASSWORD}
+      - --admin-password=${GLOBAL_PASSWORD}
       - --no-host-dns
       - --unattended
     ports:

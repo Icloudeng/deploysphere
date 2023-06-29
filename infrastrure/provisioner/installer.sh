@@ -79,7 +79,7 @@ ansible_extra_vars="platform_metadata=$metadata platform_name=$platform"
 ansible_extra_vars+=" random_secret=$random_secret admin_email=$admin_email" # Must start with empty space
 ansible_extra_vars+=" static_secret=$static_secret"                          # Must start with empty space
 
-# Installer details
+# Notification Installer details
 installer_details="Platform: $platform\nMachine IP: $vm_ip\n"
 installer_details+="Static Secret=$static_secret\n"
 
