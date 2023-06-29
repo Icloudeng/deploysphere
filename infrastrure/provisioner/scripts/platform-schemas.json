@@ -6,5 +6,9 @@
     "erpnext": {
         "port": 80,
         "protocol": "http"
+    },
+    "moodle": {
+        "port": 5080,
+        "protocol": "http"
     }
 }

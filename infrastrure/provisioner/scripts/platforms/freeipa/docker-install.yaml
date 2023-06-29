@@ -1,0 +1,17 @@
+# Install Docker
+- include_tasks: ../../tasks/docker.yaml
+
+- name: Copy Docker file
+  ansible.builtin.copy:
+    src: "docker-compose.yaml"
+    dest: "{{ project_path }}/docker-compose.yaml"
+    force: yes
+
+- name: Install FreeIPA using Docker Compose
+  become: true
+  command: docker compose up -d
+  args:
+    chdir: "{{ project_path }}"
+  environment:
+    DOMAIN: "{{ ipa_domain }}"
+    HOSTNAME: "{{ ipa_hostname }}"

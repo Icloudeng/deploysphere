@@ -11,25 +11,20 @@
     # Playbook init (with decoded_metadata, project_path)
     - include_tasks: ../../tasks/playbook-init.yaml
 
-    # Install Docker
-    - include_tasks: ../../tasks/docker.yaml
-
-    - name: Extract domain key and hostname
+    - name: Extract Required Variables
       set_fact:
+        domain: "{{ decoded_metadata | json_query('domain') }}"
         ipa_domain: "{{ decoded_metadata | json_query('ipa_domain') }}"
         ipa_hostname: "{{ decoded_metadata | json_query('ipa_hostname') }}"
 
-    - name: Copy Docker file
-      ansible.builtin.copy:
-        src: "docker-compose.yaml"
-        dest: "{{ project_path }}/docker-compose.yaml"
-        force: yes
+    # Validate domain variables
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain: "{{ item }}"
+      loop:
+        - "{{ domain }}"
+        - "{{ ipa_domain }}"
+        - "{{ ipa_hostname }}"
 
-    - name: Install FreeIPA using Docker Compose
-      become: true
-      command: docker compose up -d
-      args:
-        chdir: "{{ project_path }}"
-      environment:
-        DOMAIN: "{{ ipa_domain }}"
-        HOSTNAME: "{{ ipa_hostname }}"
+    # docker install
+    - include_tasks: docker-install.yaml

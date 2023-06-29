@@ -1,42 +1,37 @@
 ---
-- name: ERPNext
+- name: Moodle
   hosts: all
   become: true
   gather_facts: true
-  vars:
-    mysql_root_password: "{{ platform_name }}"
-    node_version: 18
-    frappe_version: 14
 
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
-      tags: [init]
 
     # Playbook init (with decoded_metadata, project_path)
     - include_tasks: ../../tasks/playbook-init.yaml
-      tags: [init]
 
     - name: Extract Required Variables
-      tags: [init]
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
+        moodle_username: "{{ decoded_metadata | json_query('moodle_username') }}"
+        moodle_email: "{{ decoded_metadata | json_query('moodle_email') }}"
+        moodle_site_name: "{{ decoded_metadata | json_query('moodle_site_name') }}"
 
     # Validate domain variable
     - include_tasks: ../../tasks/validator/domain-regex.yaml
-      tags: [init]
       vars:
         domain: "{{ domain }}"
 
-    # easy install
-    # - include_tasks: easy-install.yaml
-    #   when: ansible_python_version is version('3.10.0', '<')
+    # Validate moodle_username variable
+    - include_tasks: ../../tasks/validator/username-regex.yaml
+      vars:
+        username: "{{ moodle_username }}"
+
+    # Validate moodle_email variable
+    - include_tasks: ../../tasks/validator/email-regex.yaml
+      vars:
+        email: "{{ moodle_email }}"
 
     # docker install
     - include_tasks: docker-install.yaml
-      when: ansible_python_version is version('3.10.0', '<')
-
-    # manual install
-    - include_tasks: manual-install.yaml
-      tags: [frappe, docker, nodejs, mysql]
-      when: ansible_python_version is version('3.10.0', '>=')
