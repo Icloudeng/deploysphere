@@ -3,6 +3,8 @@
   hosts: all
   become: true
   gather_facts: true
+  vars:
+    database_password: "{{ platform_name }}"
 
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
