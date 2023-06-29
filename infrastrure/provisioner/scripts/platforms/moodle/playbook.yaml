@@ -21,17 +21,17 @@
     # Validate domain variable
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
-        domain: "{{ domain }}"
+        domain_var: "{{ domain }}"
 
     # Validate moodle_username variable
     - include_tasks: ../../tasks/validator/username-regex.yaml
       vars:
-        username: "{{ moodle_username }}"
+        username_var: "{{ moodle_username }}"
 
     # Validate moodle_email variable
     - include_tasks: ../../tasks/validator/email-regex.yaml
       vars:
-        email: "{{ moodle_email }}"
+        email_var: "{{ moodle_email }}"
 
     # docker install
     - include_tasks: docker-install.yaml

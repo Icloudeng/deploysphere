@@ -1,5 +1,5 @@
 - debug:
-    var: domain
+    var: domain_var
 
 - set_fact:
     domain_regex: ^(?=.{1,255}$)([A-Za-z0-9](?:(?:[A-Za-z0-9\-]){0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,}$
@@ -7,13 +7,13 @@
 - name: Ensure domain variable is set
   assert:
     that:
-      - domain is defined and domain != ''
+      - domain_var is defined and domain_var != ''
     fail_msg: "Domain variable is not set or is empty."
     quiet: yes
 
 - name: Ensure domain variable satisfies FQDN regex
   assert:
     that:
-      - domain | regex_search(domain_regex)
+      - domain_var | regex_search(domain_regex)
     fail_msg: "Domain variable does not satisfy the fully qualified domain name (FQDN) format."
     quiet: yes

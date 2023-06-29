@@ -1,5 +1,5 @@
 - debug:
-    var: username
+    var: username_var
 
 - set_fact:
     username_regex: ^[a-zA-Z0-9_]+$
@@ -7,13 +7,13 @@
 - name: Ensure username variable is set
   assert:
     that:
-      - username is defined and username != ''
+      - username_var is defined and username_var != ''
     fail_msg: "Username variable is not set or is empty."
     quiet: yes
 
 - name: Ensure username variable satisfies username regex
   assert:
     that:
-      - username | regex_search(username_regex)
+      - username_var | regex_search(username_regex)
     fail_msg: "Username variable does not satisfy the username address format."
     quiet: yes

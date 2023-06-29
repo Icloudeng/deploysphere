@@ -1,5 +1,5 @@
 - debug:
-    var: email
+    var: email_var
 
 - set_fact:
     email_regex: ^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$
@@ -7,13 +7,13 @@
 - name: Ensure email variable is set
   assert:
     that:
-      - email is defined and email != ''
+      - email_var is defined and email_var != ''
     fail_msg: "Email variable is not set or is empty."
     quiet: yes
 
 - name: Ensure email variable satisfies email regex
   assert:
     that:
-      - email | regex_search(email_regex)
+      - email_var | regex_search(email_regex)
     fail_msg: "Email variable does not satisfy the Email address format."
     quiet: yes
