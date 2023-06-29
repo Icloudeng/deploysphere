@@ -79,6 +79,14 @@ ansible_extra_vars="platform_metadata=$metadata platform_name=$platform"
 ansible_extra_vars+=" random_secret=$random_secret admin_email=$admin_email" # Must start with empty space
 ansible_extra_vars+=" static_secret=$static_secret"                          # Must start with empty space
 
+# Installer details
+installer_details="Platform: $platform\nMachine IP: $vm_ip\n"
+installer_details+="Static Secret=$static_secret\n"
+
+# Notify before playbook
+message_info=$(echo "Provisioning Started..." | base64)
+$python_command lib/notifier.py --logs "$message_info" --status "info" --details "$installer_details"
+
 # Run Ansible playbook
 if [ -f "./private-key.pem" ]; then
     chmod 600 ./private-key.pem
@@ -118,8 +126,7 @@ ansible_logs=$(tail -n +$logs_lines $ansible_log_file)
 ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 
 # Execute python notifier script
-installer_details="Platform: $platform\nMachine IP: $vm_ip\n"
-installer_details+="Random Secret=$random_secret\nMonthly Static Secret=$static_secret\n"
+installer_details+="Random Secret=$random_secret\n"
 $python_command lib/notifier.py --logs "$ansible_logs_4096" --status "$ran_status" --details "$installer_details"
 
 # Deactivate the virtual environment

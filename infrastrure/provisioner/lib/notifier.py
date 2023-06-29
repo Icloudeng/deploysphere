@@ -32,7 +32,13 @@ async def send_notification(encode_logs: str, status: str, installer_details: st
         return
     # Decode message and send
     try:
-        emoji = '❌' if status == "failed" else '✅'
+        status_emoji = {
+            "info": "🔵",
+            "succeeded": "✅",
+            "failed": "❌",
+        }
+        emoji = status_emoji.get(status, "🔵")
+
         decoded_logs = get_message_content(encode_logs).replace("--", "")
 
         sumzy = decoded_logs.find('========================================')
