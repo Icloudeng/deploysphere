@@ -85,7 +85,7 @@ installer_details+="Static Secret=$static_secret\n"
 
 # Notify before playbook
 message_info=$(echo "Provisioning Started..." | base64)
-$python_command lib/notifier.py --logs "$message_info" --status "info" --details "$installer_details"
+$python_command lib/notifier.py --logs "$message_info" --status "info" --details "$installer_details" --metadata "$metadata"
 
 # Run Ansible playbook
 if [ -f "./private-key.pem" ]; then
@@ -127,7 +127,7 @@ ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 
 # Execute python notifier script
 installer_details+="Random Secret=$random_secret\n"
-$python_command lib/notifier.py --logs "$ansible_logs_4096" --status "$ran_status" --details "$installer_details"
+$python_command lib/notifier.py --logs "$ansible_logs_4096" --status "$ran_status" --details "$installer_details" --metadata "$metadata"
 
 # Deactivate the virtual environment
 deactivate

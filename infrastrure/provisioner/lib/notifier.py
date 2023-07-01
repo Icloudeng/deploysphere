@@ -1,9 +1,12 @@
+import json
 import base64
 import asyncio
 import argparse
 import telegram
 from utilities.dotenv import config
 from utilities.logging import logging, bingLoggingConfig
+
+DOMAIN_KEY = "domain"
 
 
 def get_message_content(base64_content: str):
@@ -25,7 +28,19 @@ def create_bot():
     return bot, chat_id
 
 
-async def send_notification(encode_logs: str, status: str, installer_details: str):
+def get_decoded_domain(metadata: str):
+    domain = None
+    try:
+        decoded_bytes = base64.b64decode(metadata)
+        data = json.loads(decoded_bytes.decode("utf-8"))
+        domain = data.get(DOMAIN_KEY, None)
+    except Exception as e:
+        logging.warn(e)
+
+    return domain
+
+
+async def send_notification(encode_logs: str, status: str, installer_details: str, metadata: str):
     bot, chat_id = create_bot()
     if bot == None:
         logging.warn("Invalid BOT Configuration!")
@@ -44,11 +59,14 @@ async def send_notification(encode_logs: str, status: str, installer_details: st
         sumzy = decoded_logs.find('========================================')
         sumzy = sumzy if sumzy > -1 else 0
         decoded_logs = decoded_logs[sumzy:]
+        domain = get_decoded_domain(metadata)
+
+        domain_text = f"\n\nDomain: {domain}\n\n" if domain else ""
 
         installer_details = installer_details.replace("\\n", "\n")
 
         content = f"##########################\n{decoded_logs[-3000:]}\n########################"
-        text = f"\n{emoji} {status.title()}\n\n{installer_details}\n\n{content}"
+        text = f"\n{emoji} {status.title()}{domain_text}\n\n{installer_details}\n\n{content}"
         await bot.send_message(
             chat_id=chat_id,
             text=text
@@ -64,6 +82,7 @@ if __name__ == '__main__':
     parser.add_argument("--logs", required=True)
     parser.add_argument("--status", required=True)
     parser.add_argument("--details", required=False, default="")
+    parser.add_argument("--metadata", required=False, default="")
     args = parser.parse_args()
 
     logging.info(args)
@@ -73,4 +92,5 @@ if __name__ == '__main__':
         encode_logs=args.logs,
         status=args.status,
         installer_details=args.details,
+        metadata=args.metadata,
     ))

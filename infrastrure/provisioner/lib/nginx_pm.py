@@ -217,12 +217,9 @@ def main(action: str, metadata: str, platform: str, ip: str):
         delete_proxy_hosts(phost, url)
         return
 
-    # If phost exists and has create action then no need go futher
+    # If phost exists and delete it
     if phost:
-        logging.info(
-            "Exited proxy host exist while has create action"
-        )
-        return
+        delete_proxy_hosts(phost, url)
 
     # Get platform proxy
     platform_schema = get_platform_schema(platform)

@@ -3,8 +3,6 @@
   hosts: all
   become: true
   gather_facts: true
-  vars:
-    zimbra_user: "zimbra"
 
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
@@ -31,9 +29,9 @@
     - name: "Include zimbra"
       include_role:
         name: zimbra-single
-        # apply:
-        #   tags:
-        #     - zimbra9
+        apply:
+          tags:
+            - install
       vars:
         zimbra_fqdn: "{{ zimbra_fqdn }}"
         zimbra_timezone: "{{ zimbra_timezone }}"
