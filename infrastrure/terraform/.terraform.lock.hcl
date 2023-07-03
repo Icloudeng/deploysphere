@@ -4,6 +4,7 @@
 provider "registry.terraform.io/ovh/ovh" {
   version = "0.31.0"
   hashes = [
+    "h1:35dbUsVYyK4tuDjh+ZGVyilDW7tM8DsiWw3DiayuBBo=",
     "h1:C0nOtWL31Sab4DeO5zCfGaacBQVNp3t0WK0G6PBujDA=",
     "zh:0c463d7a992d360eedec15e15831a9905a55204902490defbd2698dfca662854",
     "zh:226b80b90f0ae9c090371547567d2a338cd71c94ca5ff862b2d6731830a73a2a",
@@ -25,6 +26,7 @@ provider "registry.terraform.io/telmate/proxmox" {
   version     = "2.9.14"
   constraints = "2.9.14"
   hashes = [
+    "h1:H/f+LbVyPOLslHLAYnGuMMRqWFZ65K6E3V+MCYgfAyk=",
     "h1:KWPlH228/+BiH8OOY754MTTaUkLJLN/1krSSzqiyNsE=",
     "zh:0d049d33f705e5b814d30028770c084151218439424e99684ce31d7e26a720b5",
     "zh:20b1c64ed56d81de95f3f37b82b45b4654c0de26670c0e87a474c5cce13cd015",
