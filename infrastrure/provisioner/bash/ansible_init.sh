@@ -43,6 +43,9 @@ else
     pip install ansible jmespath python-telegram-bot python-dotenv requests netaddr
 fi
 
+# Ansible dependecies
+ansible-galaxy collection install -r scripts/requirements.yaml
+
 export ANSIBLE_HOST_KEY_CHECKING="False"
 export ANSIBLE_CONFIG="$(pwd)/ansible.cfg"
 

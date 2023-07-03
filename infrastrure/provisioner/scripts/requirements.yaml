@@ -1,0 +1,4 @@
+---
+collections:
+  - name: nextcloud.admin
+    version: 2.1.0

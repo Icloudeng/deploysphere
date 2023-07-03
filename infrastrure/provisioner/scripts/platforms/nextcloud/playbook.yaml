@@ -1,0 +1,13 @@
+---
+- name: Nextcloud
+  hosts: all
+  # become: true
+  gather_facts: false
+
+  collections:
+    - nextcloud.admin
+
+  tasks:
+    - name: Deploy nextcloud and dependencies
+      include_role:
+        name: install_nextcloud

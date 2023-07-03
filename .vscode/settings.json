@@ -5,5 +5,6 @@
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/erpnext/manual-install.yaml",
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/erpnext/docker-install.yaml"
         ]
-    }
+    },
+    "deepscan.ignoreConfirmWarning": true
 }
