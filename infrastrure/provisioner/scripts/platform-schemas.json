@@ -10,5 +10,13 @@
     "moodle": {
         "port": 5080,
         "protocol": "http"
+    },
+    "jenkins": {
+        "port": 8080,
+        "protocol": "http"
+    },
+    "nextcloud": {
+        "port": 80,
+        "protocol": "http"
     }
 }

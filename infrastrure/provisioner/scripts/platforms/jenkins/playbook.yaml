@@ -1,0 +1,46 @@
+---
+- name: Jenkins
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path)
+    - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Update APT cache
+      become: true
+      apt:
+        update_cache: yes
+
+    - name: Install OpenJDK 17
+      become: true
+      apt:
+        name: openjdk-17-jre
+        state: present
+
+    - name: Import Jenkins repository key
+      become: true
+      apt_key:
+        url: "https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key"
+        state: present
+
+    - name: Add Jenkins repository to APT sources
+      become: true
+      apt_repository:
+        filename: jenkins
+        repo: deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/
+
+    - name: Update APT cache
+      become: true
+      apt:
+        update_cache: yes
+
+    - name: Install Jenkins
+      become: true
+      apt:
+        name: jenkins
+        state: present

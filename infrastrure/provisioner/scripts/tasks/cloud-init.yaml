@@ -1,9 +1,11 @@
 - name: Check status file
+  become: true
   stat:
     path: /var/lib/cloud/instance/boot-finished
   register: status_file
 
 - name: Wait for cloud-init logs
+  become: true
   wait_for:
     path: /var/log/cloud-init.log
     search_regex: "Cloud-init .* finished"
@@ -13,6 +15,7 @@
   delay: 10
 
 - name: Check dpkg lock status
+  become: true
   shell: |
     while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
       echo "Waiting for other processes to release dpkg lock..."
