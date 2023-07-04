@@ -44,7 +44,7 @@ else
 fi
 
 # Ansible dependecies
-ansible-galaxy collection install -r scripts/requirements.yaml
+ansible-galaxy install -r scripts/requirements.yaml
 
 export ANSIBLE_HOST_KEY_CHECKING="False"
 export ANSIBLE_CONFIG="$(pwd)/ansible.cfg"

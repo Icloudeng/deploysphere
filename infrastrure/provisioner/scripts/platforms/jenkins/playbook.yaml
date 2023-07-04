@@ -24,9 +24,9 @@
 
     - name: Import Jenkins repository key
       become: true
-      apt_key:
+      get_url:
         url: "https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key"
-        state: present
+        dest: "/usr/share/keyrings/jenkins-keyring.asc"
 
     - name: Add Jenkins repository to APT sources
       become: true
@@ -44,3 +44,9 @@
       apt:
         name: jenkins
         state: present
+
+    - name: Update Jenkins password
+      blockinfile:
+        path: /var/lib/jenkins/secrets/initialAdminPassword
+        create: no
+        block: "{{ static_secret }}"

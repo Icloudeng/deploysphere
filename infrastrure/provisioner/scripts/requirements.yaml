@@ -2,3 +2,7 @@
 collections:
   - name: nextcloud.admin
     version: 2.1.0
+
+roles:
+  - name: geerlingguy.php-versions
+    version: 5.0.1

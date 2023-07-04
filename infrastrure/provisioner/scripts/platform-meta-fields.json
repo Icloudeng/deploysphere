@@ -18,5 +18,7 @@
         "zimbra_timezone",
         "ldap",
         "mapping"
-    ]
+    ],
+    "jenkins": [],
+    "nextcloud": []
 }
