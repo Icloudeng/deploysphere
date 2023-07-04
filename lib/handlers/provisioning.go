@@ -11,7 +11,11 @@ import (
 )
 
 func CreateProvisioning(c *gin.Context) {
-	var json structs.Provisioning
+	json := structs.Provisioning{
+		Platform: &structs.Platform{
+			Metadata: &map[string]interface{}{},
+		},
+	}
 
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
