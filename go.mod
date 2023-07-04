@@ -14,8 +14,6 @@ require (
 	github.com/joho/godotenv v1.5.1
 )
 
-require gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-
 require (
 	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 // indirect
@@ -29,7 +27,6 @@ require (
 	github.com/go-asn1-ber/asn1-ber v1.5.4 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-playground/validator/v10 v10.14.1
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
