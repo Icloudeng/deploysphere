@@ -10,6 +10,8 @@ import (
 	"smatflow/platform-installer/lib/handlers"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 )
 
 func main() {
@@ -21,6 +23,10 @@ func main() {
 
 	if *init {
 		return
+	}
+
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("resourceref", lib.ResourcesRefValidation)
 	}
 
 	api := r.Group("/", basicAuth)

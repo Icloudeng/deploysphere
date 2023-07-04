@@ -56,7 +56,8 @@ func (t *Terrafrom) Plan() {
 
 	state, err := tf.Plan(ctx, options...)
 	if err != nil {
-		log.Fatalf("error running Show: %s", err.Error())
+		log.Printf("error running Show: %s", err.Error())
+		return
 	}
 
 	log.Printf("Terraform plan state: %v", state)
@@ -86,7 +87,8 @@ func (t *Terrafrom) Apply() {
 
 	err := tf.Apply(ctx, options...)
 	if err != nil {
-		log.Fatalf("Error running Show: %s", err)
+		log.Printf("Error running Show: %s", err)
+		return
 	}
 
 	log.Printf("********* Terraform applied ! ***********")

@@ -17,10 +17,15 @@ import (
 
 // Store resources and apply
 type Resources struct {
-	Ref      string                    `json:"ref" binding:"required,ascii"`
+	Ref      string                    `json:"ref" binding:"required,resourceref"`
 	Domain   *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
 	Vm       *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
 	Platform *structs.Platform         `json:"platform"`
+}
+
+// Delete resources and apply
+type ResourcesRef struct {
+	Ref string `uri:"ref" binding:"required,resourceref"`
 }
 
 func CreateResources(c *gin.Context) {
@@ -52,11 +57,6 @@ func CreateResources(c *gin.Context) {
 	})
 
 	c.JSON(http.StatusOK, json)
-}
-
-// Delete resources and apply
-type ResourcesRef struct {
-	Ref string `uri:"ref" binding:"required,ascii"`
 }
 
 func DeleteResources(c *gin.Context) {
