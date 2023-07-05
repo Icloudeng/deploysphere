@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"html/template"
 	"log"
+	"smatflow/platform-installer/env"
 
 	"github.com/go-ldap/ldap/v3"
 )
 
 func connect() *ldap.Conn {
-	l, err := ldap.DialURL(EnvConfig.LdapServerUrl)
+	l, err := ldap.DialURL(env.EnvConfig.LdapServerUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -37,7 +38,7 @@ func parseUserBindTemplate(username string) string {
 	}
 
 	// Create a new template with the input string
-	tmpl := template.Must(template.New("template").Parse(EnvConfig.LdapBindTemplate))
+	tmpl := template.Must(template.New("template").Parse(env.EnvConfig.LdapBindTemplate))
 
 	// Execute the template with the data and store the result in a buffer
 	var buf bytes.Buffer

@@ -1,7 +1,6 @@
-package lib
+package env
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/caarlos0/env"
@@ -11,6 +10,14 @@ import (
 type Config struct {
 	LdapServerUrl    string `env:"LDAP_SERVER_URL,required"`
 	LdapBindTemplate string `env:"LDAP_BIND_TEMPLATE,required"`
+	// DB
+	DB_PG_HOST     string `env:"DB_PG_HOST"`
+	DB_PG_PORT     string `env:"DB_PG_PORT"`
+	DB_PG_DBNAME   string `env:"DB_PG_DBNAME"`
+	DB_PG_USER     string `env:"DB_PG_USER"`
+	DB_PG_PASSWORD string `env:"DB_PG_PASSWORD"`
+	DB_PG_SSLMODE  string `env:"DB_PG_SSLMODE"`
+	DB_PG_TIMEZONE string `env:"DB_PG_TIMEZONE"`
 }
 
 var EnvConfig Config
@@ -26,8 +33,4 @@ func init() {
 	if err != nil {
 		log.Fatalf("unable to parse ennvironment variables: %e", err)
 	}
-
-	fmt.Println("Config:")
-	fmt.Printf("Ldap Server Url: %s\n", EnvConfig.LdapServerUrl)
-	fmt.Printf("Ldap Bind Template: %s\n", EnvConfig.LdapBindTemplate)
 }

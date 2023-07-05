@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"smatflow/platform-installer/jobs"
 	"smatflow/platform-installer/lib"
-	"smatflow/platform-installer/lib/handlers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -29,37 +29,12 @@ func main() {
 		v.RegisterValidation("resourceref", lib.ResourcesRefValidation)
 	}
 
-	api := r.Group("/", basicAuth)
+	api := r.Group("/local", basicAuth)
+	apiJobs := r.Group("/jobs", basicAuth)
 
-	// Resources
-	api.GET("/resources", handlers.GetResources)
-
-	api.POST("/resources", handlers.CreateResources)
-
-	api.DELETE("/resources/:ref", handlers.DeleteResources)
-
-	api.GET("/resources/state", handlers.GetResourcesState)
-
-	// Platforms
-	api.GET("/platforms", handlers.GetPlatforms)
-
-	// Domain
-	api.POST("/domain", handlers.CreateDomain)
-
-	api.DELETE("/domain/:ref", handlers.DeleteDomain)
-
-	//VM
-	api.POST("/vm", handlers.CreateVm)
-
-	api.DELETE("/vm/:ref", handlers.DeleteVm)
-
-	// Proxy host
-	api.POST("/proxy-host", handlers.CreateProxyHost)
-
-	api.DELETE("/proxy-host", handlers.DeleteProxyHost)
-
-	// The Provisioning
-	api.POST("/provisioning", handlers.CreateProvisioning)
+	// Routes
+	BindLocalJobsRoutes(api)
+	jobs.BindDatabaseJobsRoutes(apiJobs)
 
 	// Start server
 	log.Println("Server running on PORT: ", port)
