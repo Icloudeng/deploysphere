@@ -14,7 +14,7 @@ func GetOvhResource() *ovh.Resource {
 	return ovh_resource.GetResource()
 }
 
-/** OVH Domain creation resource functions **/
+/* OVH Domain creation resource functions */
 func CreateOrWriteOvhResource(ref string, domain *structs.DomainZoneRecord) {
 	// Working on ovh resource
 	ovh_resource := ovh.ResourceJSONData{}

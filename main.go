@@ -29,11 +29,11 @@ func main() {
 		v.RegisterValidation("resourceref", lib.ResourcesRefValidation)
 	}
 
-	api := r.Group("/local", basicAuth)
-	apiJobs := r.Group("/jobs", basicAuth)
-
 	// Routes
+	api := r.Group("/", basicAuth)
 	BindLocalJobsRoutes(api)
+
+	apiJobs := r.Group("/jobs", basicAuth)
 	jobs.BindDatabaseJobsRoutes(apiJobs)
 
 	// Start server
