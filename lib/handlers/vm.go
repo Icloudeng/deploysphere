@@ -36,6 +36,21 @@ func CreateVm(c *gin.Context) {
 		return
 	}
 
+	// Check if Resource when post request
+	if c.Request.Method == "POST" {
+		_proxmox := resources.GetProxmoxReferenceResource(json.Ref)
+
+		if _proxmox != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": ResourceExistsError,
+				"resource": map[string]interface{}{
+					"vm": _proxmox,
+				},
+			})
+			return
+		}
+	}
+
 	lib.Queue.QueueTask(func(ctx context.Context) error {
 		// Reset unmutable vm fields
 		structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform)

@@ -14,6 +14,10 @@ func GetOvhResource() *ovh.Resource {
 	return ovh_resource.GetResource()
 }
 
+func GetOvhReferenceResource(ref string) *structs.DomainZoneRecord {
+	return GetOvhResource().GetDomainZoneRerordStruct(ref)
+}
+
 /* OVH Domain creation resource functions */
 func CreateOrWriteOvhResource(ref string, domain *structs.DomainZoneRecord) {
 	// Working on ovh resource
@@ -42,6 +46,10 @@ func GetProxmoxResource() *proxmox.Resource {
 	proxmox_resource.ParseResourcesJSON()
 
 	return proxmox_resource.GetResource()
+}
+
+func GetProxmoxReferenceResource(ref string) *structs.ProxmoxVmQemu {
+	return GetProxmoxResource().GetProxmoxVmQemuStruct(ref)
 }
 
 /** Promox resource functions **/

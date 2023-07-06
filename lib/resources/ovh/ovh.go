@@ -97,3 +97,14 @@ func (r *Resource) DeleteDomainZoneRerord(ref string) {
 		r.OVHDomainZoneRecord = nil
 	}
 }
+
+func (r *Resource) GetDomainZoneRerordStruct(ref string) *structs.DomainZoneRecord {
+	ozr := r.GetOVHDomainZoneRecord()
+
+	found, exist := ozr[ref]
+	if !exist {
+		return nil
+	}
+
+	return found
+}

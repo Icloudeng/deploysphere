@@ -24,6 +24,21 @@ func CreateDomain(c *gin.Context) {
 		return
 	}
 
+	// Check if Resource when post request
+	if c.Request.Method == "POST" {
+		_ovh := resources.GetOvhReferenceResource(json.Ref)
+
+		if _ovh != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": ResourceExistsError,
+				"resource": map[string]interface{}{
+					"domain": _ovh,
+				},
+			})
+			return
+		}
+	}
+
 	lib.Queue.QueueTask(func(ctx context.Context) error {
 		// Create or update resources
 		resources.CreateOrWriteOvhResource(json.Ref, json.Domain)

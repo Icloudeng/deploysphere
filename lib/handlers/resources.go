@@ -9,8 +9,6 @@ import (
 	"smatflow/platform-installer/lib"
 	"smatflow/platform-installer/lib/files"
 	"smatflow/platform-installer/lib/resources"
-	"smatflow/platform-installer/lib/resources/ovh"
-	"smatflow/platform-installer/lib/resources/proxmox"
 	"smatflow/platform-installer/lib/structs"
 	"smatflow/platform-installer/lib/terraform"
 )
@@ -28,6 +26,10 @@ type ResourcesRef struct {
 	Ref string `uri:"ref" binding:"required,resourceref"`
 }
 
+const ResourceExistsError = `The resource reference already exists. If you plan to create a new resource, 
+please use a different resource reference name or use PUT method to update resource.
+`
+
 func CreateResources(c *gin.Context) {
 	json := Resources{
 		Vm:       structs.NewProxmoxVmQemu(),
@@ -42,6 +44,23 @@ func CreateResources(c *gin.Context) {
 	// Chech if platform the password corresponse to an existing platform folder
 	if !validatePlatform(c, *json.Platform) {
 		return
+	}
+
+	// Check if Resource when post request
+	if c.Request.Method == "POST" {
+		_proxmox := resources.GetProxmoxReferenceResource(json.Ref)
+		_ovh := resources.GetOvhReferenceResource(json.Ref)
+
+		if _proxmox != nil || _ovh != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": ResourceExistsError,
+				"resource": map[string]interface{}{
+					"vm":     _proxmox,
+					"domain": _ovh,
+				},
+			})
+			return
+		}
 	}
 
 	lib.Queue.QueueTask(func(ctx context.Context) error {
@@ -62,7 +81,7 @@ func CreateResources(c *gin.Context) {
 func DeleteResources(c *gin.Context) {
 	var data ResourcesRef
 	if err := c.ShouldBindUri(&data); err != nil {
-		c.AbortWithStatusJSON(400, gin.H{"msg": err})
+		c.AbortWithStatusJSON(400, gin.H{"msg": err.Error()})
 		return
 	}
 
@@ -96,15 +115,10 @@ func GetResourcesState(c *gin.Context) {
 }
 
 func GetResources(c *gin.Context) {
-	res := struct {
-		Proxmox *proxmox.Resource
-		Domain  *ovh.Resource
-	}{
-		Proxmox: resources.GetProxmoxResource(),
-		Domain:  resources.GetOvhResource(),
-	}
-
-	c.JSON(http.StatusOK, res)
+	c.JSON(http.StatusOK, gin.H{
+		"Proxmox": resources.GetProxmoxResource(),
+		"Ovh":     resources.GetOvhResource(),
+	})
 }
 
 func GetPlatforms(c *gin.Context) {
