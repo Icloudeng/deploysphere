@@ -16,7 +16,7 @@
         "protocol": "http"
     },
     "nextcloud": {
-        "port": 443,
-        "protocol": "https"
+        "port": 80,
+        "protocol": "http"
     }
 }

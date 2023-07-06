@@ -14,10 +14,34 @@
     # Playbook init (with decoded_metadata, project_path)
     - include_tasks: ../../tasks/playbook-init.yaml
 
+    - name: Extract Required Variables
+      set_fact:
+        domain: "{{ decoded_metadata | json_query('domain') }}"
+
+    # Validate domain variable
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ domain }}"
+
     - name: Deploy nextcloud and dependencies
       include_role:
         name: install_nextcloud
       vars:
+        # Variable list
+        # https://github.com/nextcloud/ansible-collection-nextcloud-admin/tree/main/roles/install_nextcloud
+        nextcloud_version_channel: "releases"
+        nextcloud_get_latest: true
         nextcloud_db_pwd: "{{ static_secret }}"
         nextcloud_admin_pwd: "{{ static_secret }}"
         nextcloud_mysql_root_pwd: "{{ static_secret }}"
+        nextcloud_install_tls: false
+        nextcloud_tls_enforce: false
+        nextcloud_mozilla_modern_ssl_profile: false
+        nextcloud_websrv: "nginx"
+        nextcloud_trusted_domain:
+          - "{{ domain }}"
+          - "{{ ansible_fqdn }}"
+          - "{{ ansible_default_ipv4.address }}"
+
+        nextcloud_trusted_proxies:
+          - "{{ domain }}"

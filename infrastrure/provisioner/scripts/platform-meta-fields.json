@@ -18,6 +18,10 @@
         "zimbra_timezone",
         "mapping"
     ],
-    "jenkins": [],
-    "nextcloud": []
+    "jenkins": [
+        "domain"
+    ],
+    "nextcloud": [
+        "domain"
+    ]
 }
