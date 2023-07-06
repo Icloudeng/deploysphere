@@ -6,6 +6,8 @@ import (
 	"smatflow/platform-installer/lib/structs"
 )
 
+//######################## OVH Resources ############################//
+
 func GetOvhResource() *ovh.Resource {
 	// Working on ovh resource
 	ovh_resource := ovh.ResourceJSONData{}
@@ -40,6 +42,8 @@ func DeleteOvhDomainZoneResource(ref string) {
 	ovh_resource.GetResource().DeleteDomainZoneRerord(ref)
 }
 
+//######################## Promox Resources ############################//
+
 func GetProxmoxResource() *proxmox.Resource {
 	// Working on ovh resource
 	proxmox_resource := proxmox.ResourceJSONData{}
@@ -52,7 +56,6 @@ func GetProxmoxVmQemuResource(ref string) *structs.ProxmoxVmQemu {
 	return GetProxmoxResource().GetProxmoxVmQemuStruct(ref)
 }
 
-/** Promox resource functions **/
 func CreateOrWriteProxmoxResource(ref string, pm *structs.ProxmoxVmQemu) {
 	// Working on Proxmox resource
 	proxmox_resource := proxmox.ResourceJSONData{}
@@ -73,7 +76,7 @@ func DeleteProxmoxVmQemuResource(ref string) {
 	proxmox_resource.GetResource().DeleteProxmoxVmQemu(ref)
 }
 
-// Initiliaze some function
+// ############## Init resources #####################
 func init() {
 	ovh_resource := &ovh.ResourceJSONData{}
 	proxmox_resource := &proxmox.ResourceJSONData{}
