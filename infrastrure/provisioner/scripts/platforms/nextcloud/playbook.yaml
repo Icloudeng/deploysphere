@@ -37,9 +37,9 @@
         nextcloud_install_tls: false
         nextcloud_tls_enforce: false
         nextcloud_mozilla_modern_ssl_profile: false
-        nextcloud_websrv: "nginx"
+        # nextcloud_websrv: "nginx"
         nextcloud_trusted_domain:
-          - "{{ domain }}"
+          # - "{{ domain }}"
           - "{{ ansible_fqdn }}"
           - "{{ ansible_default_ipv4.address }}"
 
