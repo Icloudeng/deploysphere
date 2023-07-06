@@ -131,6 +131,7 @@ func GetResourcesByReference(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"Vm":     resources.GetProxmoxVmQemuResource(uri.Ref),
 		"Domain": resources.GetOvhDomainZoneResource(uri.Ref),
+		"Ref":    uri.Ref,
 	})
 }
 
