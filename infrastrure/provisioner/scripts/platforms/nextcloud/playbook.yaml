@@ -43,5 +43,4 @@
           - "{{ ansible_fqdn }}"
           - "{{ ansible_default_ipv4.address }}"
 
-        nextcloud_trusted_proxies:
-          - "{{ domain }}"
+        nextcloud_trusted_proxies: ["{{ domain }}"]
