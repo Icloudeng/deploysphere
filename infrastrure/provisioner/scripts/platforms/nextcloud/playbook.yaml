@@ -29,8 +29,8 @@
       vars:
         # Variable list
         # https://github.com/nextcloud/ansible-collection-nextcloud-admin/tree/main/roles/install_nextcloud
-        nextcloud_version_channel: "releases"
-        nextcloud_get_latest: true
+        # nextcloud_version_channel: "releases"
+        # nextcloud_get_latest: true
         nextcloud_db_pwd: "{{ static_secret }}"
         nextcloud_admin_pwd: "{{ static_secret }}"
         nextcloud_mysql_root_pwd: "{{ static_secret }}"
