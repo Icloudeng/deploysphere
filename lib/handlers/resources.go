@@ -48,15 +48,15 @@ func CreateResources(c *gin.Context) {
 
 	// Check if Resource when post request
 	if c.Request.Method == "POST" {
-		_proxmox := resources.GetProxmoxReferenceResource(json.Ref)
-		_ovh := resources.GetOvhReferenceResource(json.Ref)
+		_vm := resources.GetProxmoxVmQemuResource(json.Ref)
+		_domain := resources.GetOvhDomainZoneResource(json.Ref)
 
-		if _proxmox != nil || _ovh != nil {
+		if _vm != nil || _domain != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": ResourceExistsError,
 				"resource": map[string]interface{}{
-					"vm":     _proxmox,
-					"domain": _ovh,
+					"vm":     _vm,
+					"domain": _domain,
 				},
 			})
 			return
@@ -79,16 +79,16 @@ func CreateResources(c *gin.Context) {
 }
 
 func DeleteResources(c *gin.Context) {
-	var data ResourcesRef
-	if err := c.ShouldBindUri(&data); err != nil {
+	var uri ResourcesRef
+	if err := c.ShouldBindUri(&uri); err != nil {
 		c.AbortWithStatusJSON(400, gin.H{"msg": err.Error()})
 		return
 	}
 
 	lib.Queue.QueueTask(func(ctx context.Context) error {
 		// Remove resources
-		resources.DeleteOvhResource(data.Ref)
-		resources.DeleteProxmoxResource(data.Ref)
+		resources.DeleteOvhDomainZoneResource(uri.Ref)
+		resources.DeleteProxmoxVmQemuResource(uri.Ref)
 
 		// Clean up resource event publish
 		// lib.BusEvent.Publish(lib.RESOURCES_CLEANUP_EVENT, domain)
@@ -99,7 +99,7 @@ func DeleteResources(c *gin.Context) {
 		return nil
 	})
 
-	c.JSON(http.StatusOK, data)
+	c.JSON(http.StatusOK, uri)
 }
 
 // Get resources state from terraform
@@ -118,6 +118,19 @@ func GetResources(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"Proxmox": resources.GetProxmoxResource(),
 		"Ovh":     resources.GetOvhResource(),
+	})
+}
+
+func GetResourcesByReference(c *gin.Context) {
+	var uri ResourcesRef
+	if err := c.ShouldBindUri(&uri); err != nil {
+		c.AbortWithStatusJSON(400, gin.H{"msg": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Vm":     resources.GetProxmoxVmQemuResource(uri.Ref),
+		"Domain": resources.GetOvhDomainZoneResource(uri.Ref),
 	})
 }
 

@@ -26,7 +26,7 @@ func CreateDomain(c *gin.Context) {
 
 	// Check if Resource when post request
 	if c.Request.Method == "POST" {
-		_ovh := resources.GetOvhReferenceResource(json.Ref)
+		_ovh := resources.GetOvhDomainZoneResource(json.Ref)
 
 		if _ovh != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -60,7 +60,7 @@ func DeleteDomain(c *gin.Context) {
 
 	lib.Queue.QueueTask(func(ctx context.Context) error {
 		// Remove resources
-		resources.DeleteOvhResource(data.Ref)
+		resources.DeleteOvhDomainZoneResource(data.Ref)
 		// Terraform Apply changes
 		defer terraform.Tf.Apply()
 		return nil

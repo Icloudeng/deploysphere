@@ -38,13 +38,13 @@ func CreateVm(c *gin.Context) {
 
 	// Check if Resource when post request
 	if c.Request.Method == "POST" {
-		_proxmox := resources.GetProxmoxReferenceResource(json.Ref)
+		_vm := resources.GetProxmoxVmQemuResource(json.Ref)
 
-		if _proxmox != nil {
+		if _vm != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": ResourceExistsError,
 				"resource": map[string]interface{}{
-					"vm": _proxmox,
+					"vm": _vm,
 				},
 			})
 			return
@@ -74,7 +74,7 @@ func DeleteVm(c *gin.Context) {
 
 	lib.Queue.QueueTask(func(ctx context.Context) error {
 		// Remove resources
-		resources.DeleteProxmoxResource(data.Ref)
+		resources.DeleteProxmoxVmQemuResource(data.Ref)
 		// Terraform Apply changes
 		defer terraform.Tf.Apply()
 		return nil

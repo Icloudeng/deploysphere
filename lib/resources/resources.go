@@ -14,7 +14,7 @@ func GetOvhResource() *ovh.Resource {
 	return ovh_resource.GetResource()
 }
 
-func GetOvhReferenceResource(ref string) *structs.DomainZoneRecord {
+func GetOvhDomainZoneResource(ref string) *structs.DomainZoneRecord {
 	return GetOvhResource().GetDomainZoneRerordStruct(ref)
 }
 
@@ -29,7 +29,7 @@ func CreateOrWriteOvhResource(ref string, domain *structs.DomainZoneRecord) {
 	ovh_resource.GetResource().AddDomainZoneRerord(ref, domain)
 }
 
-func DeleteOvhResource(ref string) {
+func DeleteOvhDomainZoneResource(ref string) {
 	// Working on ovh resource
 	ovh_resource := ovh.ResourceJSONData{}
 	ovh_resource.ParseResourcesJSON()
@@ -48,7 +48,7 @@ func GetProxmoxResource() *proxmox.Resource {
 	return proxmox_resource.GetResource()
 }
 
-func GetProxmoxReferenceResource(ref string) *structs.ProxmoxVmQemu {
+func GetProxmoxVmQemuResource(ref string) *structs.ProxmoxVmQemu {
 	return GetProxmoxResource().GetProxmoxVmQemuStruct(ref)
 }
 
@@ -63,7 +63,7 @@ func CreateOrWriteProxmoxResource(ref string, pm *structs.ProxmoxVmQemu) {
 	proxmox_resource.GetResource().AddProxmoxVmQemu(ref, pm)
 }
 
-func DeleteProxmoxResource(ref string) {
+func DeleteProxmoxVmQemuResource(ref string) {
 	// Working on Proxmox resource
 	proxmox_resource := proxmox.ResourceJSONData{}
 	proxmox_resource.ParseResourcesJSON()
