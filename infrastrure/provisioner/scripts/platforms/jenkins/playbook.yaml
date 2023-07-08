@@ -55,7 +55,7 @@
         state: present
 
     - name: Update Jenkins password
-      blockinfile:
-        path: /var/lib/jenkins/secrets/initialAdminPassword
-        create: no
-        block: "{{ static_secret }}"
+      become: false
+      copy:
+        dest: /var/lib/jenkins/secrets/initialAdminPassword
+        content: "{{ static_secret }}"

@@ -43,7 +43,7 @@ func CreateDomain(c *gin.Context) {
 		// Create or update resources
 		resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
 		// Terraform Apply changes
-		defer terraform.Tf.Apply()
+		defer terraform.Tf.Apply(true)
 		return nil
 	})
 
@@ -62,7 +62,7 @@ func DeleteDomain(c *gin.Context) {
 		// Remove resources
 		resources.DeleteOvhDomainZoneResource(data.Ref)
 		// Terraform Apply changes
-		defer terraform.Tf.Apply()
+		defer terraform.Tf.Apply(true)
 		return nil
 	})
 

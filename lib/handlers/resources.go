@@ -71,7 +71,7 @@ func CreateResources(c *gin.Context) {
 		resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
 
 		// Terraform Apply changes
-		defer terraform.Tf.Apply()
+		defer terraform.Tf.Apply(true)
 		return nil
 	})
 
@@ -94,7 +94,7 @@ func DeleteResources(c *gin.Context) {
 		// lib.BusEvent.Publish(lib.RESOURCES_CLEANUP_EVENT, domain)
 
 		// Terraform Apply changes
-		defer terraform.Tf.Apply()
+		defer terraform.Tf.Apply(true)
 
 		return nil
 	})

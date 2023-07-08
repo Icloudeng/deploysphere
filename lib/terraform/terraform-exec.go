@@ -4,7 +4,9 @@ import (
 	"context"
 	"log"
 	"path"
+	"smatflow/platform-installer/lib"
 	"smatflow/platform-installer/lib/files"
+	"smatflow/platform-installer/lib/structs"
 
 	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/hc-install/product"
@@ -46,7 +48,7 @@ func init() {
 	Tf.tk = tf
 }
 
-func (t *Terrafrom) Plan() {
+func (t *Terrafrom) Plan(notifier bool) error {
 	tf := t.tk
 	ctx := context.Background()
 
@@ -56,11 +58,24 @@ func (t *Terrafrom) Plan() {
 
 	state, err := tf.Plan(ctx, options...)
 	if err != nil {
+
+		if notifier {
+			go func() {
+				lib.BusEvent.Publish(lib.NOTIFIER_RESOURCES_EVENT, structs.Notifier{
+					Status:  "failed",
+					Details: "Terraform Plan",
+					Logs:    err.Error(),
+				})
+			}()
+		}
+
 		log.Printf("error running Show: %s", err.Error())
-		return
+		return err
 	}
 
 	log.Printf("Terraform plan state: %v", state)
+
+	return nil
 }
 
 func (t *Terrafrom) Show() *tfjson.StateModule {
@@ -76,8 +91,10 @@ func (t *Terrafrom) Show() *tfjson.StateModule {
 	return state.Values.RootModule
 }
 
-func (t *Terrafrom) Apply() {
-	t.Plan()
+func (t *Terrafrom) Apply(notifier bool) {
+	if error := t.Plan(notifier); error != nil {
+		return
+	}
 
 	tf := t.tk
 	ctx := context.Background()
@@ -87,6 +104,16 @@ func (t *Terrafrom) Apply() {
 
 	err := tf.Apply(ctx, options...)
 	if err != nil {
+		if notifier {
+			go func() {
+				lib.BusEvent.Publish(lib.NOTIFIER_RESOURCES_EVENT, structs.Notifier{
+					Status:  "failed",
+					Details: "Terraform Apply",
+					Logs:    err.Error(),
+				})
+			}()
+		}
+
 		log.Printf("Error running Show: %s", err)
 		return
 	}

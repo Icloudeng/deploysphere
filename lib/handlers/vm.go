@@ -57,7 +57,7 @@ func CreateVm(c *gin.Context) {
 		// Create or update resources
 		resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
 		// Terraform Apply changes
-		defer terraform.Tf.Apply()
+		defer terraform.Tf.Apply(true)
 		return nil
 	})
 
@@ -76,7 +76,7 @@ func DeleteVm(c *gin.Context) {
 		// Remove resources
 		resources.DeleteProxmoxVmQemuResource(data.Ref)
 		// Terraform Apply changes
-		defer terraform.Tf.Apply()
+		defer terraform.Tf.Apply(true)
 		return nil
 	})
 
