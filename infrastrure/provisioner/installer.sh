@@ -83,7 +83,7 @@ ansible_extra_vars+=" random_secret=$random_secret admin_email=$admin_email" # M
 ansible_extra_vars+=" static_secret=$static_secret"                          # Must start with empty space
 
 # Notification Installer details
-installer_details="Platform: $platform\nMachine IP: $vm_ip\n"
+installer_details="Platform: $platform\nMachine IP: $vm_ip\n\n"
 installer_details+="Static Secret=$static_secret\n"
 
 # Notify before playbook
