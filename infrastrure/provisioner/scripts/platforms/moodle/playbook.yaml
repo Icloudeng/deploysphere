@@ -37,3 +37,10 @@
 
     # docker install
     - include_tasks: docker-install.yaml
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        variable: |
+          Login
+          Username={{ moodle_username }}
+          Password={{ static_secret }}

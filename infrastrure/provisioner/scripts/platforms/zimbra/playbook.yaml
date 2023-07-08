@@ -36,3 +36,10 @@
         zimbra_fqdn: "{{ zimbra_fqdn }}"
         zimbra_timezone: "{{ zimbra_timezone }}"
         zimbra_admin_password: "{{ static_secret }}"
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        variable: |
+          Login
+          Username=admin
+          Password={{ static_secret }}

@@ -40,3 +40,10 @@
     - include_tasks: manual-install.yaml
       tags: [frappe, docker, nodejs, mysql]
       when: ansible_python_version is version('3.10.0', '>=')
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        variable: |
+          Login
+          Username=Administrator
+          Password={{ static_secret }}
