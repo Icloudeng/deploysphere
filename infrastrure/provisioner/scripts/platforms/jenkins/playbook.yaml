@@ -55,7 +55,7 @@
         state: present
 
     - name: Update Jenkins password
-      become: false
+      become: true
       copy:
         dest: /var/lib/jenkins/secrets/initialAdminPassword
         content: "{{ static_secret }}"
