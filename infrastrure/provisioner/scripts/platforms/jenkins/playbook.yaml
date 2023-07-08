@@ -54,8 +54,11 @@
         name: jenkins
         state: present
 
-    - name: Update Jenkins password
-      become: true
-      copy:
-        dest: /var/lib/jenkins/secrets/initialAdminPassword
-        content: "{{ static_secret }}"
+    - name: Default Jenkins initialAdminPassword
+      ansible.builtin.slurp:
+        src: /var/lib/jenkins/secrets/initialAdminPassword
+      register: initialAdminPassword
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        variable: "initialAdminPassword={{ initialAdminPassword['content'] | b64decode }}"

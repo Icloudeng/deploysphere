@@ -68,6 +68,9 @@ static_secret=$($python_command -c "import hashlib; print(hashlib.sha256('$stati
 # Read variables from /root/.env variable and pass them to extra variable
 getenv="$python_command lib/getenv.py"
 
+# extract variable
+extract_vars="$python_command lib/extract_vars.py"
+
 # Get the last total ansible logs file line number
 logs_lines=$(wc -l <$ansible_log_file | tr -d '[:space:]')
 
@@ -125,8 +128,11 @@ fi
 ansible_logs=$(tail -n +$logs_lines $ansible_log_file)
 ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 
+# Read and extract variables exposed from ansible logs
+exposed_variables=$($extract_vars "$ansible_logs")
+
 # Execute python notifier script
-installer_details+="Random Secret=$random_secret\n"
+installer_details+="Random Secret=$random_secret\n\n$exposed_variables\n"
 $python_command lib/notifier.py --logs "$ansible_logs_4096" --status "$ran_status" --details "$installer_details" --metadata "$metadata"
 
 # Deactivate the virtual environment
