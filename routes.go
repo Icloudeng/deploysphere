@@ -21,18 +21,18 @@ func BindLocalJobsRoutes(api *gin.RouterGroup) {
 	api.GET("/resources/state", handlers.GetResourcesState)
 
 	// Domain
-	api.POST("/resource/domain", handlers.CreateDomain)
+	api.POST("/resources/domain", handlers.CreateDomain)
 
-	api.PUT("/resource/domain", handlers.CreateDomain)
+	api.PUT("/resources/domain", handlers.CreateDomain)
 
-	api.DELETE("/resource/domain/:ref", handlers.DeleteDomain)
+	api.DELETE("/resources/domain/:ref", handlers.DeleteDomain)
 
 	//VM
-	api.POST("/resource/vm", handlers.CreateVm)
+	api.POST("/resources/vm", handlers.CreateVm)
 
-	api.PUT("/resource/vm", handlers.CreateVm)
+	api.PUT("/resources/vm", handlers.CreateVm)
 
-	api.DELETE("/resource/vm/:ref", handlers.DeleteVm)
+	api.DELETE("/resources/vm/:ref", handlers.DeleteVm)
 
 	// Platforms
 	api.GET("/platforms", handlers.GetPlatforms)
