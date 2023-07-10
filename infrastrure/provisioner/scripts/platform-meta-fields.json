@@ -30,5 +30,6 @@
     ],
     "redash": [
         "domain"
-    ]
+    ],
+    "mysql": []
 }

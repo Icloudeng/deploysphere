@@ -55,10 +55,12 @@
         state: present
 
     - name: Default Jenkins initialAdminPassword
+      ignore_errors: true
       ansible.builtin.slurp:
         src: /var/lib/jenkins/secrets/initialAdminPassword
       register: initialAdminPassword
 
     - include_tasks: ../../tasks/expose-variable.yaml
+      ignore_errors: true
       vars:
         variable: "initialAdminPassword={{ initialAdminPassword['content'] | b64decode }}"
