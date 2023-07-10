@@ -1,0 +1,53 @@
+---
+- name: Jupyterhub
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path)
+    - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Extract Required Variables
+      set_fact:
+        domain: "{{ decoded_metadata | json_query('domain') }}"
+        admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
+
+    # Validate domain variable
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ domain }}"
+
+    # Validate admin_username variable
+    - include_tasks: ../../tasks/validator/username-regex.yaml
+      vars:
+        username_var: "{{ admin_username }}"
+
+    - name: Install Package prerequisite
+      ansible.builtin.package:
+        name:
+          - python3
+          - python3-setuptools
+          - python3-distutils
+          - python3-pip
+          - python3-dev
+          - git
+          - curl
+        state: present
+
+    - name: Install Jupyterhub
+      shell: "curl -L https://tljh.jupyter.org/bootstrap.py  | sudo python3 -  --admin {{ admin_username }}:{{ static_secret }}"
+      args:
+        executable: /bin/bash
+        chdir: "{{ project_path }}"
+        creates: "/opt/tljh"
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        variable: |
+          Login
+          Username={{ admin_username }}
+          Password={{ static_secret }}

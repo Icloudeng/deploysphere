@@ -23,5 +23,9 @@
     ],
     "nextcloud": [
         "domain"
+    ],
+    "juperhub": [
+        "domain",
+        "admin_username"
     ]
 }
