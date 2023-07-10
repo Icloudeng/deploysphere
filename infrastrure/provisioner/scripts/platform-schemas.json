@@ -22,5 +22,9 @@
     "juperhub": {
         "port": 80,
         "protocol": "http"
+    },
+    "redash": {
+        "port": 80,
+        "protocol": "http"
     }
 }

@@ -27,5 +27,8 @@
     "juperhub": [
         "domain",
         "admin_username"
+    ],
+    "redash": [
+        "domain"
     ]
 }
