@@ -19,7 +19,7 @@
         "port": 443,
         "protocol": "https"
     },
-    "juperhub": {
+    "jupyterhub": {
         "port": 80,
         "protocol": "http"
     },
