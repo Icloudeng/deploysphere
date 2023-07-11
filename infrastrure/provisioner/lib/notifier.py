@@ -28,16 +28,46 @@ def create_bot():
     return bot, chat_id
 
 
-def get_decoded_domain(metadata: str):
-    domain = None
+def decode_metadata(metadata: str):
+    data = {}
     try:
         decoded_bytes = base64.b64decode(metadata)
         data = json.loads(decoded_bytes.decode("utf-8"))
-        domain = data.get(DOMAIN_KEY, None)
+    except Exception as e:
+        logging.warn(e)
+
+    return data
+
+
+def get_domain(decoded_metadata: dict):
+    domain = None
+    try:
+        domain = decoded_metadata.get(DOMAIN_KEY, None)
     except Exception as e:
         logging.warn(e)
 
     return domain
+
+
+def get_custom_telegram_chat_id(decoded_metadata: dict):
+    chat_id = None
+    try:
+        chat_id = decoded_metadata.get("_notifier_telegram_chat_id", None)
+    except Exception as e:
+        logging.warn(e)
+
+    return chat_id
+
+
+def ignore_notifier(decoded_metadata: dict):
+    ignore = False
+    try:
+        ignore = decoded_metadata.get("_notifier", None) == False or decoded_metadata.get(
+            "_notifier", None) == "false"
+    except Exception as e:
+        logging.warn(e)
+
+    return ignore
 
 
 async def send_notification(encode_logs: str, status: str, installer_details: str, metadata: str):
@@ -45,6 +75,18 @@ async def send_notification(encode_logs: str, status: str, installer_details: st
     if bot == None:
         logging.warn("Invalid BOT Configuration!")
         return
+
+    decoded_metadata = decode_metadata(metadata)
+    ignore = ignore_notifier(decoded_metadata)
+
+    if ignore == True:
+        logging.info("Notifier ignored...!")
+        return
+
+    custom_chat_id = get_custom_telegram_chat_id(decoded_metadata)
+    if custom_chat_id:
+        chat_id = custom_chat_id
+
     # Decode message and send
     try:
         status_emoji = {
@@ -59,7 +101,8 @@ async def send_notification(encode_logs: str, status: str, installer_details: st
         sumzy = decoded_logs.find('========================================')
         sumzy = sumzy if sumzy > -1 else 0
         decoded_logs = decoded_logs[sumzy:]
-        domain = get_decoded_domain(metadata)
+
+        domain = get_domain(decoded_metadata)
 
         domain_text = f"\n\nDomain: {domain}\n\n" if domain else ""
 

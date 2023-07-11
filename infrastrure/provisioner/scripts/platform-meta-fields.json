@@ -16,7 +16,7 @@
     "zimbra": [
         "zimbra_fqdn",
         "zimbra_timezone",
-        "mapping"
+        "_mapping"
     ],
     "jenkins": [
         "domain"

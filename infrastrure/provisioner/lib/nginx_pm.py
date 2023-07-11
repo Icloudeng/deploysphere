@@ -63,9 +63,9 @@ def get_decoded_domain(metadata: str):
     decoded_bytes = base64.b64decode(metadata)
     data = json.loads(decoded_bytes.decode("utf-8"))
     domain = data.get(DOMAIN_KEY, None)
-    # If mapping was passed then ignore the current mapping processs
-    ignore = data.get("mapping", None) == False or data.get(
-        "mapping", None) == "false"
+    # If _mapping was passed then ignore the current _mapping processs
+    ignore = data.get("_mapping", None) == False or data.get(
+        "_mapping", None) == "false"
 
     if ignore:
         return None
