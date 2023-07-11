@@ -6,3 +6,12 @@ collections:
 roles:
   - name: geerlingguy.php-versions
     version: 5.0.1
+
+  - name: systemli.apt_repositories
+    version: 2.1.0
+
+  - name: systemli.letsencrypt
+    version: 2.3.0
+
+  - name: systemli.jitsi_meet
+    version: 3.1.0

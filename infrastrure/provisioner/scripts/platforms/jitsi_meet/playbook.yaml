@@ -1,0 +1,36 @@
+---
+- name: Jitsi Meet
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    jitsi_meet_server_name: "{{ domain }}"
+    letsencrypt_cert:
+      name: "{{ jitsi_meet_server_name }}"
+      domains:
+        - "{{ jitsi_meet_server_name }}"
+      challenge: dns
+
+  tasks:
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path)
+    - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Extract Required Variables
+      set_fact:
+        domain: "{{ decoded_metadata | json_query('domain') }}"
+
+    # Validate domain variable
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ domain }}"
+
+    - name: Let's encrypt
+      include_role:
+        name: systemli.letsencrypt
+
+    - name: Install Jitsi Meet
+      include_role:
+        name: systemli.jitsi_meet

@@ -31,5 +31,9 @@
     "redash": [
         "domain"
     ],
-    "mysql": []
+    "mysql": [],
+    "jitsi_meet": [
+        "domain",
+        "_mapping"
+    ]
 }
