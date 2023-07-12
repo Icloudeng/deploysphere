@@ -25,6 +25,7 @@
         name: systemli.letsencrypt
       vars:
         jitsi_meet_server_name: "{{ domain }}"
+        letsencrypt_account_email: "{{ admin_email }}"
         letsencrypt_cert:
           name: "{{ jitsi_meet_server_name }}"
           domains:
@@ -36,6 +37,7 @@
         name: systemli.jitsi_meet
       vars:
         jitsi_meet_server_name: "{{ domain }}"
+        letsencrypt_account_email: "{{ admin_email }}"
         letsencrypt_cert:
           name: "{{ jitsi_meet_server_name }}"
           domains:
