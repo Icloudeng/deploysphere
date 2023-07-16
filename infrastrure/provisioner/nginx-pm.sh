@@ -46,7 +46,7 @@ if [ -z "$metadata" ] || [ -z "$action" ]; then
 fi
 
 # Include python command and activate python venv
-source $MY_DIR/bash/ansible_init.sh
+source $MY_DIR/bash/init.sh
 
 # Execute Nginx Proxy Manager (Domain mapping)
 $python_command lib/nginx_pm.py --action "$action" --metadata "$metadata" --platform "$platform" --ip "$ip"

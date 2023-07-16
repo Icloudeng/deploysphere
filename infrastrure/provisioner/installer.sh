@@ -58,24 +58,15 @@ else
 fi
 
 # Include python command and activate python venv
-source $MY_DIR/bash/ansible_init.sh
+source $MY_DIR/bash/init.sh
 source $MY_DIR/bash/functions.sh
 
 # Generate static token based on platform name
 static_secret_name="$platform-$(date +%Y-%m)"
 static_secret=$($python_command -c "import hashlib; print(hashlib.sha256('$static_secret_name'.encode()).hexdigest()[:32])")
 
-# Read variables from /root/.env variable and pass them to extra variable
-getenv="$python_command lib/getenv.py"
-
-# extract variable
-extract_vars="$python_command lib/extract_vars.py"
-
 # Get the last total ansible logs file line number
 logs_lines=$(wc -l <$ansible_log_file | tr -d '[:space:]')
-
-# Get admin system email
-admin_email=$([ -z "$($getenv ADMIN_SYSTEM_EMAIL)" ] && echo "admin@smatflow.com" || echo "$($getenv ADMIN_SYSTEM_EMAIL)")
 
 ################ Ansible extra-vars ################
 ansible_extra_vars="platform_metadata=$metadata platform_name=$platform"
@@ -90,26 +81,8 @@ installer_details+="Static Secret=$static_secret\n"
 message_info=$(echo "Provisioning Started..." | base64)
 $python_command lib/notifier.py --logs "$message_info" --status "info" --details "$installer_details" --metadata "$metadata"
 
-# Run Ansible playbook
-if [ -f "./private-key.pem" ]; then
-    chmod 600 ./private-key.pem
-    ansible-playbook -u "$ansible_user" -i "$vm_ip," --private-key "./private-key.pem" "$playbook_path" --extra-vars "$ansible_extra_vars"
-    # Capture the exit code of the Ansible playbook command
-    playbook_result=$?
-else
-    ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path" --extra-vars "$ansible_extra_vars"
-    # Capture the exit code of the Ansible playbook command
-    playbook_result=$?
-fi
-
-# Send notification accordingly
-if [ $playbook_result -eq 0 ]; then
-    echo "Playbook succeeded!"
-    ran_status="succeeded"
-else
-    echo "Playbook failed!"
-    ran_status="failed"
-fi
+# Run Ansible playbook (Function) -> (ran_status: succeeded | failed)
+execute_ansible_playbook
 
 # Create domain mapping with (nginx|treafik)
 if [ "$ran_status" == "succeeded" ]; then
@@ -134,6 +107,11 @@ exposed_variables=$($extract_vars "$ansible_logs")
 # Execute python notifier script
 installer_details+="Random Secret=$random_secret\n\n$exposed_variables\n"
 $python_command lib/notifier.py --logs "$ansible_logs_4096" --status "$ran_status" --details "$installer_details" --metadata "$metadata"
+
+if [ "$ran_status" == "succeeded" ]; then
+    # Include LDAP Script
+    source $MY_DIR/bash/ldap_executor.sh
+fi
 
 # Deactivate the virtual environment
 deactivate

@@ -18,7 +18,7 @@ fi
 if [[ "$(uname)" == "Linux" ]]; then
     # Check if pip is installed
     sudo apt-get update
-    sudo apt-get -y install python3-venv python3-pip
+    sudo apt-get -y install python3-venv python3-pip jq
 fi
 
 # Create Python virtual environment
@@ -58,3 +58,18 @@ if [[ ! -f $ansible_log_file ]]; then
 fi
 
 random_secret=$($python_command -c 'import secrets; print(secrets.token_hex(16))')
+
+# ############### PYTHON FUNTIONS ###############
+# Read variables from /root/.env variable and pass them to extra variable
+getenv="$python_command lib/getenv.py"
+
+# extract variable (format: %%variables%%)
+extract_vars="$python_command lib/extract_vars.py"
+
+# Decode Metadata and can pass key
+get_decoded_metadata="$python_command lib/metadata.py"
+
+# ############### PYTHON FUNTIONS ###############
+
+# Get admin system email
+admin_email=$([ -z "$($getenv ADMIN_SYSTEM_EMAIL)" ] && echo "admin@smatflow.com" || echo "$($getenv ADMIN_SYSTEM_EMAIL)")

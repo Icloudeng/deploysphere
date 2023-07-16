@@ -17,3 +17,25 @@ get_last_n_chars() {
         echo "${input_string:$start_position}"
     fi
 }
+
+execute_ansible_playbook() {
+    if [ -f "./private-key.pem" ]; then
+        chmod 600 ./private-key.pem
+        ansible-playbook -u "$ansible_user" -i "$vm_ip," --private-key "./private-key.pem" "$playbook_path" --extra-vars "$ansible_extra_vars"
+        # Capture the exit code of the Ansible playbook command
+        playbook_result=$?
+    else
+        ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path" --extra-vars "$ansible_extra_vars"
+        # Capture the exit code of the Ansible playbook command
+        playbook_result=$?
+    fi
+
+    if [ $playbook_result -eq 0 ]; then
+        echo "Playbook succeeded!"
+        ran_status="succeeded"
+    else
+        echo "Playbook failed!"
+        ran_status="failed"
+    fi
+
+}
