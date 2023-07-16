@@ -62,8 +62,7 @@ source $MY_DIR/bash/init.sh
 source $MY_DIR/bash/functions.sh
 
 # Generate static token based on platform name
-static_secret_name="$platform-$(date +%Y-%m)"
-static_secret=$($python_command -c "import hashlib; print(hashlib.sha256('$static_secret_name'.encode()).hexdigest()[:32])")
+static_secret=$(get_platform_static_secret)
 
 # Get the last total ansible logs file line number
 logs_lines=$(wc -l <$ansible_log_file | tr -d '[:space:]')

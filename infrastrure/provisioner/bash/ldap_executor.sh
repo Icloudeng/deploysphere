@@ -18,8 +18,13 @@ else
 fi
 
 # Overwrite global varaible
+# Generate static token based on platform name
+static_secret=$(get_platform_static_secret)
+
 ################ Ansible extra-vars ################
-ansible_extra_vars="platform_metadata=$metadata platform_name=$platform admin_email=$admin_email"
+ansible_extra_vars="platform_metadata=$metadata platform_name=$platform"
+ansible_extra_vars+=" random_secret=$random_secret admin_email=$admin_email" # Must start with empty space
+ansible_extra_vars+=" static_secret=$static_secret"                          # Must start with empty space
 
 # Get the last total ansible logs file line number (Before ansible execution)
 logs_lines=$(wc -l <$ansible_log_file | tr -d '[:space:]')
@@ -35,5 +40,5 @@ ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 exposed_variables=$($extract_vars "$ansible_logs")
 
 # Execute python notifier script
-installer_details+="EXECUTION TYPE: LDAP\n\n$exposed_variables\n"
+installer_details="EXECUTION TYPE: LDAP\n\n$exposed_variables\n"
 $python_command lib/notifier.py --logs "$ansible_logs_4096" --status "$ran_status" --details "$installer_details" --metadata "$metadata"

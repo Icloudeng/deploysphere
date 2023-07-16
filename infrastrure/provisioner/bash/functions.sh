@@ -37,5 +37,10 @@ execute_ansible_playbook() {
         echo "Playbook failed!"
         ran_status="failed"
     fi
+}
 
+get_platform_static_secret() {
+    static_secret_name="$platform-$(date +%Y-%m)"
+    static_secret=$($python_command -c "import hashlib; print(hashlib.sha256('$static_secret_name'.encode()).hexdigest()[:32])")
+    echo $static_secret
 }
