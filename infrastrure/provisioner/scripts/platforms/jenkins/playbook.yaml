@@ -62,5 +62,6 @@
 
     - include_tasks: ../../tasks/expose-variable.yaml
       ignore_errors: true
+      when: initialAdminPassword.content is defined
       vars:
         variable: "initialAdminPassword={{ initialAdminPassword['content'] | b64decode }}"
