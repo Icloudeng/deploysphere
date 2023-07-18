@@ -15,11 +15,15 @@
       set_fact:
         zimbra_fqdn: "{{ decoded_metadata | json_query('zimbra_fqdn') }}"
         zimbra_timezone: "{{ decoded_metadata | json_query('zimbra_timezone') }}"
+        zimbra_domain: "{{ decoded_metadata | json_query('zimbra_domain') }}"
 
     # Validate domain variables
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
-        domain_var: "{{ zimbra_fqdn }}"
+        domain_var: "{{ item }}"
+      loop:
+        - "{{ zimbra_fqdn }}"
+        - "{{ zimbra_domain }}"
 
     # Validate timezone variables
     - include_tasks: ../../tasks/validator/timezone-regex.yaml
@@ -36,6 +40,7 @@
         zimbra_fqdn: "{{ zimbra_fqdn }}"
         zimbra_timezone: "{{ zimbra_timezone }}"
         zimbra_admin_password: "{{ static_secret }}"
+        ansible_domain: "{{ zimbra_domain }}"
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:

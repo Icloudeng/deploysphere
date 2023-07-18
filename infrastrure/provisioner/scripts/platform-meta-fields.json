@@ -16,6 +16,7 @@
     "zimbra": [
         "zimbra_fqdn",
         "zimbra_timezone",
+        "zimbra_domain",
         "_mapping"
     ],
     "jenkins": [
@@ -35,5 +36,8 @@
     "jitsi_meet": [
         "domain",
         "_mapping"
+    ],
+    "keycloak": [
+        "domain"
     ]
 }

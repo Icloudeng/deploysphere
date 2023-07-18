@@ -5,7 +5,8 @@
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/erpnext/manual-install.yaml",
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/erpnext/docker-install.yaml",
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/moodle/docker-install.yaml"
-        ]
+        ],
+        "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/playbook": "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/zimbra/ldap-playbook.yaml"
     },
     "deepscan.ignoreConfirmWarning": true
 }

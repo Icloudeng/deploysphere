@@ -1,0 +1,22 @@
+version: '3'
+
+volumes:
+  postgres_data:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:14
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0
+    env_file:
+      - .env
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres

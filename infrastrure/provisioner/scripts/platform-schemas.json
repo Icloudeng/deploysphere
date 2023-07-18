@@ -26,5 +26,9 @@
     "redash": {
         "port": 80,
         "protocol": "http"
+    },
+    "keycloak": {
+        "port": 8080,
+        "protocol": "http"
     }
 }

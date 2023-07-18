@@ -1,3 +1,18 @@
 {
-    "zimbra": []
+    "zimbra": {
+        "fields": [
+            "admin_username",
+            "admin_password",
+            "zimbra_fqdn",
+            "zimbra_domain"
+        ],
+        "ldap": [
+            "server_url",
+            "server_port",
+            "filter_username",
+            "search_base",
+            "bind_dn",
+            "bind_password"
+        ]
+    }
 }
