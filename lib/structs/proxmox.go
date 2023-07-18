@@ -21,7 +21,7 @@ var IGNORE_CHANGES []string = []string{
 }
 
 type ProxmoxVmQemu struct {
-	Name        string `json:"name" binding:"required"`
+	Name        string `json:"name" binding:"required,resourceref"`
 	TargetNode  string `json:"target_node" binding:"required"`
 	Vmid        int    `json:"vmid" binding:"number"`
 	Description string `json:"desc"`
