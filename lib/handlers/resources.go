@@ -94,6 +94,11 @@ func DeleteResources(c *gin.Context) {
 		// lib.BusEvent.Publish(lib.RESOURCES_CLEANUP_EVENT, domain)
 
 		// Terraform Apply changes
+		defer lib.BusEvent.Publish(lib.NOTIFIER_RESOURCES_EVENT, structs.Notifier{
+			Status:  "info",
+			Details: "Ref: " + uri.Ref,
+			Logs:    "Resources deleted",
+		})
 		defer terraform.Tf.Apply(true)
 
 		return nil

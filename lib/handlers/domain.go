@@ -62,6 +62,11 @@ func DeleteDomain(c *gin.Context) {
 		// Remove resources
 		resources.DeleteOvhDomainZoneResource(data.Ref)
 		// Terraform Apply changes
+		defer lib.BusEvent.Publish(lib.NOTIFIER_RESOURCES_EVENT, structs.Notifier{
+			Status:  "info",
+			Details: "Ref: " + data.Ref,
+			Logs:    "Domain Resource deleted",
+		})
 		defer terraform.Tf.Apply(true)
 		return nil
 	})
