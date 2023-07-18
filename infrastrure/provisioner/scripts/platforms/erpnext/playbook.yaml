@@ -4,7 +4,6 @@
   become: true
   gather_facts: true
   vars:
-    mysql_root_password: "{{ platform_name }}"
     node_version: 18
     frappe_version: 14
 
@@ -13,9 +12,13 @@
     - include_tasks: ../../tasks/cloud-init.yaml
       tags: [init]
 
-    # Playbook init (with decoded_metadata, project_path)
+    # Playbook init (with decoded_metadata, project_path, app_secret)
     - include_tasks: ../../tasks/playbook-init.yaml
       tags: [init]
+
+    - name: Fact | Mysql Password
+      set_fact:
+        mysql_root_password: "{{ app_secret }}"
 
     - name: Extract Required Variables
       tags: [init]

@@ -8,36 +8,12 @@
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
 
-    # Playbook init (with decoded_metadata, project_path)
+    # Playbook init (with decoded_metadata, project_path, app_secret)
     - include_tasks: ../../tasks/playbook-init.yaml
 
     - name: Fact | Mysql Password
       set_fact:
-        mysql_root_password: "{{ random_secret }}"
-
-    - name: MYSQL | Check if file exists
-      stat:
-        path: "{{ project_path }}/root-password.txt"
-      register: file_stat
-
-    - name: Use Existing mysql password
-      block:
-        - name: MYSQL | Read the password content now
-          ansible.builtin.slurp:
-            src: "{{ project_path }}/root-password.txt"
-          register: rfile
-
-        - name: Fact | Mysql Password
-          set_fact:
-            mysql_root_password: "{{ rfile['content'] | b64decode }}"
-
-      when: file_stat.stat.exists and file_stat.stat.size > 0
-
-    - name: MYSQL | Create file with content
-      copy:
-        dest: "{{ project_path }}/root-password.txt"
-        content: "{{ mysql_root_password }}"
-      when: not file_stat.stat.exists or file_stat.stat.size == 0
+        mysql_root_password: "{{ app_secret }}"
 
     # Install mysql
     - include_tasks: ../../tasks/mysql.yaml

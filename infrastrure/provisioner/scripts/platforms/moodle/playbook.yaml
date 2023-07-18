@@ -3,15 +3,17 @@
   hosts: all
   become: true
   gather_facts: true
-  vars:
-    database_password: "{{ platform_name }}"
 
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
 
-    # Playbook init (with decoded_metadata, project_path)
+    # Playbook init (with decoded_metadata, project_path, app_secret)
     - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Fact | Database Password
+      set_fact:
+        database_password: "{{ app_secret }}"
 
     - name: Extract Required Variables
       set_fact:

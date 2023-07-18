@@ -22,3 +22,9 @@ ms {{ zimbra_fqdn }} zimbraAutoProvPollingInterval "1m"
 ms {{ zimbra_fqdn }} +zimbraAutoProvScheduledDomains "{{ zimbra_domain }}"
 
 md {{ zimbra_domain }} zimbraAutoProvLastPolledTimestamp ""
+
+
+mcf zimbraAuthMech external
+mcf zimbraAuthLdapURL "ldap{{ 's' if ldap['server_port'] == 636 else '' }}://{{ ldap['server_url'] }}:{{ ldap['server_port'] }}"
+mcf zimbraAuthLdapBindDN "{{ ldap['bind_dn'] }}"
+mcf zimbraAuthLdapBindPassword "{{ ldap['bind_dn'] }}"

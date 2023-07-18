@@ -38,3 +38,31 @@
 - name: "Var | Debug admin_email"
   debug:
     var: admin_email
+
+# DB or File secret
+- name: Fact | App Secret
+  set_fact:
+    app_secret: "{{ random_secret }}"
+
+- name: App Secret | Check if file exists
+  stat:
+    path: "{{ project_path }}/.app_secret"
+  register: file_stat
+
+- name: Use Existing App Secret
+  block:
+    - name: App Secret | Read the secret content
+      ansible.builtin.slurp:
+        src: "{{ project_path }}/.app_secret"
+      register: rfile
+
+    - name: Fact | Read the secret content
+      set_fact:
+        app_secret: "{{ rfile['content'] | b64decode }}"
+  when: file_stat.stat.exists and file_stat.stat.size > 0
+
+- name: App Secret | Create Secret file with content
+  copy:
+    dest: "{{ project_path }}/.app_secret"
+    content: "{{ random_secret }}"
+  when: not file_stat.stat.exists or file_stat.stat.size == 0

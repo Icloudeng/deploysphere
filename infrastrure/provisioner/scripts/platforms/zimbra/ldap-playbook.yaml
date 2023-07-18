@@ -44,3 +44,8 @@
       command: "zmprov </tmp/autoprovisioning.txt"
       args:
         removes: /tmp/ldap-auto-provision.txt
+
+    - name: Restart Zimbra
+      become: false
+      become_user: zimbra
+      command: "zmctl restart"
