@@ -1,6 +1,0 @@
-- name: Deploy KeyCloak and dependencies
-  include_role:
-    name: middleware_automation.keycloak.keycloak
-  vars:
-    keycloak_admin_password: "{{ static_secret }}"
-    keycloak_management_port_bind_address: 0.0.0.0

@@ -8,6 +8,7 @@ services:
   postgres:
     image: postgres:14
     restart: unless-stopped
+    container_name: postgresdb
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
@@ -16,7 +17,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:22.0
     restart: unless-stopped
-    command: "start-dev"
+    command: "start"
     env_file:
       - .env
     ports:

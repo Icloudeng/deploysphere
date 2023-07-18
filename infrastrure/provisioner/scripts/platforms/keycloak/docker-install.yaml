@@ -15,7 +15,7 @@
 
 - name: Install KeyCloak
   become: true
-  command: docker compose up -d
+  command: docker compose up -d --force-recreate
   args:
     chdir: "{{ project_path }}"
 

@@ -3,8 +3,6 @@ collections:
   - name: nextcloud.admin
     version: 2.1.0
 
-  - name: middleware_automation.keycloak
-
 roles:
   - name: geerlingguy.php-versions
     version: 5.0.1
