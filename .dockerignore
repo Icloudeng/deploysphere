@@ -1,0 +1,11 @@
+.git
+bin
+.env
+**/.terraform
+**/.venv
+**/venv
+**/variables.tfvars
+**/*.log
+
+**/.vscode
+**/.env.local

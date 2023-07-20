@@ -1,0 +1,27 @@
+version: "9"
+services:
+  redis:
+    image: redis:7.0.8-alpine
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+  server:
+    build:
+      context: .
+    depends_on:
+      - redis
+    restart: unless-stopped
+    volumes:
+      - ./.env:/app/.env
+      - ./infrastrure/terraform/variables.tfvars:/app/infrastrure/terraform/variables.tfvars
+      - server-logs:/app/infrastrure/provisioner/logs
+      - server-terraform:/app/infrastrure/terraform
+    ports:
+      - 8088:8088
+
+volumes:
+  redis-data:
+  server-logs:
+  server-terraform:

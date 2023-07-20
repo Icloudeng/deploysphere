@@ -49,7 +49,7 @@ ansible-galaxy install -r scripts/requirements.yaml
 export ANSIBLE_HOST_KEY_CHECKING="False"
 export ANSIBLE_CONFIG="$(pwd)/ansible.cfg"
 
-ansible_log_file="ansible_log.txt"
+ansible_log_file="logs/ansible_log.txt"
 
 # Create ansible log file if not exists
 if [[ ! -f $ansible_log_file ]]; then

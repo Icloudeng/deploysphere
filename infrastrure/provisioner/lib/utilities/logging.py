@@ -5,7 +5,7 @@ def bingLoggingConfig(prefix: str = ''):
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)  # or whatever
     handler = logging.FileHandler(
-        'python-lib.log', 'w', 'utf-8'
+        'logs/python-lib.log', 'w', 'utf-8'
     )  # or whatever
     handler.setFormatter(
         logging.Formatter(
