@@ -1,23 +1,43 @@
 BINARY_NAME=platform-installer
+MAIN_PACKAGE_PATH := ./cmd/${BINARY_NAME}
+
 
 .PHONY: build
 build:
-	GOARCH=amd64 GOOS=darwin go build -o ${BINARY_NAME}-darwin .
-	GOARCH=amd64 GOOS=linux go build -o ${BINARY_NAME}-linux .
-	GOARCH=amd64 GOOS=windows go build -o ${BINARY_NAME}-windows .
+	GOARCH=amd64 GOOS=darwin go build -o ./bin/${BINARY_NAME}-darwin ${MAIN_PACKAGE_PATH}
+	GOARCH=amd64 GOOS=linux go build -o ./bin/${BINARY_NAME}-linux ${MAIN_PACKAGE_PATH}
+	GOARCH=amd64 GOOS=windows go build -o ./bin/${BINARY_NAME}-windows ${MAIN_PACKAGE_PATH}
+
+
+.PHONY: dev
+dev:
+	go run ${MAIN_PACKAGE_PATH}
+
+
+
+.PHONY: service-restart
+service-restart:
+	sudo systemctl restart platform-installer
+
+
+
+.PHONY: journal
+journal:
+	sudo journalctl -fu platform-installer
+
 
 
 .PHONY: run
 run: build
-	./${BINARY_NAME}
+	./bin/${BINARY_NAME}
 
 
 .PHONY: clean
 clean:
 	go clean
-	rm ${BINARY_NAME}-darwin
-	rm ${BINARY_NAME}-linux
-	rm ${BINARY_NAME}-windows
+	rm ./bin/${BINARY_NAME}-darwin
+	rm ./bin/${BINARY_NAME}-linux
+	rm ./bin/${BINARY_NAME}-windows
 
 
 .PHONY: test
@@ -46,11 +66,4 @@ lint:
 
 
 .PHONY: prod-build
-prod-build:
-	make build
-	sudo systemctl restart platform-installer
-
-
-.PHONY: journal
-journal:
-	sudo journalctl -fu platform-installer
+prod-build: build service-restart
