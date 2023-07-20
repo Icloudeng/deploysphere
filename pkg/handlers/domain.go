@@ -3,10 +3,11 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"smatflow/platform-installer/lib"
-	"smatflow/platform-installer/lib/resources"
-	"smatflow/platform-installer/lib/structs"
-	"smatflow/platform-installer/lib/terraform"
+	"smatflow/platform-installer/pkg/events"
+	"smatflow/platform-installer/pkg/queue"
+	"smatflow/platform-installer/pkg/resources"
+	"smatflow/platform-installer/pkg/structs"
+	"smatflow/platform-installer/pkg/terraform"
 
 	"github.com/gin-gonic/gin"
 )
@@ -39,7 +40,7 @@ func CreateDomain(c *gin.Context) {
 		}
 	}
 
-	lib.Queue.QueueTask(func(ctx context.Context) error {
+	queue.Queue.QueueTask(func(ctx context.Context) error {
 		// Create or update resources
 		resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
 		// Terraform Apply changes
@@ -58,11 +59,11 @@ func DeleteDomain(c *gin.Context) {
 		return
 	}
 
-	lib.Queue.QueueTask(func(ctx context.Context) error {
+	queue.Queue.QueueTask(func(ctx context.Context) error {
 		// Remove resources
 		resources.DeleteOvhDomainZoneResource(data.Ref)
 		// Terraform Apply changes
-		defer lib.BusEvent.Publish(lib.NOTIFIER_RESOURCES_EVENT, structs.Notifier{
+		defer events.BusEvent.Publish(events.NOTIFIER_RESOURCES_EVENT, structs.Notifier{
 			Status:  "info",
 			Details: "Ref: " + data.Ref,
 			Logs:    "Domain Resource deleted",

@@ -1,9 +1,9 @@
 package resources
 
 import (
-	"smatflow/platform-installer/lib/resources/ovh"
-	"smatflow/platform-installer/lib/resources/proxmox"
-	"smatflow/platform-installer/lib/structs"
+	"smatflow/platform-installer/pkg/resources/ovh"
+	"smatflow/platform-installer/pkg/resources/proxmox"
+	"smatflow/platform-installer/pkg/structs"
 )
 
 //######################## OVH Resources ############################//

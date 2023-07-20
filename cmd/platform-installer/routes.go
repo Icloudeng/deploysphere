@@ -1,7 +1,7 @@
 package main
 
 import (
-	"smatflow/platform-installer/lib/handlers"
+	"smatflow/platform-installer/pkg/handlers"
 
 	"github.com/gin-gonic/gin"
 )

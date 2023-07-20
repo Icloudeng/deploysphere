@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 	"log"
-	"smatflow/platform-installer/env"
+	"smatflow/platform-installer/pkg/env"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

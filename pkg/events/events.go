@@ -1,8 +1,8 @@
-package lib
+package events
 
 import (
-	proxyhost "smatflow/platform-installer/lib/resources/proxy_host"
-	"smatflow/platform-installer/lib/resources/utilities"
+	proxyhost "smatflow/platform-installer/pkg/resources/proxy_host"
+	"smatflow/platform-installer/pkg/resources/utilities"
 
 	"github.com/asaskevich/EventBus"
 )

@@ -6,11 +6,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"smatflow/platform-installer/lib"
-	"smatflow/platform-installer/lib/files"
-	"smatflow/platform-installer/lib/resources"
-	"smatflow/platform-installer/lib/structs"
-	"smatflow/platform-installer/lib/terraform"
+	"smatflow/platform-installer/pkg/events"
+	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/queue"
+	"smatflow/platform-installer/pkg/resources"
+	"smatflow/platform-installer/pkg/structs"
+	"smatflow/platform-installer/pkg/terraform"
 )
 
 // Store resources and apply
@@ -63,7 +64,7 @@ func CreateResources(c *gin.Context) {
 		}
 	}
 
-	lib.Queue.QueueTask(func(ctx context.Context) error {
+	queue.Queue.QueueTask(func(ctx context.Context) error {
 		// Reset unmutable vm fields
 		structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform)
 		// Create or update resources
@@ -85,16 +86,16 @@ func DeleteResources(c *gin.Context) {
 		return
 	}
 
-	lib.Queue.QueueTask(func(ctx context.Context) error {
+	queue.Queue.QueueTask(func(ctx context.Context) error {
 		// Remove resources
 		resources.DeleteOvhDomainZoneResource(uri.Ref)
 		resources.DeleteProxmoxVmQemuResource(uri.Ref)
 
 		// Clean up resource event publish
-		// lib.BusEvent.Publish(lib.RESOURCES_CLEANUP_EVENT, domain)
+		// pkg.BusEvent.Publish(pkg.RESOURCES_CLEANUP_EVENT, domain)
 
 		// Terraform Apply changes
-		defer lib.BusEvent.Publish(lib.NOTIFIER_RESOURCES_EVENT, structs.Notifier{
+		defer events.BusEvent.Publish(events.NOTIFIER_RESOURCES_EVENT, structs.Notifier{
 			Status:  "info",
 			Details: "Ref: " + uri.Ref,
 			Logs:    "Resources deleted",

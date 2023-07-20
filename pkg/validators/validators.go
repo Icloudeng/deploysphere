@@ -1,4 +1,4 @@
-package lib
+package validators
 
 import (
 	"regexp"

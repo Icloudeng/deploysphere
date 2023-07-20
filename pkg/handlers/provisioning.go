@@ -3,9 +3,9 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"smatflow/platform-installer/lib"
-	"smatflow/platform-installer/lib/resources/provisioning"
-	"smatflow/platform-installer/lib/structs"
+	"smatflow/platform-installer/pkg/queue"
+	"smatflow/platform-installer/pkg/resources/provisioning"
+	"smatflow/platform-installer/pkg/structs"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,7 +27,7 @@ func CreateProvisioning(c *gin.Context) {
 		return
 	}
 
-	lib.Queue.QueueTask(func(ctx context.Context) error {
+	queue.Queue.QueueTask(func(ctx context.Context) error {
 		provisioning.CreateProvisioning(json)
 		return nil
 	})

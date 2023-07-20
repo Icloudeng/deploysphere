@@ -1,10 +1,10 @@
-package lib
+package ldap
 
 import (
 	"bytes"
 	"html/template"
 	"log"
-	"smatflow/platform-installer/env"
+	"smatflow/platform-installer/pkg/env"
 
 	"github.com/go-ldap/ldap/v3"
 )

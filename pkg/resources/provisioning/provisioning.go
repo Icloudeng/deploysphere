@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"os"
 	"os/exec"
-	"smatflow/platform-installer/lib/files"
-	"smatflow/platform-installer/lib/structs"
+	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/structs"
 )
 
 func CreateProvisioning(prov structs.Provisioning) {

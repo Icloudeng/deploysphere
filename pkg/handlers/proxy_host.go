@@ -3,10 +3,11 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"smatflow/platform-installer/lib"
-	"smatflow/platform-installer/lib/files"
-	proxyhost "smatflow/platform-installer/lib/resources/proxy_host"
-	"smatflow/platform-installer/lib/structs"
+	"smatflow/platform-installer/pkg/events"
+	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/queue"
+	proxyhost "smatflow/platform-installer/pkg/resources/proxy_host"
+	"smatflow/platform-installer/pkg/structs"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +26,7 @@ func CreateProxyHost(c *gin.Context) {
 		return
 	}
 
-	lib.Queue.QueueTask(func(ctx context.Context) error {
+	queue.Queue.QueueTask(func(ctx context.Context) error {
 		proxyhost.CreateProxyHost(json)
 		return nil
 	})
@@ -41,10 +42,10 @@ func DeleteProxyHost(c *gin.Context) {
 		return
 	}
 
-	lib.Queue.QueueTask(func(ctx context.Context) error {
+	queue.Queue.QueueTask(func(ctx context.Context) error {
 		proxyhost.DeleteProxyHost(json.Domain)
 
-		defer lib.BusEvent.Publish(lib.NOTIFIER_RESOURCES_EVENT, structs.Notifier{
+		defer events.BusEvent.Publish(events.NOTIFIER_RESOURCES_EVENT, structs.Notifier{
 			Status:  "info",
 			Details: "Domain: " + json.Domain,
 			Logs:    "Proxy Host deleted",

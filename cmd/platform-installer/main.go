@@ -7,7 +7,8 @@ import (
 	"strconv"
 
 	"smatflow/platform-installer/jobs"
-	"smatflow/platform-installer/lib"
+	"smatflow/platform-installer/pkg/ldap"
+	"smatflow/platform-installer/pkg/validators"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -26,7 +27,7 @@ func main() {
 	}
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterValidation("resourceref", lib.ResourcesRefValidation)
+		v.RegisterValidation("resourceref", validators.ResourcesRefValidation)
 	}
 
 	// Routes
@@ -45,7 +46,7 @@ func basicAuth(c *gin.Context) {
 	// Get the Basic Authentication credentials
 	username, password, hasAuth := c.Request.BasicAuth()
 
-	if hasAuth && lib.LDAPExistBindUser(username, password) {
+	if hasAuth && ldap.LDAPExistBindUser(username, password) {
 		c.Next()
 	} else {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Authentication required"})

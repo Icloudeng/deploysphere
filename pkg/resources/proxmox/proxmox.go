@@ -5,8 +5,8 @@ import (
 	"log"
 	"path"
 
-	files "smatflow/platform-installer/lib/files"
-	structs "smatflow/platform-installer/lib/structs"
+	files "smatflow/platform-installer/pkg/files"
+	structs "smatflow/platform-installer/pkg/structs"
 )
 
 type ResourceJSONData struct {
