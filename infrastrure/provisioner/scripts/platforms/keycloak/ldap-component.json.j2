@@ -1,0 +1,233 @@
+{
+    "id": "79d14000-bbf8-4919-a324-90f031e93ff7",
+    "name": "LDAP Provider",
+    "providerId": "ldap",
+    "subComponents": {
+        "org.keycloak.storage.ldap.mappers.LDAPStorageMapper": [
+            {
+                "id": "c0534d25-8772-473d-8285-82a9a0104a04",
+                "name": "modify date",
+                "providerId": "user-attribute-ldap-mapper",
+                "subComponents": {},
+                "config": {
+                    "ldap.attribute": [
+                        "modifyTimestamp"
+                    ],
+                    "is.mandatory.in.ldap": [
+                        "false"
+                    ],
+                    "always.read.value.from.ldap": [
+                        "true"
+                    ],
+                    "read.only": [
+                        "true"
+                    ],
+                    "user.model.attribute": [
+                        "modifyTimestamp"
+                    ]
+                }
+            },
+            {
+                "id": "a764e086-231b-4053-8fba-97477e68aad6",
+                "name": "username",
+                "providerId": "user-attribute-ldap-mapper",
+                "subComponents": {},
+                "config": {
+                    "ldap.attribute": [
+                        "uid"
+                    ],
+                    "is.mandatory.in.ldap": [
+                        "true"
+                    ],
+                    "read.only": [
+                        "true"
+                    ],
+                    "always.read.value.from.ldap": [
+                        "false"
+                    ],
+                    "user.model.attribute": [
+                        "username"
+                    ]
+                }
+            },
+            {
+                "id": "6a12c9f7-4b9d-432b-a6c3-74d8fa80486d",
+                "name": "email",
+                "providerId": "user-attribute-ldap-mapper",
+                "subComponents": {},
+                "config": {
+                    "ldap.attribute": [
+                        "mail"
+                    ],
+                    "is.mandatory.in.ldap": [
+                        "false"
+                    ],
+                    "always.read.value.from.ldap": [
+                        "false"
+                    ],
+                    "read.only": [
+                        "true"
+                    ],
+                    "user.model.attribute": [
+                        "email"
+                    ]
+                }
+            },
+            {
+                "id": "d3049f0f-1fee-470d-982e-16f689d097a4",
+                "name": "creation date",
+                "providerId": "user-attribute-ldap-mapper",
+                "subComponents": {},
+                "config": {
+                    "ldap.attribute": [
+                        "createTimestamp"
+                    ],
+                    "is.mandatory.in.ldap": [
+                        "false"
+                    ],
+                    "read.only": [
+                        "true"
+                    ],
+                    "always.read.value.from.ldap": [
+                        "true"
+                    ],
+                    "user.model.attribute": [
+                        "createTimestamp"
+                    ]
+                }
+            },
+            {
+                "id": "afeec138-124c-4138-8e1d-5020b28a68cf",
+                "name": "last name",
+                "providerId": "user-attribute-ldap-mapper",
+                "subComponents": {},
+                "config": {
+                    "ldap.attribute": [
+                        "sn"
+                    ],
+                    "is.mandatory.in.ldap": [
+                        "true"
+                    ],
+                    "always.read.value.from.ldap": [
+                        "true"
+                    ],
+                    "read.only": [
+                        "true"
+                    ],
+                    "user.model.attribute": [
+                        "lastName"
+                    ]
+                }
+            },
+            {
+                "id": "37b81571-fe24-4444-bbed-3fefd28534fc",
+                "name": "first name",
+                "providerId": "user-attribute-ldap-mapper",
+                "subComponents": {},
+                "config": {
+                    "ldap.attribute": [
+                        "givenName"
+                    ],
+                    "attribute.force.default": [
+                        "true"
+                    ],
+                    "is.mandatory.in.ldap": [
+                        "true"
+                    ],
+                    "is.binary.attribute": [
+                        "false"
+                    ],
+                    "read.only": [
+                        "true"
+                    ],
+                    "always.read.value.from.ldap": [
+                        "true"
+                    ],
+                    "user.model.attribute": [
+                        "firstName"
+                    ]
+                }
+            }
+        ]
+    },
+    "config": {
+        "fullSyncPeriod": [
+            "-1"
+        ],
+        "pagination": [
+            "false"
+        ],
+        "startTls": [
+            "false"
+        ],
+        "connectionPooling": [
+            "false"
+        ],
+        "usersDn": [
+            "{{ ldap['search_base'] }}"
+        ],
+        "cachePolicy": [
+            "DEFAULT"
+        ],
+        "useKerberosForPasswordAuthentication": [
+            "false"
+        ],
+        "importEnabled": [
+            "true"
+        ],
+        "enabled": [
+            "true"
+        ],
+        "changedSyncPeriod": [
+            "-1"
+        ],
+        "bindDn": [
+            "{{ ldap['bind_dn'] }}"
+        ],
+        "bindCredential": [
+            "{{ ldap['bind_password'] }}"
+        ],
+        "usernameLDAPAttribute": [
+            "uid"
+        ],
+        "vendor": [
+            "other"
+        ],
+        "uuidLDAPAttribute": [
+            "entryUUID"
+        ],
+        "allowKerberosAuthentication": [
+            "false"
+        ],
+        "connectionUrl": [
+            "ldap{{ 's' if ldap['server_port'] == 636 else '' }}://{{ ldap['server_url'] }}:{{ ldap['server_port'] }}"
+        ],
+        "syncRegistrations": [
+            "true"
+        ],
+        "authType": [
+            "simple"
+        ],
+        "useTruststoreSpi": [
+            "always"
+        ],
+        "usePasswordModifyExtendedOp": [
+            "false"
+        ],
+        "trustEmail": [
+            "true"
+        ],
+        "userObjectClasses": [
+            "inetOrgPerson, organizationalPerson"
+        ],
+        "rdnLDAPAttribute": [
+            "uid"
+        ],
+        "editMode": [
+            "READ_ONLY"
+        ],
+        "validatePasswordPolicy": [
+            "false"
+        ]
+    }
+}
