@@ -41,7 +41,7 @@ func ValidatePlatformMetadata(c *gin.Context, platform structs.Platform) bool {
 	return true
 }
 
-func ValidateLdapMetadata(c *gin.Context, platform structs.Platform) bool {
+func ValidateConfigurationMetadata(c *gin.Context, platform structs.Platform) bool {
 	if len(platform.Name) > 0 {
 		// Check if plaform has provisionner script
 		if !files.ExistsProvisionerPlaformReadDir(platform.Name) {
@@ -50,8 +50,8 @@ func ValidateLdapMetadata(c *gin.Context, platform structs.Platform) bool {
 		}
 
 		// Check if platform meta fields exist
-		requiredFields := files.ReadLdapMetadataFields()
-		meta := structs.LdapMetadataFields{}
+		requiredFields := files.ReadConfigurationMetadataFields()
+		meta := structs.ConfigurationMetadataFields{}
 		json.Unmarshal(requiredFields, &meta)
 
 		metadata := *platform.Metadata
@@ -68,25 +68,25 @@ func ValidateLdapMetadata(c *gin.Context, platform structs.Platform) bool {
 				}
 			}
 
-			// Validate LDAP Fields
-			ldap_type, exists := metadata["ldap"]
+			// Validate Configuration Fields
+			config_type, exists := metadata["configuration"]
 
 			if exists {
-				ldap_values, ok := ldap_type.(map[string]interface{})
+				config_values, ok := config_type.(map[string]interface{})
 
 				if !ok {
 					c.AbortWithStatusJSON(
 						http.StatusBadRequest,
-						gin.H{"error": "LDAP field be an object type"},
+						gin.H{"error": "Configuration field be an object type"},
 					)
 					return false
 				}
 
-				for _, val := range values.Ldap {
-					if _, exists := ldap_values[val]; !exists {
+				for _, val := range values.Configuration {
+					if _, exists := config_values[val]; !exists {
 						c.AbortWithStatusJSON(
 							http.StatusBadRequest,
-							gin.H{"error": fmt.Sprintf("Platform (%s), Ldap Metadata field (%s) required", platform.Name, val)},
+							gin.H{"error": fmt.Sprintf("Platform (%s), Configuration Metadata field (%s) required", platform.Name, val)},
 						)
 						return false
 					}
@@ -94,7 +94,7 @@ func ValidateLdapMetadata(c *gin.Context, platform structs.Platform) bool {
 			} else {
 				c.AbortWithStatusJSON(
 					http.StatusBadRequest,
-					gin.H{"error": "Unable to find LDAP fields in metadata object"},
+					gin.H{"error": "Unable to find Configuration field in metadata object"},
 				)
 				return false
 			}

@@ -36,7 +36,7 @@ func CreatePlatformProvisioning(c *gin.Context) {
 	c.JSON(http.StatusOK, json)
 }
 
-func CreateLdapProvisioning(c *gin.Context) {
+func CreateConfigurationProvisioning(c *gin.Context) {
 	json := structs.Provisioning{
 		Platform: &structs.Platform{
 			Metadata: &map[string]interface{}{},
@@ -49,12 +49,12 @@ func CreateLdapProvisioning(c *gin.Context) {
 	}
 
 	// Chech if platform the password corresponse to an existing platform folder
-	if !validators.ValidateLdapMetadata(c, *json.Platform) {
+	if !validators.ValidateConfigurationMetadata(c, *json.Platform) {
 		return
 	}
 
 	queue.Queue.QueueTask(func(ctx context.Context) error {
-		provisioning.CreateLdapProvisioning(json)
+		provisioning.CreateConfigurationProvisioning(json)
 		return nil
 	})
 

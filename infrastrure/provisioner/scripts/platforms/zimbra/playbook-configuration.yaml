@@ -1,5 +1,5 @@
 ---
-- name: Zimbra LDAP
+- name: Zimbra LDAP Configuration
   hosts: all
   become: true
   gather_facts: true
@@ -17,7 +17,7 @@
         admin_password: "{{ decoded_metadata | json_query('admin_password') }}"
         zimbra_fqdn: "{{ decoded_metadata | json_query('zimbra_fqdn') }}"
         zimbra_domain: "{{ decoded_metadata | json_query('zimbra_domain') }}"
-        ldap: "{{ decoded_metadata | json_query('ldap') }}"
+        configuration: "{{ decoded_metadata | json_query('configuration') }}"
 
     # Validate domain variables
     - include_tasks: ../../tasks/validator/domain-regex.yaml

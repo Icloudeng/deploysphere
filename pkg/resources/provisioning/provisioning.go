@@ -34,6 +34,6 @@ func CreatePlatformProvisioning(prov structs.Provisioning) {
 	provisioning(prov, "installer.sh")
 }
 
-func CreateLdapProvisioning(prov structs.Provisioning) {
-	provisioning(prov, "ldap.sh")
+func CreateConfigurationProvisioning(prov structs.Provisioning) {
+	provisioning(prov, "configuration.sh")
 }

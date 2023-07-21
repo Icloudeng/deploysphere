@@ -1,19 +1,19 @@
 # Check if the Ansible playbook script exists
-playbook_path="./scripts/platforms/$platform/playbook-ldap.yaml"
+playbook_path="./scripts/platforms/$platform/playbook-configuration.yaml"
 
 if [ -f "$playbook_path" ]; then
-    echo "Ansible LDAP playbook script found: $playbook_path"
+    echo "Ansible Configuration playbook script found: $playbook_path"
 else
-    echo "Ansible LDAP playbook script not found for platform: $platform"
+    echo "Ansible Configuration playbook script not found for platform: $platform"
     exit 1
 fi
 
-# Test ldap object
-ldap_data=$($get_decoded_metadata --key "ldap" --metadata "$metadata")
-if jq -e . >/dev/null 2>&1 <<<"$ldap_data"; then
-    echo "Parsed LDAP JSON successfully"
+# Test configuration object
+configuration_data=$($get_decoded_metadata --key "configuration" --metadata "$metadata")
+if jq -e . >/dev/null 2>&1 <<<"$configuration_data"; then
+    echo "Parsed Configuration JSON successfully"
 else
-    echo "Failed to parse LDAP JSON"
+    echo "Failed to parse Configuration JSON"
     exit 1
 fi
 
@@ -40,7 +40,7 @@ ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 exposed_variables=$($extract_vars "$ansible_logs")
 
 # Execute python notifier script
-installer_details="EXECUTION TYPE: LDAP\n\n"
+installer_details="EXECUTION TYPE: Configuration\n\n"
 installer_details+="Platform: $platform\n"
 installer_details+="Machine User: $ansible_user\nMachine IP: $vm_ip\n"
 installer_details+="$exposed_variables"

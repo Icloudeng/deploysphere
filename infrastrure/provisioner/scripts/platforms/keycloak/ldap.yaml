@@ -1,6 +1,6 @@
 - name: Extract Required Variables
   set_fact:
-    ldap: "{{ decoded_metadata | json_query('ldap') }}"
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
 
 - name: Copy Template ldap-component.json
   become: true

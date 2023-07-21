@@ -45,5 +45,5 @@ func BindLocalJobsRoutes(api *gin.RouterGroup) {
 	// The Provisioning
 	api.POST("/provisioning", handlers.CreatePlatformProvisioning)
 
-	api.POST("/provisioning/ldap", handlers.CreateLdapProvisioning)
+	api.POST("/provisioning/configuration", handlers.CreateConfigurationProvisioning)
 }

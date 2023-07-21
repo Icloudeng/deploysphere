@@ -50,8 +50,8 @@ fi
 source $MY_DIR/bash/init.sh
 source $MY_DIR/bash/functions.sh
 
-# Include LDAP Script
-source $MY_DIR/bash/ldap_executor.sh
+# Include configuration Script
+source $MY_DIR/bash/configuration_executor.sh
 
 # Deactivate the virtual environment
 deactivate

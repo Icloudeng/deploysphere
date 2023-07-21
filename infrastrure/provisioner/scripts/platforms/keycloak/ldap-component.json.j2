@@ -164,7 +164,7 @@
             "false"
         ],
         "usersDn": [
-            "{{ ldap['search_base'] }}"
+            "{{ configuration['ldap_search_base'] }}"
         ],
         "cachePolicy": [
             "DEFAULT"
@@ -182,10 +182,10 @@
             "-1"
         ],
         "bindDn": [
-            "{{ ldap['bind_dn'] }}"
+            "{{ configuration['ldap_bind_dn'] }}"
         ],
         "bindCredential": [
-            "{{ ldap['bind_password'] }}"
+            "{{ configuration['ldap_bind_password'] }}"
         ],
         "usernameLDAPAttribute": [
             "uid"
@@ -200,7 +200,7 @@
             "false"
         ],
         "connectionUrl": [
-            "ldap{{ 's' if ldap['server_port'] == 636 else '' }}://{{ ldap['server_url'] }}:{{ ldap['server_port'] }}"
+            "configuration{{ 's' if configuration['ldap_server_port'] == 636 else '' }}://{{ configuration['ldap_server_url'] }}:{{ configuration['ldap_server_port'] }}"
         ],
         "syncRegistrations": [
             "true"

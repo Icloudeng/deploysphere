@@ -7,7 +7,7 @@ type Platform struct {
 
 type PlatformMetadataFields map[string][]string
 
-type LdapMetadataFields map[string]struct {
-	Fields []string `json:"fields"`
-	Ldap   []string `json:"ldap"`
+type ConfigurationMetadataFields map[string]struct {
+	Fields        []string `json:"fields"`
+	Configuration []string `json:"configuration"`
 }

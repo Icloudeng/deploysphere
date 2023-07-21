@@ -7,12 +7,12 @@ md {{ zimbra_domain }} +zimbraAutoProvAttrMap "description=description"
 md {{ zimbra_domain }} zimbraAutoProvAuthMech "LDAP"
 md {{ zimbra_domain }} zimbraAutoProvBatchSize 50
 
-md {{ zimbra_domain }} zimbraAutoProvLdapAdminBindDn "{{ ldap['bind_dn'] }}"
-md {{ zimbra_domain }} zimbraAutoProvLdapAdminBindPassword "{{ ldap['bind_password'] }}"
-md {{ zimbra_domain }} zimbraAutoProvLdapBindDn "{{ ldap['bind_dn'] }}"
-md {{ zimbra_domain }} zimbraAutoProvLdapSearchBase "{{ ldap['search_base'] }}"
-md {{ zimbra_domain }} zimbraAutoProvLdapSearchFilter "({{ ldap['filter_username'] }})"
-md {{ zimbra_domain }} zimbraAutoProvLdapURL "ldap{{ 's' if ldap['server_port'] == 636 else '' }}://{{ ldap['server_url'] }}:{{ ldap['server_port'] }}"
+md {{ zimbra_domain }} zimbraAutoProvLdapAdminBindDn "{{ configuration['ldap_bind_dn'] }}"
+md {{ zimbra_domain }} zimbraAutoProvLdapAdminBindPassword "{{ configuration['ldap_bind_password'] }}"
+md {{ zimbra_domain }} zimbraAutoProvLdapBindDn "{{ configuration['ldap_bind_dn'] }}"
+md {{ zimbra_domain }} zimbraAutoProvLdapSearchBase "{{ configuration['ldap_search_base'] }}"
+md {{ zimbra_domain }} zimbraAutoProvLdapSearchFilter "({{ configuration['ldap_filter_username'] }})"
+md {{ zimbra_domain }} zimbraAutoProvLdapURL "ldap{{ 's' if configuration['ldap_server_port'] == 636 else '' }}://{{ configuration['ldap_server_url'] }}:{{ configuration['ldap_server_port'] }}"
 md {{ zimbra_domain }} zimbraAutoProvMode "EAGER"
 md {{ zimbra_domain }} zimbraAutoProvNotificationBody "Your account has been auto provisioned. Your email address is ${ACCOUNT_ADDRESS}."
 md {{ zimbra_domain }} zimbraAutoProvNotificationFromAddress "admin@{{ zimbra_domain }}"
@@ -25,6 +25,6 @@ md {{ zimbra_domain }} zimbraAutoProvLastPolledTimestamp ""
 
 
 mcf zimbraAuthMech external
-mcf zimbraAuthLdapURL "ldap{{ 's' if ldap['server_port'] == 636 else '' }}://{{ ldap['server_url'] }}:{{ ldap['server_port'] }}"
-mcf zimbraAuthLdapBindDN "{{ ldap['bind_dn'] }}"
-mcf zimbraAuthLdapBindPassword "{{ ldap['bind_dn'] }}"
+mcf zimbraAuthLdapURL "ldap{{ 's' if configuration['ldap_server_port'] == 636 else '' }}://{{ configuration['ldap_server_url'] }}:{{ configuration['ldap_server_port'] }}"
+mcf zimbraAuthLdapBindDN "{{ configuration['ldap_bind_dn'] }}"
+mcf zimbraAuthLdapBindPassword "{{ configuration['ldap_bind_dn'] }}"

@@ -108,10 +108,5 @@ exposed_variables=$($extract_vars "$ansible_logs")
 installer_details+="Random Secret=$random_secret\n\n$exposed_variables\n"
 $python_command lib/notifier.py --logs "$ansible_logs_4096" --status "$ran_status" --details "$installer_details" --metadata "$metadata"
 
-# if [ "$ran_status" == "succeeded" ]; then
-#     # Include LDAP Script
-#     source $MY_DIR/bash/ldap_executor.sh
-# fi
-
 # Deactivate the virtual environment
 deactivate
