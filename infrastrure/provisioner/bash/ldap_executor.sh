@@ -40,7 +40,9 @@ ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 exposed_variables=$($extract_vars "$ansible_logs")
 
 # Execute python notifier script
-installer_details="EXECUTION TYPE: LDAP\n\n$exposed_variables\n"
+installer_details="EXECUTION TYPE: LDAP\n\n"
 installer_details+="Platform: $platform\n"
-installer_details+="Machine User: $ansible_user\nMachine IP: $vm_ip"
+installer_details+="Machine User: $ansible_user\nMachine IP: $vm_ip\n"
+installer_details+="$exposed_variables"
+
 $python_command lib/notifier.py --logs "$ansible_logs_4096" --status "$ran_status" --details "$installer_details" --metadata "$metadata"
