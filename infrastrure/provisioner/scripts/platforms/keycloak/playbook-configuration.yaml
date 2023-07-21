@@ -12,3 +12,8 @@
     - include_tasks: ../../tasks/playbook-init.yaml
 
     - include_tasks: ldap.yaml
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        variable: |
+          Configuration Type: LDAP

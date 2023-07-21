@@ -8,7 +8,6 @@
         ],
         "configuration": [
             "ldap_server_url",
-            "ldap_server_port",
             "ldap_filter_username",
             "ldap_search_base",
             "ldap_bind_dn",
@@ -19,7 +18,6 @@
         "fields": [],
         "configuration": [
             "ldap_server_url",
-            "ldap_server_port",
             "ldap_search_base",
             "ldap_bind_dn",
             "ldap_bind_password"

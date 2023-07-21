@@ -200,7 +200,7 @@
             "false"
         ],
         "connectionUrl": [
-            "configuration{{ 's' if configuration['ldap_server_port'] == 636 else '' }}://{{ configuration['ldap_server_url'] }}:{{ configuration['ldap_server_port'] }}"
+            "{{ configuration['ldap_server_url'] }}"
         ],
         "syncRegistrations": [
             "true"
