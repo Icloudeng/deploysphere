@@ -11,6 +11,11 @@
     # Playbook init (with decoded_metadata, project_path)
     - include_tasks: ../../tasks/playbook-init.yaml
 
+    - name: Test Docker service UP
+      command: docker compose exec keycloak ls
+      args:
+        chdir: "{{ project_path }}"
+
     - name: Permission exports Folder KeyCloak
       command: chmod -r 777 ./exports
       args:
