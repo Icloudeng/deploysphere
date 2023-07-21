@@ -6,11 +6,12 @@ import (
 	"smatflow/platform-installer/pkg/queue"
 	"smatflow/platform-installer/pkg/resources/provisioning"
 	"smatflow/platform-installer/pkg/structs"
+	"smatflow/platform-installer/pkg/validators"
 
 	"github.com/gin-gonic/gin"
 )
 
-func CreateProvisioning(c *gin.Context) {
+func CreatePlatformProvisioning(c *gin.Context) {
 	json := structs.Provisioning{
 		Platform: &structs.Platform{
 			Metadata: &map[string]interface{}{},
@@ -23,12 +24,37 @@ func CreateProvisioning(c *gin.Context) {
 	}
 
 	// Chech if platform the password corresponse to an existing platform folder
-	if !validatePlatform(c, *json.Platform) {
+	if !validators.ValidatePlatformMetadata(c, *json.Platform) {
 		return
 	}
 
 	queue.Queue.QueueTask(func(ctx context.Context) error {
-		provisioning.CreateProvisioning(json)
+		provisioning.CreatePlatformProvisioning(json)
+		return nil
+	})
+
+	c.JSON(http.StatusOK, json)
+}
+
+func CreateLdapProvisioning(c *gin.Context) {
+	json := structs.Provisioning{
+		Platform: &structs.Platform{
+			Metadata: &map[string]interface{}{},
+		},
+	}
+
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Chech if platform the password corresponse to an existing platform folder
+	if !validators.ValidateLdapMetadata(c, *json.Platform) {
+		return
+	}
+
+	queue.Queue.QueueTask(func(ctx context.Context) error {
+		provisioning.CreateLdapProvisioning(json)
 		return nil
 	})
 

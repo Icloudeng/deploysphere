@@ -2,15 +2,13 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"smatflow/platform-installer/pkg/events"
-	"smatflow/platform-installer/pkg/files"
 	"smatflow/platform-installer/pkg/queue"
 	"smatflow/platform-installer/pkg/resources"
 	"smatflow/platform-installer/pkg/structs"
 	"smatflow/platform-installer/pkg/terraform"
+	"smatflow/platform-installer/pkg/validators"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,7 +31,7 @@ func CreateVm(c *gin.Context) {
 	}
 
 	// Chech if platform the password corresponse to an existing platform folder
-	if !validatePlatform(c, *json.Platform) {
+	if !validators.ValidatePlatformMetadata(c, *json.Platform) {
 		return
 	}
 
@@ -87,35 +85,4 @@ func DeleteVm(c *gin.Context) {
 	})
 
 	c.JSON(http.StatusOK, data)
-}
-
-func validatePlatform(c *gin.Context, platform structs.Platform) bool {
-	if len(platform.Name) > 0 {
-		// Check if plaform has provisionner script
-		if !files.ExistsProvisionerPlaformReadDir(platform.Name) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Cannot found the correspoding platform"})
-			return false
-		}
-
-		// Check if platform meta fields exist
-		requriedFields := files.ReadPlatformMetadataFields()
-		meta := structs.PlatformMetadataFields{}
-		json.Unmarshal(requriedFields, &meta)
-
-		metadata := *platform.Metadata
-
-		if values, found := meta[platform.Name]; found {
-			for _, val := range values {
-				if _, exists := metadata[val]; !exists {
-					c.AbortWithStatusJSON(
-						http.StatusBadRequest,
-						gin.H{"error": fmt.Sprintf("platform (%s), Metadata field (%s) required", platform.Name, val)},
-					)
-					return false
-				}
-			}
-		}
-	}
-
-	return true
 }

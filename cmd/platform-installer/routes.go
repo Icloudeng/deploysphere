@@ -43,5 +43,7 @@ func BindLocalJobsRoutes(api *gin.RouterGroup) {
 	api.DELETE("/proxy-host", handlers.DeleteProxyHost)
 
 	// The Provisioning
-	api.POST("/provisioning", handlers.CreateProvisioning)
+	api.POST("/provisioning", handlers.CreatePlatformProvisioning)
+
+	api.POST("/provisioning/ldap", handlers.CreateLdapProvisioning)
 }

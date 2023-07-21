@@ -1,5 +1,5 @@
 # Check if the Ansible playbook script exists
-playbook_path="./scripts/platforms/$platform/ldap-playbook.yaml"
+playbook_path="./scripts/platforms/$platform/playbook-ldap.yaml"
 
 if [ -f "$playbook_path" ]; then
     echo "Ansible LDAP playbook script found: $playbook_path"

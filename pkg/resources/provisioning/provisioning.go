@@ -9,14 +9,14 @@ import (
 	"smatflow/platform-installer/pkg/structs"
 )
 
-func CreateProvisioning(prov structs.Provisioning) {
+func provisioning(prov structs.Provisioning, file string) {
 	platform := prov.Platform
 
 	metadata, _ := json.Marshal(platform.Metadata)
 	metadatab64 := base64.StdEncoding.EncodeToString(metadata)
 
 	cmd := exec.Command(
-		"bash", "installer.sh",
+		"bash", file,
 		"--ansible-user", prov.MachineUser,
 		"--vmip", prov.MachineIp,
 		"--platform", platform.Name,
@@ -28,4 +28,12 @@ func CreateProvisioning(prov structs.Provisioning) {
 	cmd.Stderr = os.Stderr
 
 	cmd.Run()
+}
+
+func CreatePlatformProvisioning(prov structs.Provisioning) {
+	provisioning(prov, "installer.sh")
+}
+
+func CreateLdapProvisioning(prov structs.Provisioning) {
+	provisioning(prov, "ldap.sh")
 }

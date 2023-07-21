@@ -12,6 +12,7 @@ import (
 	"smatflow/platform-installer/pkg/resources"
 	"smatflow/platform-installer/pkg/structs"
 	"smatflow/platform-installer/pkg/terraform"
+	"smatflow/platform-installer/pkg/validators"
 )
 
 // Store resources and apply
@@ -43,7 +44,7 @@ func CreateResources(c *gin.Context) {
 	}
 
 	// Chech if platform the password corresponse to an existing platform folder
-	if !validatePlatform(c, *json.Platform) {
+	if !validators.ValidatePlatformMetadata(c, *json.Platform) {
 		return
 	}
 

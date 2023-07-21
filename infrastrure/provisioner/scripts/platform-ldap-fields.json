@@ -14,5 +14,15 @@
             "bind_dn",
             "bind_password"
         ]
+    },
+    "keycloak": {
+        "fields": [],
+        "ldap": [
+            "server_url",
+            "server_port",
+            "search_base",
+            "bind_dn",
+            "bind_password"
+        ]
     }
 }

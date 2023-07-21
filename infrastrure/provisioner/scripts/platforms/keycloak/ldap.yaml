@@ -1,0 +1,62 @@
+- name: Extract Required Variables
+  set_fact:
+    ldap: "{{ decoded_metadata | json_query('ldap') }}"
+
+- name: Copy Template ldap-component.json
+  become: true
+  ansible.builtin.template:
+    src: ldap-component.json.j2
+    dest: /tmp/ldap-component.json
+
+- name: Read ldap-component.json
+  slurp:
+    path: "/tmp/ldap-component.json"
+  register: ldap_component_data
+
+- name: Parse ldap-component.json content
+  set_fact:
+    ldap_component_parsed_json: "{{ ldap_component_data.content | b64decode | from_json }}"
+
+- name: Test Docker service UP
+  command: docker compose exec keycloak ls
+  args:
+    chdir: "{{ project_path }}"
+
+- name: Permission exports Folder KeyCloak
+  command: "chmod -R 777 ./exports"
+  args:
+    chdir: "{{ project_path }}"
+
+- name: Export KeyCloak Master Realm
+  command: docker compose exec keycloak /opt/keycloak/bin/kc.sh export --realm master --dir /opt/keycloak/exports
+  args:
+    chdir: "{{ project_path }}"
+
+- name: Read Exported Master Realm File
+  slurp:
+    path: "{{ project_path }}/exports/master-realm.json"
+  register: master_realm_data
+
+- name: Parse Exported Master Realm File JSON content
+  set_fact:
+    master_realm_parsed_json: "{{ master_realm_data.content | b64decode | from_json }}"
+
+- name: Add new nested key-value pair
+  set_fact:
+    parsed_json: "{{ master_realm_parsed_json | combine({'components': master_realm_parsed_json.components | combine({'org.keycloak.storage.UserStorageProvider': [ldap_component_parsed_json]})}) }}"
+
+- name: Write back modified JSON to the Master Realm file
+  copy:
+    content: "{{ parsed_json | to_nice_json }}"
+    dest: "{{ project_path }}/exports/master-realm.json"
+    mode: "0777"
+
+- name: Import KeyCloak Master Realm
+  command: docker compose exec keycloak /opt/keycloak/bin/kc.sh import --dir /opt/keycloak/exports
+  args:
+    chdir: "{{ project_path }}"
+
+- name: Delete Exported files
+  command: rm -rf exports/*
+  args:
+    chdir: "{{ project_path }}"
