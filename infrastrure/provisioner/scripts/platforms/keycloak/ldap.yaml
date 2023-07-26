@@ -57,6 +57,7 @@
     chdir: "{{ project_path }}"
 
 - name: Delete Exported files
-  command: rm -rf exports/*
+  ignore_errors: true
+  shell: "rm -rf exports/*"
   args:
     chdir: "{{ project_path }}"
