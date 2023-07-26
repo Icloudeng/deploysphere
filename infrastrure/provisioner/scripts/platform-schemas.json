@@ -30,5 +30,9 @@
     "keycloak": {
         "port": 8080,
         "protocol": "http"
+    },
+    "discourse": {
+        "port": 80,
+        "protocol": "http"
     }
 }

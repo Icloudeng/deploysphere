@@ -10,3 +10,71 @@
 
     # Playbook init (with decoded_metadata, project_path, app_secret)
     - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Extract Required Variables
+      set_fact:
+        domain: "{{ decoded_metadata | json_query('domain') }}"
+        admin_emails: "{{ decoded_metadata | json_query('admin_emails') }}"
+        smtp_address: "{{ decoded_metadata | json_query('smtp_address') }}"
+        smtp_port: "{{ decoded_metadata | json_query('smtp_port') }}"
+        smtp_username: "{{ decoded_metadata | json_query('smtp_username') }}"
+        smtp_password: "{{ decoded_metadata | json_query('smtp_password') }}"
+        smtp_email_from: "{{ decoded_metadata | json_query('smtp_email_from') }}"
+
+    # Validate domain variable
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ item }}"
+      loop:
+        - "{{ domain }}"
+        - "{{ smtp_address }}"
+
+    # Validate email variable
+    - include_tasks: ../../tasks/validator/email-regex.yaml
+      vars:
+        email_var: "{{ item }}"
+      loop:
+        - "{{ smtp_username }}"
+        - "{{ smtp_email_from }}"
+
+    # Install Docker
+    - include_tasks: ../../tasks/docker.yaml
+
+    - name: Update Discourse code from GitHub (cd /var/discourse && git pull)
+      become: true
+      git:
+        repo: "https://github.com/discourse/discourse_docker.git"
+        dest: /var/discourse
+        version: main
+
+    - name: Permission containers Folder
+      become: true
+      command: "chmod 700 containers"
+      args:
+        chdir: "/var/discourse"
+
+    - name: "Copy app.yml template"
+      become: true
+      template:
+        src: app.yml.j2
+        dest: "/var/discourse/containers/app.yml"
+        force: yes
+
+    - name: Build and Start app
+      become: true
+      shell: "./launcher rebuild app"
+      args:
+        chdir: "/var/discourse"
+        executable: /bin/bash
+
+    - name: Pause play until a URL is reachable from this host
+      ignore_errors: true
+      ansible.builtin.uri:
+        url: "http://127.0.0.1"
+        follow_redirects: none
+        validate_certs: no
+        method: GET
+      register: _result
+      until: _result.status >= 200
+      retries: 50
+      delay: 15
