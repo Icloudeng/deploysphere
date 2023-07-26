@@ -77,4 +77,4 @@
       register: _result
       until: _result.status >= 200
       retries: 50
-      delay: 15
+      delay: 5
