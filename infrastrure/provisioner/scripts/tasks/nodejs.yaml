@@ -1,11 +1,13 @@
 - name: Install the gpg key for nodejs LTS
   tags: [nodejs]
+  become: true
   apt_key:
     url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
     state: present
 
 - name: Install the nodejs {{ node_version }} LTS repos
   tags: [nodejs]
+  become: true
   apt_repository:
     repo: "deb https://deb.nodesource.com/node_{{ node_version }}.x {{ ansible_distribution_release }} main"
     state: present
@@ -13,6 +15,7 @@
 
 - name: Install the nodejs {{ node_version }} LTS
   tags: [nodejs]
+  become: true
   package:
     update_cache: yes
     name:
@@ -21,6 +24,7 @@
 
 - name: NPM | Install PNPM, YARN, PM2
   tags: [nodejs]
+  become: true
   npm:
     name: "{{ item }}"
     global: yes
