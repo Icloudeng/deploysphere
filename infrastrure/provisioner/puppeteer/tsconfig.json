@@ -8,8 +8,9 @@
             "dom",
             "dom.iterable",
             "esnext",
-            "es2015"
+            "es2015",
         ],
+        "moduleResolution": "node",
         "allowJs": true,
         "checkJs": true,
         "skipLibCheck": true,
