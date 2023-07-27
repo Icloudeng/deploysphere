@@ -1,0 +1,25 @@
+- debug:
+    var: page_file
+
+- name: Fact | Puppeteer folder
+  set_fact:
+    puppeteer_folder: "{{ project_path }}/.puppeteer"
+
+- name: Create Puppeteer folder
+  become: false
+  file:
+    state: directory
+    path: "{{ puppeteer_folder }}"
+    recurse: yes
+
+- name: Install dependencies
+  become: true
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - libgbm-dev
+
+- include_tasks: nodejs.yaml
+  vars:
+    node_version: 18
