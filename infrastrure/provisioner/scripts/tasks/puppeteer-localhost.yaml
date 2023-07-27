@@ -1,0 +1,31 @@
+- name: Fact | Puppeteer folder
+  set_fact:
+    puppeteer_folder: "{{ playbook_dir | dirname | dirname | dirname  }}/puppeteer"
+
+  delegate_to: 127.0.0.1
+
+- name: Install dependencies
+  become: true
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - libnss3
+    - libxss1
+    - libasound2
+    - libatk-bridge2.0-0
+    - libgtk-3-0
+    - libgbm-dev
+  delegate_to: 127.0.0.1
+  when: ansible_os_family == 'Linux'
+
+- include_tasks: nodejs.yaml
+  when: ansible_os_family == 'Linux'
+  delegate_to: 127.0.0.1
+
+- name: PNPM | Install dependencies
+  become: false
+  command: "pnpm install"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+  delegate_to: 127.0.0.1

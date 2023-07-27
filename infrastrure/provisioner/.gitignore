@@ -5,3 +5,5 @@ test.sh
 ansible_log.txt
 *.log
 __pycache__
+
+/playbook.test.yaml

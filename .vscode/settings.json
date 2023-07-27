@@ -9,7 +9,10 @@
         ],
         "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/playbook": [
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/keycloak/playbook-configuration.yaml",
-            "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/moodle/playbook-configuration.yaml"
+            "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/moodle/playbook-configuration.yaml",
+            "file:///home/ubuntu/projects/smatflow/platform-installer/infrastrure/provisioner/scripts/platforms/moodle/playbook-configuration.yaml",
+            "file:///home/ubuntu/projects/smatflow/platform-installer/infrastrure/provisioner/playbook.test.yaml",
+            "file:///home/ubuntu/projects/smatflow/platform-installer/infrastrure/provisioner/scripts/playbook.test.yaml"
         ]
     },
     "deepscan.ignoreConfirmWarning": true

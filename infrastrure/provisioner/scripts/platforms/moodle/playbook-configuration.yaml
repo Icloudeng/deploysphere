@@ -1,23 +1,23 @@
 ---
 - name: Moodle Configuration
-  hosts: all
+  hosts: localhost
   become: true
   gather_facts: true
-  vars_files:
-    - ../../variables.yaml
-  vars:
-    node_version: 18
 
   tasks:
-    # Wait until all unable to acquire the dpkg frontend lock process finished
-    - include_tasks: ../../tasks/cloud-init.yaml
-
-    # Playbook init (with decoded_metadata, project_path)
-    - include_tasks: ../../tasks/playbook-init.yaml
+    - name: Decode base64 platform_metadata variable
+      set_fact:
+        decoded_metadata: "{{ platform_metadata | b64decode }}"
 
     - name: Extract Required Variables
       set_fact:
-        domain: "{{ decoded_metadata | json_query('domain') }}"
+        admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
+        admin_password: "{{ decoded_metadata | json_query('admin_password') }}"
         configuration: "{{ decoded_metadata | json_query('configuration') }}"
 
-    - include_tasks: ../../tasks/puppeteer.yaml
+    # Validate domain variable
+    - include_tasks: ../../tasks/validator/url-ws-regex.yaml
+      vars:
+        url_var: "{{ configuration['keycloak_url'] }}"
+
+    - include_tasks: sso-configuration.yaml

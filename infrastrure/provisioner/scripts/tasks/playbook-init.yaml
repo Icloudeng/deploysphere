@@ -39,6 +39,10 @@
   debug:
     var: admin_email
 
+- name: "Var | Debug vm_ip"
+  debug:
+    var: vm_ip
+
 # DB or File secret
 - name: Fact | App Secret
   set_fact:

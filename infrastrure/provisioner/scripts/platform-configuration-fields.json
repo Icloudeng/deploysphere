@@ -22,5 +22,16 @@
             "ldap_bind_dn",
             "ldap_bind_password"
         ]
+    },
+    "moodle": {
+        "fields": [
+            "admin_username",
+            "admin_password"
+        ],
+        "configuration": [
+            "keycloak_url",
+            "keycloak_admin",
+            "keycloak_password"
+        ]
     }
 }

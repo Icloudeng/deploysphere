@@ -1,8 +1,8 @@
 import puppeteer, { Page } from "puppeteer";
 import { wait, log } from "./utils";
 
-const baseUrl = "https://keycloak.lab.smatflow.xyz/admin";
-const CLIENT_ID = "{{ keycloak_client }}";
+const baseUrl = "{{ configuration['keycloak_url'] }}/admin";
+const CLIENT_ID = "{{ keycloak_client_id }}";
 
 (async () => {
   // Launch the browser and open a new blank page
@@ -21,10 +21,10 @@ const CLIENT_ID = "{{ keycloak_client }}";
   await page.waitForSelector("#kc-form-login");
 
   // Login
-  await page.type("#kc-form-login #username", "admin");
+  await page.type("#kc-form-login #username", "{{ configuration['keycloak_admin'] }}");
   await page.type(
     "#kc-form-login #password",
-    "e96e0a9a6e182646a884c41a9f2227e4"
+    "{{ configuration['keycloak_password'] }}"
   );
   await Promise.all([
     page.waitForNavigation(),

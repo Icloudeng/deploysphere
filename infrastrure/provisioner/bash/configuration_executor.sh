@@ -25,6 +25,7 @@ static_secret=$(get_platform_static_secret)
 ansible_extra_vars="platform_metadata=$metadata platform_name=$platform"
 ansible_extra_vars+=" random_secret=$random_secret admin_email=$admin_email" # Must start with empty space
 ansible_extra_vars+=" static_secret=$static_secret"                          # Must start with empty space
+ansible_extra_vars+=" vm_ip=$vm_ip"                                          # Must start with empty space
 
 # Get the last total ansible logs file line number (Before ansible execution)
 logs_lines=$(wc -l <$ansible_log_file | tr -d '[:space:]')

@@ -1,0 +1,19 @@
+- debug:
+    var: url_var
+
+- set_fact:
+    url_regex: ^(https?:\/\/)?[\w.-]+(\.[\w-]+)+$
+
+- name: Ensure Url variable is set
+  assert:
+    that:
+      - url_var is defined and url_var != ''
+    fail_msg: "Url variable is not set or is empty."
+    quiet: yes
+
+- name: Ensure Url variable satisfies Url regex
+  assert:
+    that:
+      - url_var | regex_search(url_regex)
+    fail_msg: "Url variable does not satisfy the Url address format."
+    quiet: yes

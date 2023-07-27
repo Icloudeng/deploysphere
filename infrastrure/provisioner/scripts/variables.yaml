@@ -1,2 +1,3 @@
 ---
-keycloak_client: "apps-authenticator"
+keycloak_client_id: "apps-authenticator"
+node_version: 18
