@@ -16,10 +16,10 @@
     - libgtk-3-0
     - libgbm-dev
   delegate_to: 127.0.0.1
-  when: ansible_os_family == 'Linux'
+  when: ansible_distribution == "Ubuntu"
 
 - import_tasks: nodejs.yaml
-  when: ansible_os_family == 'Linux'
+  when: ansible_distribution == "Ubuntu"
   delegate_to: 127.0.0.1
 
 - name: PNPM | Install dependencies
