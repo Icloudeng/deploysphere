@@ -3,13 +3,21 @@
 
 - name: keycloak-client file
   set_fact:
-    keycloak_client_file: "{{ puppeteer_folder }}/src/{{ random_secret }}.ts"
+    keycloak_client_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-keycloak.ts"
+    moodle_sso_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-moodle.ts"
 
 - name: "Copy keycloak-client.ts template"
   become: false
   template:
     src: puppeteer/keycloak-client.ts.j2
     dest: "{{ keycloak_client_file }}"
+    force: yes
+
+- name: "Copy moodle-sso.ts template"
+  become: false
+  template:
+    src: puppeteer/moodle-sso.ts.j2
+    dest: "{{ moodle_sso_file }}"
     force: yes
 
 - name: "Run keycloak-client.ts"
@@ -23,8 +31,17 @@
   set_fact:
     client_secret: "{{ client_key.stdout | regex_search('%%%(.*?)%%%') | replace('%%%', '') }}"
 
-- name: "Remove {{ random_secret }}.ts"
+- name: "Run moodle-sso.ts"
   become: false
-  command: "rm -rf {{ keycloak_client_file }}"
+  command: "pnpm ts-node {{ moodle_sso_file }}"
   args:
     chdir: "{{ puppeteer_folder }}"
+
+- name: "Remove {{ item }}"
+  become: false
+  command: "rm -rf {{ item }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+  loop:
+    - "{{ keycloak_client_file }}"
+    - "{{ moodle_sso_file }}"

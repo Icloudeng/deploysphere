@@ -3,6 +3,9 @@
   hosts: localhost
   become: true
   gather_facts: true
+  vars:
+    oidc_plugin_name: "auth_oidc_moodle42_2023042400.zip"
+    oidc_plugin_url: "https://moodle.org/plugins/download.php/29296/{{ oidc_plugin_name }}"
 
   tasks:
     - name: Decode base64 platform_metadata variable

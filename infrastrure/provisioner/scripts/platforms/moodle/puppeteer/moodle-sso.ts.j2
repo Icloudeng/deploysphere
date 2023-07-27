@@ -1,0 +1,265 @@
+import puppeteer, { Page } from "puppeteer";
+import { wait, downloadFile } from "./utils";
+
+const oidcPluginName = "{{ oidc_plugin_name }}";
+const oidcPluginUrl = "{{ oidc_plugin_url }}";
+
+const baseUrl = "{{ vm_ip }}";
+const USERNAME = "{{ admin_username }}";
+const PASSWORD = "{{ admin_password }}";
+
+const PLUGIN_ID = "oidc";
+
+// OPENID Settings
+const OIDC_ENDPOINT = "{{ configuration['keycloak_url'] }}";
+const OIDC_APPLICATION_ID = "{{ keycloak_client_id }}";
+const OIDC_CLIENT_SECRET = "{{ client_secret }}";
+
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+  });
+
+  const page = await browser.newPage();
+
+  // Navigate the page to a URL
+  await page.goto(baseUrl + "/admin/plugins.php");
+
+  // Set screen size
+  await page.setViewport({ width: 1200, height: 1024 });
+
+  /**
+   * ===========================
+   * LOGIN
+   */
+  const lusername = await page.waitForSelector("#login #username");
+  await lusername.type(USERNAME);
+
+  const lpassword = await page.waitForSelector("#login #password");
+  await lpassword.type(PASSWORD);
+
+  const loginbtn = await page.waitForSelector("#login #loginbtn");
+  await Promise.all([page.waitForNavigation(), loginbtn.click()]);
+
+  /**
+   * ===========================
+   * Checkif OPENID Plugin exists
+   */
+  const typeAuth = await page.waitForSelector("tr.type-auth");
+  const exists = await typeAuth.evaluate((_, PLUGIN_ID) => {
+    const plugins = Array.from(document.querySelectorAll("tr.type-auth"));
+    return plugins.some((el) => {
+      return el.textContent.includes("auth_" + PLUGIN_ID);
+    });
+  }, PLUGIN_ID);
+
+  if (!exists) {
+    await installPlugin(page);
+  }
+
+  // Configuration
+  await openIdConfiguration(page);
+
+  await browser.close();
+})();
+
+async function openIdConfiguration(page: Page) {
+  await Promise.all([
+    page.waitForNetworkIdle(),
+    page.waitForNavigation(),
+    page.goto(baseUrl + "/auth/oidc/manageapplication.php"),
+  ]);
+
+  /**
+   * =========================
+   * Auth Settings
+   */
+
+  // idptype field
+  const idptype = await page.waitForSelector("form select[name=idptype]");
+  await idptype.select("3");
+
+  // clientid field
+  const clientid = await page.waitForSelector("form input[name=clientid]");
+  await clientid.evaluate((el, OIDC_APPLICATION_ID) => {
+    el.value = OIDC_APPLICATION_ID;
+  }, OIDC_APPLICATION_ID);
+
+  // clientsecret field
+  const clientsecret = await page.waitForSelector(
+    "form input[name=clientsecret]"
+  );
+  await clientsecret.evaluate((el, OIDC_CLIENT_SECRET) => {
+    el.value = OIDC_CLIENT_SECRET;
+  }, OIDC_CLIENT_SECRET);
+
+  // authendpoint field
+  const authendpoint = await page.waitForSelector(
+    "form input[name=authendpoint]"
+  );
+  await authendpoint.evaluate((el, OIDC_ENDPOINT) => {
+    el.value = `${OIDC_ENDPOINT}/realms/master/protocol/openid-connect/auth`;
+  }, OIDC_ENDPOINT);
+
+  // tokenendpoint field
+  const tokenendpoint = await page.waitForSelector(
+    "form input[name=tokenendpoint]"
+  );
+  await tokenendpoint.evaluate((el, OIDC_ENDPOINT) => {
+    el.value = `${OIDC_ENDPOINT}/realms/master/protocol/openid-connect/token`;
+  }, OIDC_ENDPOINT);
+
+  // oidcresource field
+  const oidcresource = await page.waitForSelector(
+    "form input[name=oidcresource]"
+  );
+  await oidcresource.evaluate((el, OIDC_ENDPOINT) => {
+    el.value = `${OIDC_ENDPOINT}/realms/master`;
+  }, OIDC_ENDPOINT);
+
+  // oidcscope field
+  const oidcscope = await page.waitForSelector("form input[name=oidcscope]");
+  await oidcscope.evaluate((el) => {
+    el.value = "openid";
+  });
+
+  // Save Cconfiguration
+  const saveConfig = await page.waitForSelector("form input[type=submit]");
+  await Promise.all([page.waitForNavigation(), saveConfig.click()]);
+
+  /**
+   * =========================
+   * Fiels mapping
+   */
+  await Promise.all([
+    page.waitForNavigation(),
+    page.goto(baseUrl + "/admin/settings.php?section=auth_oidc_field_mapping"),
+  ]);
+
+  // field_map_firstname
+  const field_map_firstname = await page.waitForSelector(
+    "select[name=s_auth_oidc_field_map_firstname]"
+  );
+  await field_map_firstname.select("givenName");
+
+  // field_map_firstname
+  const field_map_lastname = await page.waitForSelector(
+    "select[name=s_auth_oidc_field_map_lastname]"
+  );
+  await field_map_lastname.select("surname");
+
+  // field_map_email
+  const field_map_email = await page.waitForSelector(
+    "select[name=s_auth_oidc_field_map_email]"
+  );
+  await field_map_email.select("mail");
+
+  // Save settings
+  const saveSettingsBtn = await page.waitForSelector(
+    "#adminsettings button[type=submit]"
+  );
+  await Promise.all([page.waitForNavigation(), saveSettingsBtn.click()]);
+
+  /**
+   * =========================
+   * Enable openid plugin
+   */
+  await Promise.all([
+    page.waitForNavigation(),
+    page.goto(baseUrl + "/admin/settings.php?section=manageauths"),
+  ]);
+
+  const manageauthtable = await page.waitForSelector("#manageauthtable tbody");
+
+  const sesskey = await manageauthtable.evaluate((tbody) => {
+    return Array.from(tbody.children).reduce((acc, tr) => {
+      const firstLink = tr.querySelector("a");
+      if (firstLink && acc.length === 0) {
+        const url = new URL(firstLink.href);
+        const sesskey = url.searchParams.get("sesskey");
+
+        if (sesskey) {
+          acc = sesskey;
+        }
+      }
+      return acc;
+    }, "");
+  });
+
+  // Enable plugin
+  await Promise.all([
+    page.waitForNavigation(),
+    page.goto(
+      baseUrl +
+        `/admin/auth.php?sesskey=${sesskey}&action=enable&auth=${PLUGIN_ID}`
+    ),
+  ]);
+}
+
+/**
+ * INSTALL Auth PLUGIN
+ *
+ * @param page
+ */
+async function installPlugin(page: Page) {
+  await Promise.all([
+    page.waitForNavigation(),
+    page.waitForNetworkIdle(),
+    page.goto(baseUrl + "/admin/tool/installaddon/index.php"),
+  ]);
+
+  const pluginFile = await downloadFile(oidcPluginUrl, "cache/" + oidcPluginName);
+
+  // Open file picker
+  const chooseFile = await page.waitForSelector(
+    "#fitem_id_zipfile input.fp-btn-choose"
+  );
+  await wait(3);
+  await chooseFile.click();
+
+  // Pick file
+  const inputFile = await page.waitForSelector(
+    ".fp-upload-form input[name=repo_upload_file]"
+  );
+
+  const [fileChooser] = await Promise.all([
+    page.waitForFileChooser(),
+    inputFile.click(),
+  ]);
+
+  await fileChooser.accept([pluginFile]);
+
+  const uploadBtn = await page.waitForSelector(
+    ".fp-upload-form button.fp-upload-btn"
+  );
+  await Promise.all([page.waitForNetworkIdle(), uploadBtn.click()]);
+  await wait(2);
+
+  // Install plugugin
+  const installBtn = await page.waitForSelector(
+    "#fitem_id_submitbutton input[name=submitbutton]"
+  );
+  await Promise.all([page.waitForNavigation(), installBtn.click()]);
+
+  // Continue plugin installation
+  const continueBtn = await page.waitForSelector(
+    ".continue form button[type=submit]"
+  );
+  await Promise.all([page.waitForNavigation(), continueBtn.click()]);
+
+  // Continue twice plugin installation
+  for (let index = 0; index < 3; index++) {
+    const continue2Btn = await page.waitForSelector(
+      ".continuebutton form button[type=submit]"
+    );
+    await Promise.all([page.waitForNavigation(), continue2Btn.click()]);
+    await wait(1);
+  }
+
+  // Save default settings
+  const saveSettingsBtn = await page.waitForSelector(
+    "#adminsettings input[type=submit]"
+  );
+  await Promise.all([page.waitForNavigation(), saveSettingsBtn.click()]);
+}
