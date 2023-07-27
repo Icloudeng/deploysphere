@@ -4,7 +4,7 @@ import { wait, downloadFile } from "./utils";
 const oidcPluginName = "{{ oidc_plugin_name }}";
 const oidcPluginUrl = "{{ oidc_plugin_url }}";
 
-const baseUrl = "{{ vm_ip }}";
+const baseUrl = "http://{{ vm_ip }}:5080";
 const USERNAME = "{{ admin_username }}";
 const PASSWORD = "{{ admin_password }}";
 
@@ -19,6 +19,7 @@ const OIDC_CLIENT_SECRET = "{{ client_secret }}";
   const browser = await puppeteer.launch({
     headless: "new",
     args: ["--no-sandbox"],
+    timeout: 60_000,
   });
 
   const page = await browser.newPage();

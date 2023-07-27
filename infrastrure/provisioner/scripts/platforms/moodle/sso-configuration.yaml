@@ -13,13 +13,6 @@
     dest: "{{ keycloak_client_file }}"
     force: yes
 
-- name: "Copy moodle-sso.ts template"
-  become: false
-  template:
-    src: puppeteer/moodle-sso.ts.j2
-    dest: "{{ moodle_sso_file }}"
-    force: yes
-
 - name: "Run keycloak-client.ts"
   become: false
   command: "pnpm ts-node {{ keycloak_client_file }}"
@@ -30,6 +23,13 @@
 - name: Keycloak client secret
   set_fact:
     client_secret: "{{ client_key.stdout | regex_search('%%%(.*?)%%%') | replace('%%%', '') }}"
+
+- name: "Copy moodle-sso.ts template"
+  become: false
+  template:
+    src: puppeteer/moodle-sso.ts.j2
+    dest: "{{ moodle_sso_file }}"
+    force: yes
 
 - name: "Run moodle-sso.ts"
   become: false
