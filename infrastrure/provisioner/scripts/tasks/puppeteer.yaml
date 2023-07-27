@@ -1,6 +1,3 @@
-- debug:
-    var: page_file
-
 - name: Fact | Puppeteer folder
   set_fact:
     puppeteer_folder: "{{ project_path }}/.puppeteer"
@@ -21,5 +18,20 @@
     - libgbm-dev
 
 - include_tasks: nodejs.yaml
-  vars:
-    node_version: 18
+
+- name: Copy Package files
+  become: false
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ puppeteer_folder }}/"
+    force: true
+  loop:
+    - "../../puppeteer/package.json"
+    - "../../puppeteer/pnpm-lock.yaml"
+    - "../../puppeteer/tsconfig.json"
+
+- name: PNPM | Install dependencies
+  become: false
+  command: "pnpm install"
+  args:
+    chdir: "{{ puppeteer_folder }}"

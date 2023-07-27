@@ -1,2 +1,2 @@
 ---
-keycloak_app_authenticator_secret: "FqrjbqNL0oGeUOUyq37rpmuMBKDhhBSY"
+keycloak_client: "apps-authenticator"

@@ -5,6 +5,8 @@
   gather_facts: true
   vars_files:
     - ../../variables.yaml
+  vars:
+    node_version: 18
 
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
