@@ -27,13 +27,14 @@
 - name: Copy Package files
   become: false
   ansible.builtin.copy:
-    src: "{{ item }}"
-    dest: "{{ puppeteer_folder }}/"
+    src: "{{ item.file }}"
+    dest: "{{ puppeteer_folder }}/{{ item.name }}"
     force: true
   loop:
-    - "../../puppeteer/package.json"
-    - "../../puppeteer/pnpm-lock.yaml"
-    - "../../puppeteer/tsconfig.json"
+    - { file: "../../puppeteer/package.json", name: "package.json" }
+    - { file: "../../puppeteer/pnpm-lock.yaml", name: "pnpm-lock.yaml" }
+    - { file: "../../puppeteer/tsconfig.json", name: "tsconfig.json" }
+    - { file: "../../puppeteer/src/utils.ts", name: "utils.ts" }
 
 - name: PNPM | Install dependencies
   become: false

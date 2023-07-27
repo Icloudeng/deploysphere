@@ -21,11 +21,11 @@ get_last_n_chars() {
 execute_ansible_playbook() {
     if [ -f "./private-key.pem" ]; then
         chmod 600 ./private-key.pem
-        ansible-playbook -u "$ansible_user" -i "$vm_ip," --private-key "./private-key.pem" "$playbook_path" --extra-vars "$ansible_extra_vars"
+        ansible-playbook -u "$ansible_user" -i "$vm_ip," --private-key "./private-key.pem" "$playbook_path" --extra-vars "$ansible_extra_vars" --extra-vars "@scripts/variables.yaml"
         # Capture the exit code of the Ansible playbook command
         playbook_result=$?
     else
-        ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path" --extra-vars "$ansible_extra_vars"
+        ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path" --extra-vars "$ansible_extra_vars" --extra-vars "@scripts/variables.yaml"
         # Capture the exit code of the Ansible playbook command
         playbook_result=$?
     fi

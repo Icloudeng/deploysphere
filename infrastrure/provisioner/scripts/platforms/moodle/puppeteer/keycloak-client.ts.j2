@@ -1,0 +1,108 @@
+import puppeteer, { Page } from "puppeteer";
+import { wait, log } from "./utils";
+
+const baseUrl = "https://keycloak.lab.smatflow.xyz/admin";
+const CLIENT_ID = "{{ keycloak_client }}";
+
+(async () => {
+  // Launch the browser and open a new blank page
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+  });
+  const page = await browser.newPage();
+
+  // Navigate the page to a URL
+  await page.goto(baseUrl);
+
+  // Set screen size
+  await page.setViewport({ width: 1200, height: 1024 });
+
+  await page.waitForSelector("#kc-form-login");
+
+  // Login
+  await page.type("#kc-form-login #username", "admin");
+  await page.type(
+    "#kc-form-login #password",
+    "e96e0a9a6e182646a884c41a9f2227e4"
+  );
+  await Promise.all([
+    page.waitForNavigation(),
+    page.click("#kc-form-login #kc-login"),
+  ]);
+
+  //  Click Clients page
+  page.goto(`${baseUrl}/master/console/#/master/clients`);
+
+  // Client Page
+  const element = await page.waitForSelector(
+    "#kc-main-content-page-container table tbody"
+  );
+
+  // If client exists
+  const shouldCreateClient = await element.evaluate((el, CLIENT_ID) => {
+    const value = Array.from(el.children).reduce((acc, element) => {
+      const link = element.querySelector("a");
+      if (link.textContent.trim().includes(CLIENT_ID)) {
+        acc = link.href.replace("settings", "credentials");
+      }
+      return acc;
+    }, null as string | null);
+
+    return value;
+  }, CLIENT_ID);
+
+  if (shouldCreateClient) {
+    await readClientSecret(page, shouldCreateClient);
+  } else {
+    // Create new Client
+    await Promise.all([
+      page.waitForNavigation(),
+      page.goto(`${baseUrl}/master/console/#/master/clients/add-client`),
+    ]);
+
+    // Fill client id field
+    const clientIdEl = await page.waitForSelector("input[id=clientId]");
+    await clientIdEl.type(CLIENT_ID);
+
+    // Client next button
+    await page.click("button[data-testid=next]");
+
+    // Enable authentication switch
+    const el = await page.waitForSelector("#kc-authentication-switch");
+    await el.click();
+
+    // Client next button
+    await page.click("button[data-testid=next]");
+
+    const redirectEl = await page.waitForSelector("#kc-redirect input");
+    redirectEl.type("*");
+
+    const originEl = await page.waitForSelector("#kc-web-origins input");
+    originEl.type("*");
+
+    // Client save button
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click("button[data-testid=save]"),
+    ]);
+
+    await readClientSecret(page, page.url().replace("settings", "credentials"));
+  }
+
+  await browser.close();
+})();
+
+async function readClientSecret(page: Page, url: string) {
+  await Promise.all([page.goto(url), page.waitForNavigation()]);
+
+  const secretElement = await page.waitForSelector("#kc-client-secret");
+
+  await wait(2);
+
+  const secretKey = await secretElement.evaluate(
+    (el: HTMLInputElement) => el.value
+  );
+
+  log(secretKey);
+}
