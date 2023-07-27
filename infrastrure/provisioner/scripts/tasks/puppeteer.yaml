@@ -15,6 +15,11 @@
     name: "{{ item }}"
     state: present
   loop:
+    - libnss3
+    - libxss1
+    - libasound2
+    - libatk-bridge2.0-0
+    - libgtk-3-0
     - libgbm-dev
 
 - include_tasks: nodejs.yaml
