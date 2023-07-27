@@ -19,6 +19,7 @@
   when: ansible_distribution == "Ubuntu"
 
 - import_tasks: nodejs.yaml
+  become: true
   when: ansible_distribution == "Ubuntu"
   delegate_to: 127.0.0.1
 
