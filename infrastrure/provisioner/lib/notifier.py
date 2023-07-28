@@ -100,7 +100,11 @@ async def send_notification(encode_logs: str, status: str, installer_details: st
 
         sumzy = decoded_logs.find('========================================')
         sumzy = sumzy if sumzy > -1 else 0
-        decoded_logs = decoded_logs[sumzy:]
+        
+        if status == "succeeded":
+            decoded_logs = decoded_logs[sumzy:]
+        elif status == "failed" and sumzy > 0:
+            decoded_logs = decoded_logs[:sumzy]
 
         domain = get_domain(decoded_metadata)
 
