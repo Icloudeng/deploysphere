@@ -9,9 +9,13 @@
 - name: "Copy keycloak-client.ts template"
   become: false
   template:
-    src: puppeteer/keycloak-client.ts.j2
+    src: ../../templates/keycloak-client.ts.j2
     dest: "{{ keycloak_client_file }}"
     force: yes
+  vars:
+    keycloak_url: "{{ configuration['keycloak_url']  }}"
+    keycloak_admin: "{{ configuration['keycloak_admin']  }}"
+    keycloak_password: "{{ configuration['keycloak_password']  }}"
 
 - name: "Run keycloak-client.ts"
   become: false

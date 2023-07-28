@@ -1,0 +1,48 @@
+---
+- name: Joomla
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path)
+    - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Fact | Database Password
+      set_fact:
+        database_password: "{{ app_secret }}"
+
+    - name: Extract Required Variables
+      set_fact:
+        domain: "{{ decoded_metadata | json_query('domain') }}"
+        joomla_username: "{{ decoded_metadata | json_query('joomla_username') }}"
+        joomla_email: "{{ decoded_metadata | json_query('joomla_email') }}"
+        joomla_site_name: "{{ decoded_metadata | json_query('joomla_site_name') }}"
+
+    # Validate domain variable
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ domain }}"
+
+    # Validate joomla_username variable
+    - include_tasks: ../../tasks/validator/username-regex.yaml
+      vars:
+        username_var: "{{ joomla_username }}"
+
+    # Validate joomla_email variable
+    - include_tasks: ../../tasks/validator/email-regex.yaml
+      vars:
+        email_var: "{{ joomla_email }}"
+
+    # docker install
+    - include_tasks: docker-install.yaml
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        variable: |
+          Login
+          Username={{ joomla_username }}
+          Password={{ static_secret }}

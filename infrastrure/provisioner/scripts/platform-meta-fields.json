@@ -13,6 +13,12 @@
         "moodle_email",
         "moodle_site_name"
     ],
+    "joomla": [
+        "domain",
+        "joomla_username",
+        "joomla_email",
+        "joomla_site_name"
+    ],
     "zimbra": [
         "zimbra_fqdn",
         "zimbra_timezone",

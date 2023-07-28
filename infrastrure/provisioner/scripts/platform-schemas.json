@@ -34,5 +34,9 @@
     "discourse": {
         "port": 80,
         "protocol": "http"
+    },
+    "Joomla": {
+        "port": 5080,
+        "protocol": "http"
     }
 }

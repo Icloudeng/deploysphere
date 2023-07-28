@@ -6,7 +6,8 @@
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/erpnext/docker-install.yaml",
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/moodle/docker-install.yaml",
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/keycloak/ldap.yaml",
-            "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/moodle/sso-configuration.yaml"
+            "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/moodle/sso-configuration.yaml",
+            "file:///home/ubuntu/projects/smatflow/platform-installer/infrastrure/provisioner/scripts/platforms/moodle/sso-configuration.yaml"
         ],
         "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/playbook": [
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/keycloak/playbook-configuration.yaml",
