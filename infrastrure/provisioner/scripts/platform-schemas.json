@@ -35,7 +35,7 @@
         "port": 80,
         "protocol": "http"
     },
-    "Joomla": {
+    "joomla": {
         "port": 5080,
         "protocol": "http"
     }
