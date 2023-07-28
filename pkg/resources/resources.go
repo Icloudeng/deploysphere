@@ -45,7 +45,7 @@ func DeleteOvhDomainZoneResource(ref string) {
 //######################## Promox Resources ############################//
 
 func GetProxmoxResource() *proxmox.Resource {
-	// Working on ovh resource
+	// Working on prpxmox vm resource
 	proxmox_resource := proxmox.ResourceJSONData{}
 	proxmox_resource.ParseResourcesJSON()
 
