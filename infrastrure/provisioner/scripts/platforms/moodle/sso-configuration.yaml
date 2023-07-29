@@ -9,7 +9,7 @@
 - name: "Copy keycloak-client.ts template"
   become: false
   template:
-    src: ../../templates/keycloak-client.ts.j2
+    src: ../../templates/puppeteer/keycloak-client.ts.j2
     dest: "{{ keycloak_client_file }}"
     force: yes
   vars:
