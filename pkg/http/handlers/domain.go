@@ -44,7 +44,7 @@ func CreateDomain(c *gin.Context) {
 		// Create or update resources
 		resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
 		// Terraform Apply changes
-		defer terraform.Tf.Apply(true)
+		terraform.Tf.Apply(true)
 		return nil
 	})
 
@@ -62,13 +62,16 @@ func DeleteDomain(c *gin.Context) {
 	queue.Queue.QueueTask(func(ctx context.Context) error {
 		// Remove resources
 		resources.DeleteOvhDomainZoneResource(data.Ref)
+
 		// Terraform Apply changes
-		defer events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
-			Status:  "info",
-			Details: "Ref: " + data.Ref,
-			Logs:    "Domain Resource deleted",
-		})
-		defer terraform.Tf.Apply(true)
+		if err := terraform.Tf.Apply(true); err != nil {
+			events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+				Status:  "info",
+				Details: "Ref: " + data.Ref,
+				Logs:    "Domain Resource deleted",
+			})
+		}
+
 		return nil
 	})
 

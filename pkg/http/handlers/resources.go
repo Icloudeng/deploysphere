@@ -73,7 +73,7 @@ func CreateResources(c *gin.Context) {
 		resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
 
 		// Terraform Apply changes
-		defer terraform.Tf.Apply(true)
+		terraform.Tf.Apply(true)
 		return nil
 	})
 
@@ -92,16 +92,17 @@ func DeleteResources(c *gin.Context) {
 		resources.DeleteOvhDomainZoneResource(uri.Ref)
 		resources.DeleteProxmoxVmQemuResource(uri.Ref)
 
-		// Clean up resource event publish
-		// pkg.BusEvent.Publish(pkg.RESOURCES_CLEANUP_EVENT, domain)
-
 		// Terraform Apply changes
-		defer events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
-			Status:  "info",
-			Details: "Ref: " + uri.Ref,
-			Logs:    "Resources deleted",
-		})
-		defer terraform.Tf.Apply(true)
+		if err := terraform.Tf.Apply(true); err != nil {
+			events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+				Status:  "info",
+				Details: "Ref: " + uri.Ref,
+				Logs:    "Resources deleted",
+			})
+		}
+
+		// Clean up resources
+		// pkg.BusEvent.Publish(pkg.RESOURCES_CLEANUP_EVENT, domain)
 
 		return nil
 	})

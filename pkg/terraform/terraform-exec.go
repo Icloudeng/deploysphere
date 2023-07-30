@@ -91,18 +91,16 @@ func (t *Terrafrom) Show() *tfjson.StateModule {
 	return state.Values.RootModule
 }
 
-func (t *Terrafrom) Apply(notifier bool) {
-	if error := t.Plan(notifier); error != nil {
-		return
+func (t *Terrafrom) Apply(notifier bool) error {
+	if err := t.Plan(notifier); err != nil {
+		return err
 	}
 
-	tf := t.tk
-	ctx := context.Background()
 	options := []tfexec.ApplyOption{
 		tfexec.VarFile("variables.tfvars"),
 	}
 
-	err := tf.Apply(ctx, options...)
+	err := t.tk.Apply(context.Background(), options...)
 	if err != nil {
 		if notifier {
 			go func() {
@@ -115,8 +113,10 @@ func (t *Terrafrom) Apply(notifier bool) {
 		}
 
 		log.Printf("Error running Show: %s", err)
-		return
+		return err
 	}
 
 	log.Printf("********* Terraform applied ! ***********")
+
+	return nil
 }

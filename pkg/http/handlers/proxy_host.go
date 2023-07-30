@@ -45,7 +45,7 @@ func DeleteProxyHost(c *gin.Context) {
 	queue.Queue.QueueTask(func(ctx context.Context) error {
 		proxyhost.DeleteProxyHost(json.Domain)
 
-		defer events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+		events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 			Status:  "info",
 			Details: "Domain: " + json.Domain,
 			Logs:    "Proxy Host deleted",
