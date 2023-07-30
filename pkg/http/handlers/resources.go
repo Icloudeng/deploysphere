@@ -93,7 +93,7 @@ func DeleteResources(c *gin.Context) {
 		resources.DeleteProxmoxVmQemuResource(uri.Ref)
 
 		// Terraform Apply changes
-		if err := terraform.Tf.Apply(true); err != nil {
+		if err := terraform.Tf.Apply(true); err == nil {
 			events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 				Status:  "info",
 				Details: "Ref: " + uri.Ref,
