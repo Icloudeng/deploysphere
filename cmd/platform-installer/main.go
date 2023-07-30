@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"smatflow/platform-installer/jobs"
+	"smatflow/platform-installer/pkg/events/subscribers"
 	"smatflow/platform-installer/pkg/ldap"
 	"smatflow/platform-installer/pkg/validators"
 
@@ -14,6 +15,10 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 )
+
+func init() {
+	subscribers.EventSubscribers()
+}
 
 func main() {
 	r := gin.Default()
