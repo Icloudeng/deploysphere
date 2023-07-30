@@ -11,6 +11,7 @@ type Config struct {
 	LdapServerUrl    string `env:"LDAP_SERVER_URL,required"`
 	LdapBindTemplate string `env:"LDAP_BIND_TEMPLATE,required"`
 	// DB
+	DB_TYPE        string `env:"DB_TYPE"`
 	DB_PG_HOST     string `env:"DB_PG_HOST"`
 	DB_PG_PORT     string `env:"DB_PG_PORT"`
 	DB_PG_DBNAME   string `env:"DB_PG_DBNAME"`

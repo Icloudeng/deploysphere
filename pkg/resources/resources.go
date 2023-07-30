@@ -76,6 +76,8 @@ func DeleteProxmoxVmQemuResource(ref string) {
 	proxmox_resource.GetResource().DeleteProxmoxVmQemu(ref)
 }
 
+// Store resources state
+
 // ############## Init resources #####################
 func init() {
 	ovh_resource := &ovh.ResourceJSONData{}

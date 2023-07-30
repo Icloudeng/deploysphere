@@ -6,10 +6,11 @@ import (
 	"smatflow/platform-installer/pkg/env"
 
 	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
-var Db *gorm.DB
+var db *gorm.DB
 
 func init() {
 	dsn := fmt.Sprintf(
@@ -23,8 +24,21 @@ func init() {
 		env.EnvConfig.DB_PG_TIMEZONE,
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if Db = db; err != nil {
-		log.Print(err.Error())
+	if env.EnvConfig.DB_TYPE == "postgres" {
+		_db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+			PrepareStmt: true,
+		})
+
+		if db = _db; err != nil {
+			log.Fatal(err.Error())
+		}
+	} else {
+		_db, err := gorm.Open(sqlite.Open(".data.db"), &gorm.Config{
+			PrepareStmt: true,
+		})
+
+		if db = _db; err != nil {
+			log.Fatal(err.Error())
+		}
 	}
 }

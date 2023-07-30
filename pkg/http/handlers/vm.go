@@ -8,32 +8,42 @@ import (
 	"smatflow/platform-installer/pkg/resources"
 	"smatflow/platform-installer/pkg/structs"
 	"smatflow/platform-installer/pkg/terraform"
+	"smatflow/platform-installer/pkg/validators"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Domain struct {
-	Ref    string                    `json:"ref" binding:"required,resourceref"`
-	Domain *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
+type Vm struct {
+	Ref      string                 `json:"ref" binding:"required,resourceref"`
+	Vm       *structs.ProxmoxVmQemu `json:"vm" binding:"required,json"`
+	Platform *structs.Platform      `json:"platform"`
 }
 
-func CreateDomain(c *gin.Context) {
-	var json Domain
+func CreateVm(c *gin.Context) {
+	json := Vm{
+		Vm:       structs.NewProxmoxVmQemu(),
+		Platform: &structs.Platform{Metadata: &map[string]interface{}{}},
+	}
 
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Chech if platform the password corresponse to an existing platform folder
+	if !validators.ValidatePlatformMetadata(c, *json.Platform) {
+		return
+	}
+
 	// Check if Resource when post request
 	if c.Request.Method == "POST" {
-		_ovh := resources.GetOvhDomainZoneResource(json.Ref)
+		_vm := resources.GetProxmoxVmQemuResource(json.Ref)
 
-		if _ovh != nil {
+		if _vm != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": ResourceExistsError,
 				"resource": map[string]interface{}{
-					"domain": _ovh,
+					"vm": _vm,
 				},
 			})
 			return
@@ -41,8 +51,10 @@ func CreateDomain(c *gin.Context) {
 	}
 
 	queue.Queue.QueueTask(func(ctx context.Context) error {
+		// Reset unmutable vm fields
+		structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform)
 		// Create or update resources
-		resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
+		resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
 		// Terraform Apply changes
 		defer terraform.Tf.Apply(true)
 		return nil
@@ -51,7 +63,7 @@ func CreateDomain(c *gin.Context) {
 	c.JSON(http.StatusOK, json)
 }
 
-func DeleteDomain(c *gin.Context) {
+func DeleteVm(c *gin.Context) {
 	var data ResourcesRef
 
 	if err := c.ShouldBindUri(&data); err != nil {
@@ -61,12 +73,12 @@ func DeleteDomain(c *gin.Context) {
 
 	queue.Queue.QueueTask(func(ctx context.Context) error {
 		// Remove resources
-		resources.DeleteOvhDomainZoneResource(data.Ref)
+		resources.DeleteProxmoxVmQemuResource(data.Ref)
 		// Terraform Apply changes
-		defer events.BusEvent.Publish(events.NOTIFIER_RESOURCES_EVENT, structs.Notifier{
+		defer events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 			Status:  "info",
 			Details: "Ref: " + data.Ref,
-			Logs:    "Domain Resource deleted",
+			Logs:    "VM Resource deleted",
 		})
 		defer terraform.Tf.Apply(true)
 		return nil
