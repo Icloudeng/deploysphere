@@ -34,10 +34,10 @@ const OIDC_CLIENT_SECRET = "{{ client_secret }}";
    * ===========================
    * LOGIN
    */
-  const lusername = await page.waitForSelector("#login #username");
+  const lusername = await page.waitForSelector("#login input[name=username]");
   await lusername.type(USERNAME);
 
-  const lpassword = await page.waitForSelector("#login #password");
+  const lpassword = await page.waitForSelector("#login input[name=password]");
   await lpassword.type(PASSWORD);
 
   const loginbtn = await page.waitForSelector("#login #loginbtn");

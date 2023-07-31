@@ -5,6 +5,7 @@ const baseUrl = "{{ keycloak_url }}/admin";
 const CLIENT_ID = "{{ keycloak_client_id }}";
 const USERNAME = "{{ keycloak_admin }}";
 const PASSWORD = "{{ keycloak_password }}";
+const EMAIL = "{{ admin_email }}";
 
 (async () => {
   // Launch the browser and open a new blank page
@@ -23,9 +24,12 @@ const PASSWORD = "{{ keycloak_password }}";
 
   await page.waitForSelector("#kc-form-login");
 
-  // Login
-  await page.type("#kc-form-login #username", USERNAME);
-  await page.type("#kc-form-login #password", PASSWORD);
+  /**
+   * ===========================
+   * LOGIN
+   */
+  await page.type("#kc-form-login input[name=username]", USERNAME);
+  await page.type("#kc-form-login input[name=password]", PASSWORD);
   await Promise.all([
     page.waitForNavigation(),
     page.click("#kc-form-login #kc-login"),
@@ -90,8 +94,55 @@ const PASSWORD = "{{ keycloak_password }}";
     await readClientSecret(page, page.url().replace("settings", "credentials"));
   }
 
+  /**
+   * ===========================
+   * Admin Email
+   */
+  await adminEmail(page).catch();
+
   await browser.close();
 })();
+
+async function adminEmail(page: Page) {
+  await Promise.all([
+    page.waitForNavigation(),
+    page.goto(`${baseUrl}/master/console/#/master/users`),
+  ]);
+
+  const usersPage = await page.waitForSelector(
+    "section[data-testid=users-page] table tbody"
+  );
+
+  const adminLink = await usersPage.evaluate((tbody) => {
+    return Array.from(tbody.querySelectorAll("tr")).reduce((acc, tr) => {
+      const link = tr.querySelector("a");
+      if (link.textContent.includes("admin") && acc == null) {
+        acc = link.href;
+      }
+      return acc;
+    }, null as null | string);
+  });
+
+  if (!adminLink) {
+    return;
+  }
+
+  await page.goto(adminLink);
+
+  const emailInput = await page.waitForSelector("input[name=email]");
+  const value = await emailInput.evaluate((input) => {
+    return input.value;
+  });
+
+  if (value.trim().length === 0) {
+    await emailInput.type(EMAIL);
+    const saveButton = await page.waitForSelector(
+      "button[data-testid=save-user]"
+    );
+
+    await Promise.all([page.waitForNetworkIdle(), saveButton.click()]);
+  }
+}
 
 async function readClientSecret(page: Page, url: string) {
   await Promise.all([page.goto(url), page.waitForNavigation()]);
