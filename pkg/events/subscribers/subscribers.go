@@ -5,7 +5,7 @@ import (
 	proxyhost "smatflow/platform-installer/pkg/resources/proxy_host"
 	"smatflow/platform-installer/pkg/resources/utilities"
 
-	"smatflow/platform-installer/pkg/resources"
+	"smatflow/platform-installer/pkg/resources/database"
 )
 
 func EventSubscribers() {
@@ -16,5 +16,5 @@ func EventSubscribers() {
 	events.BusEvent.Subscribe(events.RESOURCES_CLEANUP_EVENT, proxyhost.DeleteProxyHost)
 
 	// Event Store or Update Resource DB
-	events.BusEvent.Subscribe(events.RESOURCES_DB_STORE_UPDATE, resources.StoreOrUpdateResourceState)
+	events.BusEvent.Subscribe(events.RESOURCES_DB_STORE_UPDATE, database.StoreOrUpdateResourceState)
 }

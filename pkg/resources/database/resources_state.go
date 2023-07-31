@@ -1,4 +1,4 @@
-package resources
+package database
 
 import (
 	"smatflow/platform-installer/pkg/database"
@@ -32,5 +32,5 @@ func StoreOrUpdateResourceState(ref string) {
 	current_res.Ref = ref
 	current_res.State = datatypes.NewJSONType(current_state)
 
-	repository.UpdateOrCreate(&current_res)
+	repository.UpdateOrCreate(current_res)
 }

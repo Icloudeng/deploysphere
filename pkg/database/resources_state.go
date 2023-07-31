@@ -17,12 +17,12 @@ type ResourcesState struct {
 
 type ResourcesStatesRepository struct{}
 
-func (r *ResourcesStatesRepository) GetByRef(ref string) ResourcesState {
-	res := ResourcesState{
+func (r *ResourcesStatesRepository) GetByRef(ref string) *ResourcesState {
+	res := &ResourcesState{
 		Ref: ref,
 	}
 
-	db.First(&res)
+	db.First(res)
 
 	return res
 }
