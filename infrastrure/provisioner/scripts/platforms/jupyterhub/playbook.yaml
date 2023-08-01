@@ -45,23 +45,32 @@
         chdir: "{{ project_path }}"
         creates: "/opt/tljh"
 
-    - name: Update Packages
+    # - name: Update Packages
+    #   become: true
+    #   command: "/opt/tljh/hub/bin/python3 -m pip install {{ item }}"
+    #   args:
+    #     executable: /bin/bash
+    #   loop:
+    #     - "wheel"
+    #     - "jupyterhub jupyterlab"
+    #     - "ipywidgets"
+
+    # - name: Install conda / pip packages for all users
+    #   shell: "source /opt/tljh/user/bin/activate && sudo /opt/tljh/user/bin/conda install -c conda-forge gdal -y"
+    #   args:
+    #     executable: /bin/bash
+
+    # - name: Install {{ item }} with pip
+    #   shell: "source /opt/tljh/user/bin/activate && sudo /opt/tljh/user/bin/pip install {{ item }}"
+    #   args:
+    #     executable: /bin/bash
+    #   loop:
+    #     - "there"
+    #     - "numpy"
+
+    - name: To launch JupyterLab when users log in.
       become: true
-      command: "/opt/tljh/hub/bin/python3 -m pip install {{ item }}"
-      args:
-        executable: /bin/bash
-      loop:
-        - "wheel"
-        - "jupyterhub jupyterlab"
-        - "ipywidgets"
-
-    - name: Install conda / pip packages for all users
-      shell: "source /opt/tljh/user/bin/activate && sudo /opt/tljh/user/bin/conda install -c conda-forge gdal -y"
-      args:
-        executable: /bin/bash
-
-    - name: Install there with pip
-      shell: "source /opt/tljh/user/bin/activate && sudo /opt/tljh/user/bin/pip install there"
+      shell: "sudo tljh-config set user_environment.default_app jupyterlab"
       args:
         executable: /bin/bash
 
