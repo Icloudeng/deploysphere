@@ -10,7 +10,7 @@ import (
 )
 
 func connect() *ldap.Conn {
-	l, err := ldap.DialURL(env.EnvConfig.LdapServerUrl)
+	l, err := ldap.DialURL(env.EnvConfig.LDAP_SERVER_URL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -19,6 +19,11 @@ func connect() *ldap.Conn {
 }
 
 func LDAPExistBindUser(username string, password string) bool {
+	// If LDAP_AUTH disable then authorize all request
+	if !env.EnvConfig.LDAP_AUTH {
+		return true
+	}
+
 	connection := connect()
 	defer connection.Close()
 
@@ -38,7 +43,7 @@ func parseUserBindTemplate(username string) string {
 	}
 
 	// Create a new template with the input string
-	tmpl := template.Must(template.New("template").Parse(env.EnvConfig.LdapBindTemplate))
+	tmpl := template.Must(template.New("template").Parse(env.EnvConfig.LDAP_BIND_TEMPLATE))
 
 	// Execute the template with the data and store the result in a buffer
 	var buf bytes.Buffer
@@ -52,8 +57,10 @@ func parseUserBindTemplate(username string) string {
 }
 
 func init() {
-	// Test the conection
-	connect().Close()
-	// Test template parse
-	parseUserBindTemplate("Test")
+	if env.EnvConfig.LDAP_AUTH {
+		// Test the conection
+		connect().Close()
+		// Test template parse
+		parseUserBindTemplate("Test")
+	}
 }

@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	LdapServerUrl    string `env:"LDAP_SERVER_URL,required"`
-	LdapBindTemplate string `env:"LDAP_BIND_TEMPLATE,required"`
+	LDAP_AUTH          bool   `env:"LDAP_AUTH" envDefault:"false"`
+	LDAP_SERVER_URL    string `env:"LDAP_SERVER_URL"`
+	LDAP_BIND_TEMPLATE string `env:"LDAP_BIND_TEMPLATE"`
 	// DB
 	DB_TYPE        string `env:"DB_TYPE"`
 	DB_PG_HOST     string `env:"DB_PG_HOST"`
