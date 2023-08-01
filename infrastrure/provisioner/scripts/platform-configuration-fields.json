@@ -44,5 +44,15 @@
             "keycloak_admin",
             "keycloak_password"
         ]
+    },
+    "jupyterhub": {
+        "fields": [
+            "domain"
+        ],
+        "configuration": [
+            "keycloak_url",
+            "keycloak_admin",
+            "keycloak_password"
+        ]
     }
 }
