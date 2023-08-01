@@ -32,9 +32,9 @@
         nextcloud_version_channel: "releases"
         nextcloud_get_latest: true
         nextcloud_version_major: 27
-        nextcloud_db_pwd: "{{ static_secret }}"
-        nextcloud_admin_pwd: "{{ static_secret }}"
-        nextcloud_mysql_root_pwd: "{{ static_secret }}"
+        nextcloud_db_pwd: "{{ app_secret }}"
+        nextcloud_admin_pwd: "{{ app_secret }}"
+        nextcloud_mysql_root_pwd: "{{ app_secret }}"
         # nextcloud_install_tls: false
         # nextcloud_tls_enforce: false
         # nextcloud_mozilla_modern_ssl_profile: false
@@ -51,4 +51,4 @@
         variable: |
           Login
           Username=admin
-          Password={{ static_secret }}
+          Password={{ app_secret }}

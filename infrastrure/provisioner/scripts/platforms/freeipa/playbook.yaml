@@ -34,4 +34,4 @@
         variable: |
           Login
           Username=admin
-          Password={{ static_secret }}
+          Password={{ app_secret }}

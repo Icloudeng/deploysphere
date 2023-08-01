@@ -39,7 +39,7 @@
         state: present
 
     - name: Install Jupyterhub
-      shell: "curl -L https://tljh.jupyter.org/bootstrap.py  | sudo python3 -  --admin {{ admin_username }}:{{ static_secret }}"
+      shell: "curl -L https://tljh.jupyter.org/bootstrap.py  | sudo python3 -  --admin {{ admin_username }}:{{ app_secret }}"
       args:
         executable: /bin/bash
         chdir: "{{ project_path }}"
@@ -50,4 +50,4 @@
         variable: |
           Login
           Username={{ admin_username }}
-          Password={{ static_secret }}
+          Password={{ app_secret }}

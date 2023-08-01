@@ -39,7 +39,7 @@
       vars:
         zimbra_fqdn: "{{ zimbra_fqdn }}"
         zimbra_timezone: "{{ zimbra_timezone }}"
-        zimbra_admin_password: "{{ static_secret }}"
+        zimbra_admin_password: "{{ app_secret }}"
         ansible_domain: "{{ zimbra_domain }}"
 
     - include_tasks: ../../tasks/expose-variable.yaml
@@ -47,4 +47,4 @@
         variable: |
           Login
           Username=admin
-          Password={{ static_secret }}
+          Password={{ app_secret }}

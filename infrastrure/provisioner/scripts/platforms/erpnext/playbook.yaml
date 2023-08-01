@@ -49,4 +49,4 @@
         variable: |
           Login
           Username=Administrator
-          Password={{ static_secret }}
+          Password={{ app_secret }}

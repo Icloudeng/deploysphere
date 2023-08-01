@@ -45,4 +45,4 @@
         variable: |
           Login
           Username={{ joomla_username }}
-          Password={{ static_secret }}
+          Password={{ app_secret }}
