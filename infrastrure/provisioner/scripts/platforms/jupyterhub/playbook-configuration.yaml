@@ -39,6 +39,7 @@
         - "auth.GenericOAuthenticator.login_service 'keycloak'"
         - "auth.GenericOAuthenticator.username_key 'preferred_username'"
         - "auth.GenericOAuthenticator.userdata_params.state 'state'"
+        - "auth.GenericOAuthenticator.scope 'openid'"
         - "auth.type 'generic-oauth'"
 
     - name: Apply the changes by restarting JupyterHub.
