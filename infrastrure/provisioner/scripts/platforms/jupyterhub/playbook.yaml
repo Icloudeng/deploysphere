@@ -47,7 +47,7 @@
 
     - name: Update all conda installed packages
       become: true
-      shell: "source /opt/tljh/user/bin/activate && /opt/tljh/user/bin/conda update --all"
+      shell: "source /opt/tljh/user/bin/activate && /opt/tljh/user/bin/conda update --all -y"
       args:
         executable: /bin/bash
 
