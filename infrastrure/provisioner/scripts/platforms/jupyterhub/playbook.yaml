@@ -47,13 +47,13 @@
 
     - name: Update all conda installed packages
       become: true
-      shell: "source /opt/tljh/user/bin/activate && /opt/tljh/user/bin/conda update --all -y"
+      shell: "source /opt/tljh/user/bin/activate && sudo /opt/tljh/user/bin/conda update --all -y"
       args:
         executable: /bin/bash
 
     # - name: Install conda / pip packages for all users
     #   become: true
-    #   shell: "source /opt/tljh/user/bin/activate && /opt/tljh/user/bin/conda install -c conda-forge {{ item }} -y"
+    #   shell: "source /opt/tljh/user/bin/activate && sudo /opt/tljh/user/bin/conda install -c conda-forge {{ item }} -y"
     #   args:
     #     executable: /bin/bash
     #   loop:
@@ -62,7 +62,7 @@
     # https://builtin.com/data-science/python-libraries-data-science
     - name: "Install {{ item }} with pip"
       become: true
-      shell: "source /opt/tljh/user/bin/activate && /opt/tljh/user/bin/pip install {{ item }}"
+      shell: "source /opt/tljh/user/bin/activate && sudo /opt/tljh/user/bin/pip install {{ item }}"
       args:
         executable: /bin/bash
       loop:
