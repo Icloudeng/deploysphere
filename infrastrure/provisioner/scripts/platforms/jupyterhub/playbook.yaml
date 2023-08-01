@@ -62,7 +62,7 @@
     # https://builtin.com/data-science/python-libraries-data-science
     - name: "Install {{ item }} with pip"
       become: true
-      shell: "source /opt/tljh/user/bin/activate && /opt/tljh/user/bin/pip install {{ item }}"
+      shell: "source /opt/tljh/user/bin/activate && /opt/tljh/user/bin/pip install  -U {{ item }}"
       args:
         executable: /bin/bash
       loop:
@@ -71,6 +71,8 @@
         - "pandas"
         - "scipy"
         - "seaborn"
+        - "jupyterlab"
+        - "notebook"
 
     - name: To launch JupyterLab when users log in.
       become: true
