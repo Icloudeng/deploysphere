@@ -19,7 +19,7 @@
         configuration: "{{ decoded_metadata | json_query('configuration') }}"
 
     # Validate domain variable
-    - import_tasks: ../../tasks/validator/url-ws-regex.yaml
+    - include_tasks: ../../tasks/validator/url-ws-regex.yaml
       vars:
         url_var: "{{ item }}"
       loop:
