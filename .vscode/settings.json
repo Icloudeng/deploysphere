@@ -14,7 +14,8 @@
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/moodle/playbook-configuration.yaml",
             "file:///home/ubuntu/projects/smatflow/platform-installer/infrastrure/provisioner/scripts/platforms/moodle/playbook-configuration.yaml",
             "file:///home/ubuntu/projects/smatflow/platform-installer/infrastrure/provisioner/playbook.test.yaml",
-            "file:///home/ubuntu/projects/smatflow/platform-installer/infrastrure/provisioner/scripts/playbook.test.yaml"
+            "file:///home/ubuntu/projects/smatflow/platform-installer/infrastrure/provisioner/scripts/playbook.test.yaml",
+            "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastrure/provisioner/scripts/platforms/joomla/playbook-configuration.yaml"
         ]
     },
     "deepscan.ignoreConfirmWarning": true

@@ -1,9 +1,10 @@
+import { once } from "events";
 import puppeteer, { Browser, Page } from "puppeteer";
 import { log, wait } from "./utils";
 
 const oidcPluginUrl = "{{ oidc_plugin_url }}";
 
-const baseUrl = "http://{{ vm_ip }}:5080";
+const baseUrl = "{{ domain }}";
 const USERNAME = "{{ admin_username }}";
 const PASSWORD = "{{ admin_password }}";
 
@@ -159,9 +160,14 @@ async function configureOAuth(page: Page, browser: Browser) {
   // Test Configuration
   // ==========================
   const testBtn = await page.waitForSelector("#test_config_button");
-  await testBtn.click();
 
-  await wait(2);
+  const [kcPage] = await Promise.all([
+    once(browser, "targetcreated").then(async () => {
+      const pages = await browser.pages();
+      return pages.at(-1);
+    }),
+    testBtn.click(),
+  ]);
 
   const pages = await browser.pages();
   const kcPage = pages.at(-1);

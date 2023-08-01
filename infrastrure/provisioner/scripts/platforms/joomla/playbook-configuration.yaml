@@ -13,6 +13,7 @@
 
     - name: Extract Required Variables
       set_fact:
+        domain: "{{ decoded_metadata | json_query('domain') }}"
         admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
         admin_password: "{{ decoded_metadata | json_query('admin_password') }}"
         configuration: "{{ decoded_metadata | json_query('configuration') }}"
@@ -20,7 +21,10 @@
     # Validate domain variable
     - import_tasks: ../../tasks/validator/url-ws-regex.yaml
       vars:
-        url_var: "{{ configuration['keycloak_url'] }}"
+        url_var: "{{ item }}"
+      loop:
+        - "{{ domain }}"
+        - "{{ configuration['keycloak_url'] }}"
 
     - import_tasks: sso-configuration.yaml
 
