@@ -127,7 +127,10 @@ async function adminEmail(page: Page) {
     return;
   }
 
-  await page.goto(adminLink);
+  await Promise.all([
+    page.waitForNavigation(),
+    page.goto(adminLink),
+  ]);
 
   const emailInput = await page.waitForSelector("input[name=email]");
   const value = await emailInput.evaluate((input) => {

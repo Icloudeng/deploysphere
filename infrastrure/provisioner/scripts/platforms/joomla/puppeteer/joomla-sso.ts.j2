@@ -1,0 +1,225 @@
+import puppeteer, { Browser, Page } from "puppeteer";
+import { log, wait } from "./utils";
+
+const oidcPluginUrl = "{{ oidc_plugin_url }}";
+
+const baseUrl = "http://{{ vm_ip }}:5080";
+const USERNAME = "{{ admin_username }}";
+const PASSWORD = "{{ admin_password }}";
+
+// OPENID Settings
+const OIDC_ENDPOINT = "{{ configuration['keycloak_url'] }}";
+const OIDC_APPLICATION_ID = "{{ keycloak_client_id }}";
+const OIDC_CLIENT_SECRET = "{{ client_secret }}";
+const KEYCLOAK_REALM = "{{ keycloak_realm }}";
+
+// KeyCloak
+const KC_USERNAME = "{{ configuration['keycloak_admin'] }}";
+const KC_PASSWORD = "{{ configuration['keycloak_password'] }}";
+
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+    timeout: 60_000,
+  });
+
+  const page = await browser.newPage();
+
+  // Navigate the page to a URL
+  await page.goto(baseUrl + "/administrator/index.php");
+
+  // Set screen size
+  await page.setViewport({ width: 1200, height: 1024 });
+
+  /**
+   * ===========================
+   * LOGIN
+   */
+  const lusername = await page.waitForSelector(
+    "#form-login input[name=username]"
+  );
+  await lusername.type(USERNAME);
+
+  const lpassword = await page.waitForSelector(
+    "#form-login input[name=passwd]"
+  );
+  await lpassword.type(PASSWORD);
+
+  const loginbtn = await page.waitForSelector("#form-login #btn-login-submit");
+  await Promise.all([page.waitForNavigation(), loginbtn.click()]);
+
+  /**
+   * ===========================
+   * Check If OAuth Plugin exist
+   */
+  const pluginExists = await checkForPlugin(page);
+
+  /**
+   * ===========================
+   * Install Plugin
+   */
+  if (!pluginExists) {
+    await page.goto(
+      baseUrl + "/administrator/index.php?option=com_installer&view=install"
+    );
+
+    const urlTab = await page.waitForSelector("button[aria-controls=url]");
+    await urlTab.click();
+
+    await wait(1);
+
+    const installInput = await page.waitForSelector("input[name=install_url]");
+    await installInput.type(oidcPluginUrl);
+
+    const installBtn = await page.waitForSelector("#installbutton_url");
+    await Promise.all([page.waitForNavigation(), installBtn.click()]);
+  }
+
+  await configureOAuth(page, browser);
+
+  await browser.close();
+})();
+
+async function configureOAuth(page: Page, browser: Browser) {
+  /**
+   * ===========================
+   * Configure OAuth Application
+   */
+  await page.goto(
+    baseUrl +
+      "/administrator/index.php?option=com_miniorange_oauth&view=accountsetup&moAuthAddApp=keycloak"
+  );
+
+  // mo_oauth_client_id
+  const clientIdEl = await page.waitForSelector(
+    "input[name=mo_oauth_client_id]"
+  );
+  await clientIdEl.evaluate((el, OIDC_APPLICATION_ID) => {
+    el.value = OIDC_APPLICATION_ID;
+  }, OIDC_APPLICATION_ID);
+
+  // mo_oauth_client_secret
+  const clientSecretEl = await page.waitForSelector(
+    "input[name=mo_oauth_client_secret]"
+  );
+  await clientSecretEl.evaluate((el, OIDC_CLIENT_SECRET) => {
+    el.value = OIDC_CLIENT_SECRET;
+  }, OIDC_CLIENT_SECRET);
+
+  // hasDomainInput
+  const hasDomainInput = await page.evaluate(() => {
+    return !!document.querySelector("input[name=Domain]");
+  });
+
+  if (hasDomainInput) {
+    const domainEl = await page.waitForSelector("input[name=Domain]");
+    await domainEl.evaluate((el, baseUrl) => {
+      el.value = baseUrl;
+    }, baseUrl);
+
+    // Realm
+    const realmEL = await page.waitForSelector("input[name=Realm]");
+    await realmEL.evaluate((el, KEYCLOAK_REALM) => {
+      el.value = KEYCLOAK_REALM;
+    }, KEYCLOAK_REALM);
+  }
+
+  // save settings
+  const saveSettingsEl = await page.waitForSelector(
+    "#oauth_config_form input[name=send_query]"
+  );
+  await Promise.all([page.waitForNavigation(), saveSettingsEl.click()]);
+
+  // ===================================
+
+  // mo_oauth_authorizeurl
+  const authorizeurl = await page.waitForSelector(
+    "input[name=mo_oauth_authorizeurl]"
+  );
+  await authorizeurl.evaluate((el, OIDC_ENDPOINT) => {
+    el.value = `${OIDC_ENDPOINT}/realms/master/protocol/openid-connect/auth`;
+  }, OIDC_ENDPOINT);
+
+  // mo_oauth_accesstokenurl
+  const accesstokenurl = await page.waitForSelector(
+    "input[name=mo_oauth_accesstokenurl]"
+  );
+  await accesstokenurl.evaluate((el, OIDC_ENDPOINT) => {
+    el.value = `${OIDC_ENDPOINT}/realms/master/protocol/openid-connect/token`;
+  }, OIDC_ENDPOINT);
+
+  // Save settings
+  const saveSettings = await page.waitForSelector(
+    "#oauth_config_form input[name=send_query]"
+  );
+  await Promise.all([page.waitForNavigation(), saveSettings.click()]);
+
+  // ==========================
+  // Test Configuration
+  // ==========================
+  const testBtn = await page.waitForSelector("#test_config_button");
+  await testBtn.click();
+
+  await wait(2);
+
+  const pages = await browser.pages();
+  const kcPage = pages.at(-1);
+
+  await kcPage.type("#kc-form-login input[name=username]", KC_USERNAME);
+  await kcPage.type("#kc-form-login input[name=password]", KC_PASSWORD);
+  await Promise.all([
+    kcPage.waitForNavigation(),
+    kcPage.click("#kc-form-login #kc-login"),
+  ]);
+
+  await kcPage.close();
+
+  // ==========================
+  //  Attribute mapping
+  // ==========================
+  await Promise.all([page.waitForNavigation(), page.reload()]);
+
+  // mo_oauth_email_attr
+  const emailAttrEl = await page.waitForSelector(
+    "select[name=mo_oauth_email_attr]"
+  );
+  await emailAttrEl.select("email");
+
+  // mo_oauth_first_name_attr
+  const firstNameAttrEl = await page.waitForSelector(
+    "select[name=mo_oauth_first_name_attr]"
+  );
+  await firstNameAttrEl.select("preferred_username");
+
+  const attrSaveSettings = await page.waitForSelector(
+    "#oauth_mapping_form input[name=send_query]"
+  );
+  await Promise.all([page.waitForNavigation(), attrSaveSettings.click()]);
+
+  // Get Login URL
+  const loginUrlEl = await page.waitForSelector("input[id=loginUrl]");
+  const url = await loginUrlEl.evaluate((el) => el.value);
+
+  log(url);
+}
+
+async function checkForPlugin(page: Page) {
+  await page.goto(
+    baseUrl + "/administrator/index.php?option=com_installer&view=manage"
+  );
+
+  const searhInput = await page.waitForSelector("#filter_search");
+  await searhInput.type("miniOrange OAuth Client");
+
+  const searchBtn = await page.waitForSelector(".filter-search-bar__button");
+  await Promise.all([
+    page.waitForNavigation(),
+    page.waitForNetworkIdle(),
+    searchBtn.click(),
+  ]);
+
+  return await page.evaluate(() => {
+    return !!document.querySelector("#manageList");
+  });
+}
