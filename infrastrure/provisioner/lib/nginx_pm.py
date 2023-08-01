@@ -34,7 +34,7 @@ def get_api_token():
     password = config.get("NGINX_PM_PASSWORD")
 
     if not url or not email or not password:
-        logging.warn(
+        logging.warning(
             "Cannot read variable env (NGINX_PM_URL, NGINX_PM_EMAIL, NGINX_PM_PASSWORD)"
         )
         return None, None
@@ -45,7 +45,7 @@ def get_api_token():
         headers=headers
     )
     if res.status_code != 200:
-        logging.warn(
+        logging.warning(
             "Nginx proxy mananger authentication failed"
         )
         return None, None

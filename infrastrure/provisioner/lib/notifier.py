@@ -34,7 +34,7 @@ def decode_metadata(metadata: str):
         decoded_bytes = base64.b64decode(metadata)
         data = json.loads(decoded_bytes.decode("utf-8"))
     except Exception as e:
-        logging.warn(e)
+        logging.warning(e)
 
     return data
 
@@ -44,7 +44,7 @@ def get_domain(decoded_metadata: dict):
     try:
         domain = decoded_metadata.get(DOMAIN_KEY, None)
     except Exception as e:
-        logging.warn(e)
+        logging.warning(e)
 
     return domain
 
@@ -54,7 +54,7 @@ def get_custom_telegram_chat_id(decoded_metadata: dict):
     try:
         chat_id = decoded_metadata.get("_notifier_telegram_chat_id", None)
     except Exception as e:
-        logging.warn(e)
+        logging.warning(e)
 
     return chat_id
 
@@ -65,7 +65,7 @@ def ignore_notifier(decoded_metadata: dict):
         ignore = decoded_metadata.get("_notifier", None) == False or decoded_metadata.get(
             "_notifier", None) == "false"
     except Exception as e:
-        logging.warn(e)
+        logging.warning(e)
 
     return ignore
 
@@ -73,7 +73,7 @@ def ignore_notifier(decoded_metadata: dict):
 async def send_notification(encode_logs: str, status: str, installer_details: str, metadata: str):
     bot, chat_id = create_bot()
     if bot == None:
-        logging.warn("Invalid BOT Configuration!")
+        logging.warning("Invalid BOT Configuration!")
         return
 
     decoded_metadata = decode_metadata(metadata)

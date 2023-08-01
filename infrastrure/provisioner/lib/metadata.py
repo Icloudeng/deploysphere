@@ -12,7 +12,7 @@ def decode_metadata(metadata: str):
         decoded_bytes = base64.b64decode(metadata)
         data = json.loads(decoded_bytes.decode("utf-8"))
     except Exception as e:
-        logging.warn(e)
+        logging.warning(e)
 
     return data
 
