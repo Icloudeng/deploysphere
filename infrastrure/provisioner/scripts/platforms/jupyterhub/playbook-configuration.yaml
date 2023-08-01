@@ -1,0 +1,10 @@
+---
+- name: Jupyterhub Configuration
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Decode base64 platform_metadata variable
+      set_fact:
+        decoded_metadata: "{{ platform_metadata | b64decode }}"

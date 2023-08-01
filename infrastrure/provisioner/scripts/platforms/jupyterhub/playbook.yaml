@@ -45,6 +45,11 @@
         chdir: "{{ project_path }}"
         creates: "/opt/tljh"
 
+    - name: Update all conda installed packages
+      shell: "source /opt/tljh/user/bin/activate && sudo /opt/tljh/user/bin/conda update --all"
+      args:
+        executable: /bin/bash
+
     # - name: Install conda / pip packages for all users
     #   shell: "source /opt/tljh/user/bin/activate && sudo /opt/tljh/user/bin/conda install -c conda-forge {{ item }} -y"
     #   args:
