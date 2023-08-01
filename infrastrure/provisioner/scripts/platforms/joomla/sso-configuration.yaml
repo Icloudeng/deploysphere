@@ -40,6 +40,7 @@
   command: "pnpm ts-node {{ joomla_sso_file }}"
   args:
     chdir: "{{ puppeteer_folder }}"
+  register: joomla_output
 
 - name: "Remove {{ item }}"
   become: false
@@ -49,3 +50,7 @@
   loop:
     - "{{ keycloak_client_file }}"
     - "{{ joomla_sso_file }}"
+
+- name: SSO Url
+  set_fact:
+    sso_url: "{{ joomla_output.stdout | regex_search('%%%(.*?)%%%') | replace('%%%', '') }}"
