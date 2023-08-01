@@ -1,0 +1,37 @@
+- name: Download Anaconda GPG key using curl
+  shell: "curl https://repo.anaconda.com/pkgs/misc/gpgkeys/anaconda.asc | gpg --dearmor > conda.gpg"
+  args:
+    creates: "conda.gpg"
+    executable: /bin/bash
+    chdir: "{{ project_path }}"
+
+- name: Copy the GPG key to /etc/apt/trusted.gpg.d/
+  become: true
+  copy:
+    src: "{{ project_path }}/conda.gpg"
+    dest: "/etc/apt/trusted.gpg.d/"
+    mode: "0644"
+
+- name: Add the Anaconda repository entry
+  become: true
+  apt_repository:
+    filename: conda
+    repo: "deb [arch=amd64] https://repo.anaconda.com/pkgs/misc/debrepo/conda stable main"
+
+- name: APT | Update
+  become: true
+  apt:
+    update_cache: yes
+
+- name: Install Conda
+  ansible.builtin.package:
+    name:
+      - conda
+    state: present
+
+- name: Create symbolic link for conda.sh
+  become: true
+  file:
+    src: "/opt/conda/etc/profile.d/conda.sh"
+    dest: "/etc/profile.d/conda.sh"
+    state: link
