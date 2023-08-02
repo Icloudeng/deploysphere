@@ -128,9 +128,17 @@ def find_existing_certificate(domain: str, url: str):
     return None
 
 
-def get_platform_schema(platform: str):
+def get_platform_protocol(platform: str):
     data: dict[str, Any] = {}
-    with open("scripts/platform-schemas.json", "r") as file:
+    with open("scripts/platform-protocols.json", "r") as file:
+        data = json.loads(file.read())
+
+    return data.get(platform)
+
+
+def get_platform_nginx_pm_config(platform: str):
+    data: dict[str, Any] = {}
+    with open("scripts/platform-nginx-pm.json", "r") as file:
         data = json.loads(file.read())
 
     return data.get(platform)
@@ -164,15 +172,20 @@ def create_domain_certificate(domain: str, url: str):
     return None
 
 
-def create_proxy_host(url: str, domain: str, certificate: Any, platform_schema: Any, ip: str):
+def create_proxy_host(url: str, domain: str, certificate: Any, platform_protocol: Any, ip: str, platform: str):
     certificate = certificate if certificate else {}
     certificate_id = certificate.get('id')
+
+    advanced_config = get_platform_nginx_pm_config(platform)
+    advanced_config = (
+        "" if not advanced_config else advanced_config
+    ).replace("\\n", "\n")
 
     body = {
         "domain_names": [domain],
         "forward_host": ip,
-        "forward_scheme": platform_schema.get('protocol'),
-        "forward_port": platform_schema.get('port'),
+        "forward_scheme": platform_protocol.get('protocol'),
+        "forward_port": platform_protocol.get('port'),
         "block_exploits": True,
         "allow_websocket_upgrade": True,
         "access_list_id": "0",
@@ -184,7 +197,7 @@ def create_proxy_host(url: str, domain: str, certificate: Any, platform_schema: 
             "letsencrypt_agree": False,
             "dns_challenge": False
         },
-        "advanced_config": "",
+        "advanced_config": advanced_config,
         "locations": [],
         "caching_enabled": False,
         "hsts_subdomains": False
@@ -222,11 +235,11 @@ def main(action: str, metadata: str, platform: str, ip: str):
         delete_proxy_hosts(phost, url)
 
     # Get platform proxy
-    platform_schema = get_platform_schema(platform)
+    platform_protocol = get_platform_protocol(platform)
 
-    if not platform_schema:
+    if not platform_protocol:
         logging.info(
-            "Cannot found the corresponding platform schema"
+            "Cannot found the corresponding platform protocol"
         )
         return
 
@@ -238,8 +251,9 @@ def main(action: str, metadata: str, platform: str, ip: str):
         url=url,
         domain=domain,
         certificate=certificate,
-        platform_schema=platform_schema,
-        ip=ip
+        platform_protocol=platform_protocol,
+        ip=ip,
+        platform=platform
     )
 
 
