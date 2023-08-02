@@ -26,7 +26,7 @@ func init() {
 
 	installer := &releases.ExactVersion{
 		Product:    product.Terraform,
-		Version:    version.Must(version.NewVersion("1.5.0")),
+		Version:    version.Must(version.NewVersion("1.5.4")),
 		InstallDir: path.Join(pwd, "./bin"),
 	}
 
