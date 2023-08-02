@@ -19,6 +19,11 @@
         "joomla_email",
         "joomla_site_name"
     ],
+    "suitecrm": [
+        "domain",
+        "suitecrm_username",
+        "suitecrm_email"
+    ],
     "zimbra": [
         "zimbra_fqdn",
         "zimbra_timezone",

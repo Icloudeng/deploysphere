@@ -38,5 +38,9 @@
     "joomla": {
         "port": 5080,
         "protocol": "http"
+    },
+    "suitecrm": {
+        "port": 5080,
+        "protocol": "http"
     }
 }
