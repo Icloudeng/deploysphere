@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"smatflow/platform-installer/jobs"
+	"smatflow/platform-installer/pkg/env"
 	"smatflow/platform-installer/pkg/events/subscribers"
 	"smatflow/platform-installer/pkg/ldap"
 	"smatflow/platform-installer/pkg/validators"
@@ -48,6 +49,11 @@ func main() {
 }
 
 func basicAuth(c *gin.Context) {
+	// If LDAP_AUTH disable then authorize all request
+	if !env.EnvConfig.LDAP_AUTH {
+		c.Next()
+		return
+	}
 	// Get the Basic Authentication credentials
 	username, password, hasAuth := c.Request.BasicAuth()
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/resources"
 	"smatflow/platform-installer/pkg/structs"
 
 	"github.com/gin-gonic/gin"
@@ -99,6 +100,31 @@ func ValidateConfigurationMetadata(c *gin.Context, platform structs.Platform) bo
 				return false
 			}
 		}
+	}
+
+	return true
+}
+
+func ValidatePlatformProvisionAndBindResourceState(body *structs.Provisioning) bool {
+	if len(body.Ref) > 0 {
+		resourceState := resources.TerraformResourceState{Module: "proxmox"}
+		vm_resource := resourceState.GetResourceState(body.Ref)
+
+		if vm_resource != nil {
+			values := vm_resource.AttributeValues
+
+			muser, muser_ok := values["ciuser"]
+			mip, mip_ok := values["default_ipv4_address"]
+
+			if mip_ok && muser_ok {
+				body.MachineUser = muser.(string)
+				body.MachineIp = mip.(string)
+			}
+		}
+	}
+
+	if len(body.MachineUser) == 0 || len(body.MachineIp) == 0 {
+		return false
 	}
 
 	return true

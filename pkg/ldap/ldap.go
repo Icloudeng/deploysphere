@@ -2,6 +2,7 @@ package ldap
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"log"
 	"smatflow/platform-installer/pkg/env"
@@ -19,11 +20,6 @@ func connect() *ldap.Conn {
 }
 
 func LDAPExistBindUser(username string, password string) bool {
-	// If LDAP_AUTH disable then authorize all request
-	if !env.EnvConfig.LDAP_AUTH {
-		return true
-	}
-
 	connection := connect()
 	defer connection.Close()
 
@@ -58,6 +54,7 @@ func parseUserBindTemplate(username string) string {
 
 func init() {
 	if env.EnvConfig.LDAP_AUTH {
+		fmt.Print("LDAP Enabled!")
 		// Test the conection
 		connect().Close()
 		// Test template parse
