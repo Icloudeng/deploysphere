@@ -1,5 +1,5 @@
 ---
-- name: KeyCloak LDAP Configuration
+- name: SuiteCRM LDAP Configuration
   hosts: all
   become: true
   gather_facts: true
