@@ -34,7 +34,7 @@ please use a different resource reference name or use PUT method to update resou
 
 func CreateResources(c *gin.Context) {
 	json := Resources{
-		Vm:       structs.NewProxmoxVmQemu(),
+		Vm:       structs.NewProxmoxVmQemu(""),
 		Platform: &structs.Platform{Metadata: &map[string]interface{}{}},
 	}
 
@@ -67,7 +67,7 @@ func CreateResources(c *gin.Context) {
 
 	queue.Queue.QueueTask(func(ctx context.Context) error {
 		// Reset unmutable vm fields
-		structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform)
+		structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform, json.Ref)
 		// Create or update resources
 		resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
 		resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)

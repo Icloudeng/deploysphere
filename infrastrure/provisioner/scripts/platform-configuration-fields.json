@@ -23,6 +23,16 @@
             "ldap_bind_password"
         ]
     },
+    "suitecrm": {
+        "fields": [],
+        "configuration": [
+            "ldap_server_host",
+            "ldap_server_port",
+            "ldap_search_base",
+            "ldap_bind_dn",
+            "ldap_bind_password"
+        ]
+    },
     "moodle": {
         "fields": [
             "admin_username",

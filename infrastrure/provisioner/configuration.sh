@@ -7,6 +7,7 @@ ansible_user=""
 platform=""
 vm_ip=""
 metadata=""
+reference=""
 
 # Parse named arguments
 while [[ $# -gt 0 ]]; do
@@ -30,6 +31,11 @@ while [[ $# -gt 0 ]]; do
         ;;
     --metadata)
         metadata="$2"
+        shift
+        shift
+        ;;
+    --reference)
+        reference="$2"
         shift
         shift
         ;;

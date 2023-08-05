@@ -21,6 +21,7 @@ func provisioning(prov structs.Provisioning, file string) {
 		"--vmip", prov.MachineIp,
 		"--platform", platform.Name,
 		"--metadata", metadatab64,
+		"--reference", prov.Ref,
 	)
 
 	cmd.Dir = files.ProvisionerDir

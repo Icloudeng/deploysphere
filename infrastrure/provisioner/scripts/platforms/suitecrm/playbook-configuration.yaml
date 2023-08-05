@@ -1,0 +1,49 @@
+---
+- name: KeyCloak LDAP Configuration
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path)
+    - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Extract Required Variables
+      set_fact:
+        configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+    - name: Insert/Update HTML surrounded by custom markers after DATABASE_URL line
+      ansible.builtin.blockinfile:
+        path: "{{ project_path }}/data/.env.local"
+        insertafter: "(?m)DATABASE_URL.*"
+        block: |
+          AUTH_TYPE=ldap
+          ###> LDAP CONFIG ###
+          LDAP_HOST='{{ configuration['ldap_server_host'] }}'
+          LDAP_PORT={{ configuration['ldap_server_port'] }}
+          LDAP_ENCRYPTION=none
+          LDAP_PROTOCOL_VERSION=3
+          LDAP_REFERRALS=false
+          LDAP_DN_STRING='uid={username},{{ configuration['ldap_search_base'] }}'
+          #LDAP_QUERY_STRING=''
+          LDAP_SEARCH_DN='{{ configuration['ldap_bind_dn'] }}'
+          LDAP_SEARCH_PASSWORD='{{ configuration['ldap_bind_password'] }}'
+          ###< LDAP CONFIG ###
+
+          ###> LDAP AUTO CREATE CONFIG ###
+          LDAP_AUTO_CREATE=enabled
+          LDAP_PROVIDER_BASE_DN='{{ configuration['ldap_search_base'] }}'
+          LDAP_PROVIDER_SEARCH_DN='{{ configuration['ldap_bind_dn'] }}'
+          LDAP_PROVIDER_SEARCH_PASSWORD='{{ configuration['ldap_bind_password'] }}'
+          LDAP_PROVIDER_DEFAULT_ROLES=ROLE_USER
+          LDAP_PROVIDER_UID_KEY='uid'
+          LDAP_PROVIDER_FILTER='({uid_key}={username})'
+          ###< LDAP AUTO CREATE CONFIG ##
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        variable: |
+          Configuration Type: LDAP

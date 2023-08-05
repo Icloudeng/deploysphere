@@ -8,6 +8,7 @@ ansible_user=""
 platform=""
 vm_ip=""
 metadata=""
+reference=""
 
 # Parse named arguments
 while [[ $# -gt 0 ]]; do
@@ -31,6 +32,11 @@ while [[ $# -gt 0 ]]; do
         ;;
     --metadata)
         metadata="$2"
+        shift
+        shift
+        ;;
+    --reference)
+        reference="$2"
         shift
         shift
         ;;
@@ -77,6 +83,7 @@ ansible_extra_vars+=" vm_ip=$vm_ip"                                          # M
 installer_details="Platform: $platform\n"
 installer_details+="Machine User: $ansible_user\nMachine IP: $vm_ip\n\n"
 installer_details+="Static Secret=$static_secret\n"
+installer_details+="Reference=$reference\n"
 
 # Notify before playbook
 message_info=$(echo "Provisioning Started..." | base64)

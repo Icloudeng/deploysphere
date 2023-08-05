@@ -78,7 +78,7 @@ type PmRemoteExecProvisioner struct {
 	RemoteExec [1]*PmRemoteExec `json:"remote-exec"`
 }
 
-func NewProxmoxVmQemu() *ProxmoxVmQemu {
+func NewProxmoxVmQemu(ref string) *ProxmoxVmQemu {
 	pm := ProxmoxVmQemu{
 		Vmid:      0,
 		FullClone: true,
@@ -100,7 +100,7 @@ func NewProxmoxVmQemu() *ProxmoxVmQemu {
 		Tag:    -1,
 	})
 
-	ResetUnmutableProxmoxVmQemu(&pm, Platform{})
+	ResetUnmutableProxmoxVmQemu(&pm, Platform{}, ref)
 
 	return &pm
 }
@@ -116,7 +116,7 @@ func newProxmoxResourceLifecycle() *PmResourceLifecycle {
 	return &lifecycle
 }
 
-func newProxmoxProvisioner(platform Platform) [1]interface{} {
+func newProxmoxProvisioner(platform Platform, ref string) [1]interface{} {
 	// Provisioner local-exec
 	local_exec := &PmLocalExecProvisioner{}
 
@@ -127,7 +127,7 @@ func newProxmoxProvisioner(platform Platform) [1]interface{} {
 
 		local_exec.LocalExec[0] = &PmLocalExec{
 			// Run our ansible scripts here
-			Command: fmt.Sprintf("chmod +x installer.sh && ./installer.sh --ansible-user ${self.ciuser} --vmip ${self.default_ipv4_address} --platform %s --metadata %s", name, metadatab64),
+			Command: fmt.Sprintf("chmod +x installer.sh && ./installer.sh --reference %s --ansible-user ${self.ciuser} --vmip ${self.default_ipv4_address} --platform %s --metadata %s", ref, name, metadatab64),
 			// Relative to infrastrure/terraform
 			WorkingDir: "../provisioner",
 		}
@@ -150,9 +150,9 @@ func newProxmoxProvisioner(platform Platform) [1]interface{} {
 	return [1]interface{}{local_exec}
 }
 
-func ResetUnmutableProxmoxVmQemu(pm *ProxmoxVmQemu, platform Platform) {
+func ResetUnmutableProxmoxVmQemu(pm *ProxmoxVmQemu, platform Platform, ref string) {
 	pm.Lifecycle = nil
 	pm.Lifecycle = append(pm.Lifecycle, newProxmoxResourceLifecycle())
 
-	pm.Provisioner = newProxmoxProvisioner(platform)
+	pm.Provisioner = newProxmoxProvisioner(platform, ref)
 }

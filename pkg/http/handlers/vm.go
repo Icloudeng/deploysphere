@@ -21,7 +21,7 @@ type Vm struct {
 
 func CreateVm(c *gin.Context) {
 	json := Vm{
-		Vm:       structs.NewProxmoxVmQemu(),
+		Vm:       structs.NewProxmoxVmQemu(""),
 		Platform: &structs.Platform{Metadata: &map[string]interface{}{}},
 	}
 
@@ -52,7 +52,7 @@ func CreateVm(c *gin.Context) {
 
 	queue.Queue.QueueTask(func(ctx context.Context) error {
 		// Reset unmutable vm fields
-		structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform)
+		structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform, json.Ref)
 		// Create or update resources
 		resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
 
