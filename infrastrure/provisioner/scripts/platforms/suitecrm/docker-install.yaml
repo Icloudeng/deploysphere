@@ -7,6 +7,16 @@
     dest: "{{ project_path }}/docker-compose.yaml"
     force: yes
 
+- name: Create Data folder
+  file:
+    state: directory
+    path: "{{ project_path }}/data"
+
+- name: Permission Data Folder
+  command: "chmod -R 777 ./data"
+  args:
+    chdir: "{{ project_path }}"
+
 - name: "Copy .env template"
   template:
     src: .env.j2
