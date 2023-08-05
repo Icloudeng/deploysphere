@@ -43,6 +43,17 @@
           LDAP_PROVIDER_FILTER='({uid_key}={username})'
           ###< LDAP AUTO CREATE CONFIG ##
 
+    - name: Permission Data Folder
+      command: "chmod -R 777 ./data"
+      args:
+        chdir: "{{ project_path }}"
+
+    - name: Restart SuiteCRM using Docker Compose
+      become: true
+      command: "docker compose up -d --force-recreate"
+      args:
+        chdir: "{{ project_path }}"
+
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
         variable: |

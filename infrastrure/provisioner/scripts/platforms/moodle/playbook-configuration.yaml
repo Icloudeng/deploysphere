@@ -24,3 +24,8 @@
         url_var: "{{ configuration['keycloak_url'] }}"
 
     - import_tasks: sso-configuration.yaml
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        variable: |
+          Configuration Type: Keycloak SSO

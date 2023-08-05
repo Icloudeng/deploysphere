@@ -31,5 +31,7 @@
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
         variable: |
+          Configuration Type: Keycloak SSO
+
           SSO Url
           Url={{ sso_url }}
