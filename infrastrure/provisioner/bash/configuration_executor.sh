@@ -41,8 +41,9 @@ ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 exposed_variables=$($extract_vars "$ansible_logs")
 
 # Execute python notifier script
-installer_details="EXECUTION TYPE: Configuration\n\n"
-installer_details+="Reference: $reference\n"
+installer_details="EXECUTION TYPE: Configuration\n"
+installer_details+="Reference: $reference\n\n"
+
 installer_details+="Platform: $platform\n"
 installer_details+="Machine User: $ansible_user\nMachine IP: $vm_ip\n\n"
 installer_details+="$exposed_variables"

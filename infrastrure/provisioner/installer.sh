@@ -80,10 +80,11 @@ ansible_extra_vars+=" static_secret=$static_secret"                          # M
 ansible_extra_vars+=" vm_ip=$vm_ip"                                          # Must start with empty space
 
 # Notification Installer details
-installer_details="Platform: $platform\n"
+installer_details="Reference: $reference\n\n"
+
+installer_details+="Platform: $platform\n"
 installer_details+="Machine User: $ansible_user\nMachine IP: $vm_ip\n\n"
-installer_details+="Static Secret=$static_secret\n"
-installer_details+="Reference=$reference\n"
+installer_details+="Static Secret: $static_secret\n"
 
 # Notify before playbook
 message_info=$(echo "Provisioning Started..." | base64)
