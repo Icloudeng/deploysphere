@@ -44,7 +44,13 @@ func CreateDomain(c *gin.Context) {
 		// Create or update resources
 		resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
 		// Terraform Apply changes
-		terraform.Tf.Apply(true)
+		if err := terraform.Tf.Apply(true); err == nil {
+			events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+				Status:  "succeeded",
+				Details: "Ref: " + json.Ref,
+				Logs:    "Domain Resource created",
+			})
+		}
 		return nil
 	})
 
