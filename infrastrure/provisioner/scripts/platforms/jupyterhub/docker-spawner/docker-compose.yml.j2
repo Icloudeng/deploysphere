@@ -38,6 +38,12 @@ services:
       # Using this run command
       DOCKER_SPAWN_CMD: start-singleuser.sh
 
+    # deploy:
+    #   replicas: 1
+    #   placement:
+    #     constraints:
+    #       - node.role == manager
+
 volumes:
   jupyterhub-data:
 
