@@ -9,6 +9,7 @@ RUN python3 -m pip install --no-cache-dir \
     dockerspawner \
     jupyterhub-nativeauthenticator \
     oauthenticator \
-    jupyterhub-ldapauthenticator
+    jupyterhub-ldapauthenticator \
+    jupyterhub-firstuseauthenticator
 
 CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
