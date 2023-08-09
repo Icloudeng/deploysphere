@@ -26,64 +26,8 @@
       vars:
         username_var: "{{ admin_username }}"
 
-    - name: Install Package prerequisite
-      ansible.builtin.package:
-        name:
-          - python3
-          - python3-setuptools
-          - python3-distutils
-          - python3-pip
-          - python3-dev
-          - git
-          - curl
-        state: present
-
-    - name: Install Jupyterhub
-      shell: "curl -L https://tljh.jupyter.org/bootstrap.py  | sudo python3 -  --admin {{ admin_username }}:{{ app_secret }} --show-progress-page"
-      args:
-        executable: /bin/bash
-        chdir: "{{ project_path }}"
-        creates: "/opt/tljh"
-
-    - name: Update all conda installed packages
-      become: true
-      shell: "source /opt/tljh/user/bin/activate && sudo /opt/tljh/user/bin/conda update --all -y"
-      args:
-        executable: /bin/bash
-
-    # - name: Install conda / pip packages for all users
-    #   become: true
-    #   shell: "source /opt/tljh/user/bin/activate && sudo /opt/tljh/user/bin/conda install -c conda-forge {{ item }} -y"
-    #   args:
-    #     executable: /bin/bash
-    #   loop:
-    #     - "gdal"
-
-    # https://builtin.com/data-science/python-libraries-data-science
-    - name: "Install {{ item }} with pip"
-      become: true
-      shell: "source /opt/tljh/user/bin/activate && sudo /opt/tljh/user/bin/pip install {{ item }}"
-      args:
-        executable: /bin/bash
-      loop:
-        - "datascience"
-        - "numpy"
-        - "matplotlib"
-        - "pandas"
-        - "scipy"
-        - "seaborn"
-
-    - name: To launch JupyterLab when users log in.
-      become: true
-      shell: "sudo tljh-config set user_environment.default_app jupyterlab"
-      args:
-        executable: /bin/bash
-
-    - name: Apply the changes by restarting JupyterHub.
-      become: true
-      shell: "sudo tljh-config reload hub"
-      args:
-        executable: /bin/bash
+    - include_tasks: tljh-install.yaml
+    # - include_tasks: docker-spawner-install.yaml
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:

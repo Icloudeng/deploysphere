@@ -1,0 +1,37 @@
+# Install Docker
+- include_tasks: ../../tasks/docker.yaml
+
+- name: Copy docker-spawner folder
+  copy:
+    src: docker-spawner/
+    dest: "{{ project_path }}/"
+    directory_mode:
+    force: yes
+
+- name: "Copy docker-compose.yml template"
+  template:
+    src: docker-spawner/docker-compose.yml
+    dest: "{{ project_path }}/docker-compose.yml"
+    force: yes
+
+- name: Build the JupyterHub Docker image
+  command: "docker-compose build"
+  args:
+    chdir: "{{ project_path }}"
+
+- name: Run JupyterHub
+  command: "docker-compose up -d"
+  args:
+    chdir: "{{ project_path }}"
+
+- name: Pause play until a URL is reachable from this host
+  ignore_errors: true
+  ansible.builtin.uri:
+    url: "http://127.0.0.1"
+    follow_redirects: none
+    validate_certs: no
+    method: GET
+  register: _result
+  until: _result.status >= 200
+  retries: 30
+  delay: 5
