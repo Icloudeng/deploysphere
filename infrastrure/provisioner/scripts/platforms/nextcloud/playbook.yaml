@@ -44,8 +44,8 @@
           - "{{ ansible_fqdn }}"
           - "{{ ansible_default_ipv4.address }}"
 
-        # nextcloud_apps:
-        #   nextcloud_social_login: "https://github.com/zorn-v/nextcloud-social-login/archive/refs/tags/v5.4.3.zip"
+        nextcloud_apps:
+          social_login:
 
         nextcloud_trusted_proxies: ["{{ domain }}"]
 
