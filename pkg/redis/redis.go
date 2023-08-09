@@ -3,15 +3,18 @@ package redis
 import (
 	// "context"
 	// "fmt"
+	"smatflow/platform-installer/pkg/env"
+
 	"github.com/redis/go-redis/v9"
 )
 
 var Client *redis.Client
 
 func init() {
-	Client = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
+	opts, err := redis.ParseURL(env.EnvConfig.REDIS_URL)
+	if err != nil {
+		panic(err)
+	}
+
+	Client = redis.NewClient(opts)
 }
