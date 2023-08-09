@@ -46,7 +46,6 @@
 
         nextcloud_apps:
           sociallogin:
-          # "https://github.com/zorn-v/nextcloud-social-login/releases/download/v5.4.3/release.tar.gz"
 
         nextcloud_trusted_proxies: ["{{ domain }}"]
 
