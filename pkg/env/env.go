@@ -20,6 +20,13 @@ type Config struct {
 	DB_PG_PASSWORD string `env:"DB_PG_PASSWORD"`
 	DB_PG_SSLMODE  string `env:"DB_PG_SSLMODE"`
 	DB_PG_TIMEZONE string `env:"DB_PG_TIMEZONE"`
+
+	// Front
+	FRONT_PROXY bool   `env:"FRONT_PROXY,required"`
+	FRONT_URL   string `env:"FRONT_URL,required"`
+
+	// Redis
+	REDIS_URL string `env:"REDIS_URL,required"`
 }
 
 var EnvConfig Config
