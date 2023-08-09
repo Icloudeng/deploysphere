@@ -1,18 +1,23 @@
 # Install Docker
 - include_tasks: ../../tasks/docker.yaml
 
-- name: Copy docker-spawner folder
+- name: Copy docker-spawner items to remote
   copy:
-    src: docker-spawner/
-    dest: "{{ project_path }}/"
-    directory_mode:
+    src: "docker-spawner/{{ item }}"
+    dest: "{{ project_path }}/{{ item }}"
     force: yes
+  loop:
+    - ".dockerignore"
+    - "Dockerfile.jupyterhub"
 
-- name: "Copy docker-compose.yml template"
+- name: "Copy docker-spawner items template"
   template:
-    src: docker-spawner/docker-compose.yml
-    dest: "{{ project_path }}/docker-compose.yml"
+    src: "docker-spawner/{{ item }}.j2"
+    dest: "{{ project_path }}/{{ item }}"
     force: yes
+  loop:
+    - "docker-compose.yml"
+    - "jupyterhub_config.py"
 
 - name: Build the JupyterHub Docker image
   command: "docker-compose build"
