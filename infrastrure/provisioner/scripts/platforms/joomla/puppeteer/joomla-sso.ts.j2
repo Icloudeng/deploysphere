@@ -10,7 +10,7 @@ const PASSWORD = "{{ admin_password }}";
 
 // OPENID Settings
 const OIDC_ENDPOINT = "{{ configuration['keycloak_url'] }}";
-const OIDC_APPLICATION_ID = "{{ keycloak_client_id }}";
+const OIDC_CLIENT_ID = "{{ keycloak_client_id }}";
 const OIDC_CLIENT_SECRET = "{{ client_secret }}";
 const KEYCLOAK_REALM = "{{ keycloak_realm }}";
 
@@ -96,9 +96,9 @@ async function configureOAuth(page: Page, browser: Browser) {
   const clientIdEl = await page.waitForSelector(
     "input[name=mo_oauth_client_id]"
   );
-  await clientIdEl.evaluate((el, OIDC_APPLICATION_ID) => {
-    el.value = OIDC_APPLICATION_ID;
-  }, OIDC_APPLICATION_ID);
+  await clientIdEl.evaluate((el, OIDC_CLIENT_ID) => {
+    el.value = OIDC_CLIENT_ID;
+  }, OIDC_CLIENT_ID);
 
   // mo_oauth_client_secret
   const clientSecretEl = await page.waitForSelector(

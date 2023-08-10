@@ -64,5 +64,16 @@
             "keycloak_admin",
             "keycloak_password"
         ]
+    },
+    "nextcloud": {
+        "fields": [
+            "admin_username",
+            "admin_password"
+        ],
+        "configuration": [
+            "keycloak_url",
+            "keycloak_admin",
+            "keycloak_password"
+        ]
     }
 }

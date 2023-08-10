@@ -12,7 +12,7 @@ const PLUGIN_ID = "oidc";
 
 // OPENID Settings
 const OIDC_ENDPOINT = "{{ configuration['keycloak_url'] }}";
-const OIDC_APPLICATION_ID = "{{ keycloak_client_id }}";
+const OIDC_CLIENT_ID = "{{ keycloak_client_id }}";
 const OIDC_CLIENT_SECRET = "{{ client_secret }}";
 
 (async () => {
@@ -83,9 +83,9 @@ async function openIdConfiguration(page: Page) {
 
   // clientid field
   const clientid = await page.waitForSelector("form input[name=clientid]");
-  await clientid.evaluate((el, OIDC_APPLICATION_ID) => {
-    el.value = OIDC_APPLICATION_ID;
-  }, OIDC_APPLICATION_ID);
+  await clientid.evaluate((el, OIDC_CLIENT_ID) => {
+    el.value = OIDC_CLIENT_ID;
+  }, OIDC_CLIENT_ID);
 
   // clientsecret field
   const clientsecret = await page.waitForSelector(

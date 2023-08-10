@@ -1,0 +1,178 @@
+import puppeteer from "puppeteer";
+import { wait } from "./utils";
+
+const baseUrl = "https://{{ vm_ip }}/index.php";
+const USERNAME = "{{ admin_username }}";
+const PASSWORD = "{{ admin_password }}";
+
+// OPENID Settings
+const OIDC_ENDPOINT = "{{ configuration['keycloak_url'] }}";
+const OIDC_CLIENT_ID = "{{ keycloak_client_id }}";
+const OIDC_CLIENT_SECRET = "{{ client_secret }}";
+
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+    timeout: 60_000,
+  });
+  const page = await browser.newPage();
+
+  // Navigate the page to a URL
+  await page.goto(baseUrl + "/settings/admin/sociallogin");
+
+  // Set screen size
+  await page.setViewport({ width: 1200, height: 1024 });
+
+  /**
+   * ===========================
+   * LOGIN
+   */
+  const lusername = await page.waitForSelector(".login-form input[name=user]");
+  await lusername.type(USERNAME);
+
+  const lpassword = await page.waitForSelector(
+    ".login-form input[name=password]"
+  );
+  await lpassword.type(PASSWORD);
+
+  const loginbtn = await page.waitForSelector(
+    ".login-form button[type=submit]"
+  );
+  await Promise.all([page.waitForNavigation(), loginbtn.click()]);
+
+  /**
+   * =======================
+   * Configure social login in Nextcloud
+   */
+  await Promise.all(
+    [
+      "opt_prevent_create_email_exists",
+      "opt_restrict_users_wo_mapped_groups",
+    ].map(async (e) => {
+      const input = await page.waitForSelector(`#${e}`);
+      const checked = await input.evaluate((input: HTMLInputElement) => {
+        return input.checked;
+      });
+
+      if (!checked) {
+        const inputLael = await page.waitForSelector(`label[for=${e}]`);
+        await inputLael.click();
+      }
+    })
+  );
+
+  /**
+   * =======================
+   * Save setting
+   */
+  const saveBtn = await page.waitForSelector(
+    `#sociallogin_settings_app button`
+  );
+  await Promise.all([page.waitForNetworkIdle(), saveBtn.click()]);
+
+  // Reload page
+  await Promise.all([page.waitForNavigation(), page.reload()]);
+
+  const formExists = await page.evaluate(() => {
+    return !!document.querySelector(
+      'input[name="custom_providers[custom_oidc][0][name]"]'
+    );
+  });
+
+  if (!formExists) {
+    // Create sso form
+    const formCreateBtn = await page.waitForSelector(
+      "#sociallogin_settings_app button .icon-add"
+    );
+    await formCreateBtn.click();
+
+    await wait(1);
+  }
+
+  // Fill SSO Form (Name)
+  const iname = await page.waitForSelector(
+    'input[name="custom_providers[custom_oidc][0][name]"]'
+  );
+  const iname_v = await iname.evaluate((e) => e.value);
+  if (iname_v.trim().length === 0) {
+    await iname.type("keycloak");
+  }
+
+  // Fill SSO Form (Title)
+  const ititle = await page.waitForSelector(
+    'input[name="custom_providers[custom_oidc][0][title]"]'
+  );
+  await ititle.evaluate((e) => (e.value = "keycloak"));
+
+  // Fill SSO Form (authorizeUrl)
+  const iauthorizeUrl = await page.waitForSelector(
+    'input[name="custom_providers[custom_oidc][0][authorizeUrl]"]'
+  );
+  await iauthorizeUrl.evaluate((e, OIDC_ENDPOINT) => {
+    e.value = `${OIDC_ENDPOINT}/realms/master/protocol/openid-connect/auth`;
+  }, OIDC_ENDPOINT);
+
+  // Fill SSO Form (tokenUrl)
+  const itokenUrl = await page.waitForSelector(
+    'input[name="custom_providers[custom_oidc][0][tokenUrl]"]'
+  );
+  await itokenUrl.evaluate((e, OIDC_ENDPOINT) => {
+    e.value = `${OIDC_ENDPOINT}/realms/master/protocol/openid-connect/token`;
+  }, OIDC_ENDPOINT);
+
+  // Fill SSO Form (userInfoUrl)
+  const iuserInfoUrl = await page.waitForSelector(
+    'input[name="custom_providers[custom_oidc][0][userInfoUrl]"]'
+  );
+  await iuserInfoUrl.evaluate((e, OIDC_ENDPOINT) => {
+    e.value = `${OIDC_ENDPOINT}/realms/master/protocol/openid-connect/userinfo`;
+  }, OIDC_ENDPOINT);
+
+  // Fill SSO Form (clientId)
+  const iclientId = await page.waitForSelector(
+    'input[name="custom_providers[custom_oidc][0][clientId]"]'
+  );
+  await iclientId.evaluate((e, OIDC_CLIENT_ID) => {
+    e.value = OIDC_CLIENT_ID;
+  }, OIDC_CLIENT_ID);
+
+  // Fill SSO Form (clientSecret)
+  const iclientSecret = await page.waitForSelector(
+    'input[name="custom_providers[custom_oidc][0][clientSecret]"]'
+  );
+  await iclientSecret.evaluate((e, OIDC_CLIENT_SECRET) => {
+    e.value = OIDC_CLIENT_SECRET;
+  }, OIDC_CLIENT_SECRET);
+
+  // Fill SSO Form (scope)
+  const iscope = await page.waitForSelector(
+    'input[name="custom_providers[custom_oidc][0][scope]"]'
+  );
+  await iscope.evaluate((e) => (e.value = "openid"));
+
+  // Fill SSO Form (groupsClaim)
+  const igroupsClaim = await page.waitForSelector(
+    'input[name="custom_providers[custom_oidc][0][groupsClaim]"]'
+  );
+  await igroupsClaim.evaluate((e) => (e.value = "roles"));
+
+  // Fill SSO Form (style)
+  const istyle = await page.waitForSelector(
+    'select[name="custom_providers[custom_oidc][0][style]"]'
+  );
+  await istyle.select("keycloak");
+
+  // Save Settings
+  await Promise.all([
+    page.waitForNetworkIdle(),
+    page.evaluate(() => {
+      const buttons = Array.from<HTMLButtonElement>(
+        document.querySelectorAll("#sociallogin_settings_app button")
+      );
+      buttons[buttons.length - 1].click();
+    }),
+  ]);
+
+  await browser.close();
+})();

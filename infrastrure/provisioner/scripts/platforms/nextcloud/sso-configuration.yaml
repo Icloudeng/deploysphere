@@ -1,0 +1,51 @@
+# Variable output (puppeteer_folder)
+- include_tasks: ../../tasks/puppeteer-localhost.yaml
+
+- name: keycloak-client file
+  set_fact:
+    keycloak_client_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-keycloak.ts"
+    nextcloud_sso_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-nextcloud.ts"
+
+- name: "Copy keycloak-client.ts template"
+  become: false
+  template:
+    src: ../../templates/puppeteer/keycloak-client.ts.j2
+    dest: "{{ keycloak_client_file }}"
+    force: yes
+  vars:
+    keycloak_url: "{{ configuration['keycloak_url']  }}"
+    keycloak_admin: "{{ configuration['keycloak_admin']  }}"
+    keycloak_password: "{{ configuration['keycloak_password']  }}"
+
+- name: "Run keycloak-client.ts"
+  become: false
+  command: "pnpm ts-node {{ keycloak_client_file }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+  register: client_key
+
+- name: Keycloak client secret
+  set_fact:
+    client_secret: "{{ client_key.stdout | regex_search('%%%(.*?)%%%') | replace('%%%', '') }}"
+
+- name: "Copy nextcloud-sso.ts template"
+  become: false
+  template:
+    src: puppeteer/nextcloud-sso.ts.j2
+    dest: "{{ nextcloud_sso_file }}"
+    force: yes
+
+- name: "Run nextcloud-sso.ts"
+  become: false
+  command: "pnpm ts-node {{ nextcloud_sso_file }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+
+- name: "Remove {{ item }}"
+  become: false
+  command: "rm -rf {{ item }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+  loop:
+    - "{{ keycloak_client_file }}"
+    - "{{ nextcloud_sso_file }}"
