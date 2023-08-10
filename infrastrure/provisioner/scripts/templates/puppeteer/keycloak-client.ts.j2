@@ -109,6 +109,20 @@ async function adminEmail(page: Page) {
     page.goto(`${baseUrl}/master/console/#/master/users`),
   ]);
 
+  //   Search admin
+  const searchInput = await page.waitForSelector(
+    "section[data-testid=users-page] input[aria-label=search]"
+  );
+  await searchInput.type("admin");
+
+  const searchbtn = await page.waitForSelector(
+    "section[data-testid=users-page] button[type=submit]"
+  );
+  await Promise.all([page.waitForNetworkIdle(), searchbtn.click()]);
+
+  await wait(1);
+
+  //   Get admin id
   const usersPage = await page.waitForSelector(
     "section[data-testid=users-page] table tbody"
   );
@@ -127,10 +141,7 @@ async function adminEmail(page: Page) {
     return;
   }
 
-  await Promise.all([
-    page.waitForNavigation(),
-    page.goto(adminLink),
-  ]);
+  await Promise.all([page.waitForNavigation(), page.goto(adminLink)]);
 
   const emailInput = await page.waitForSelector("input[name=email]");
   const value = await emailInput.evaluate((input) => {
