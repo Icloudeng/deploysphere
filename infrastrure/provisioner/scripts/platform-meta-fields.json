@@ -41,7 +41,10 @@
         "admin_username"
     ],
     "redash": [
-        "domain"
+        "domain",
+        "admin_name",
+        "admin_email",
+        "organization_name"
     ],
     "mysql": [],
     "jitsi_meet": [

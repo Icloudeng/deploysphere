@@ -1,0 +1,25 @@
+# Variable output (puppeteer_folder)
+- include_tasks: ../../tasks/puppeteer-localhost.yaml
+
+- name: Puppeteer Files
+  set_fact:
+    redash_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-redash-account-setup.ts"
+
+- name: "Copy redash-account-setup.ts.j2 template"
+  become: false
+  template:
+    src: puppeteer/redash-account-setup.ts.j2
+    dest: "{{ redash_file }}"
+    force: yes
+
+- name: "Run redash-account-setup.ts"
+  become: false
+  command: "pnpm ts-node {{ redash_file }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+
+- name: "Remove {{ redash_file }}"
+  become: false
+  command: "rm -rf {{ redash_file }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
