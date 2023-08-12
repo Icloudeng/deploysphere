@@ -65,5 +65,5 @@
       vars:
         variable: |
           Login
-          Email={{ admin_email }}
-          Password={{ app_secret }}
+          Email: {{ admin_email }}
+          Password: {{ app_secret }}
