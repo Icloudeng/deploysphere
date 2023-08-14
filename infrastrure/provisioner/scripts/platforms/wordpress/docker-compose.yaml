@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  database:
+    image: mysql:5.7
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/mysql
+    env_file:
+      - .env
+
+  wordpress:
+    depends_on:
+      - database
+    image: wordpress:6
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/var/www/html
+
+volumes:
+  db_data: {}

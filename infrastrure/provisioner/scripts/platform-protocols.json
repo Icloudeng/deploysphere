@@ -42,5 +42,9 @@
     "suitecrm": {
         "port": 5080,
         "protocol": "http"
+    },
+    "wordpress": {
+        "port": 8000,
+        "protocol": "http"
     }
 }

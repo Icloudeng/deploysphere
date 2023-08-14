@@ -62,5 +62,8 @@
         "smtp_username",
         "smtp_password",
         "smtp_email_from"
+    ],
+    "wordpress": [
+        "domain"
     ]
 }
