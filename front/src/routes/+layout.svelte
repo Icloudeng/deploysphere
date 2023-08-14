@@ -1,20 +1,14 @@
 <script>
   import "./styles.css";
-  import {
-    fns,
-    AppShell,
-    Navbar,
-    Header,
-    Title,
-    Divider,
-  } from "@svelteuidev/core";
-
+  import { base } from "$app/paths";
   import {
     colorScheme,
     SvelteUIProvider,
-    Stack,
-    Switch,
-    Text,
+    AppShell,
+    Navbar,
+    Image,
+    Flex,
+    Container,
   } from "@svelteuidev/core";
 
   function toggleTheme() {
@@ -22,15 +16,24 @@
   }
 </script>
 
-<SvelteUIProvider withGlobalStyles themeObserver={$colorScheme}>
+<SvelteUIProvider withGlobalStyles themeObserver={"dark"}>
   <AppShell>
-    <!-- <Navbar slot="navbar" hidden={!opened} />
-  <Header slot="header" height="" /> -->
-    <Stack align="center">
+    <Navbar fixed className="">
+      <!-- <Container> -->
+      <Flex justify="space-between">
+        <Image width={50} height={50} src="{base}/favicon.png" />
+        <span />
+      </Flex>
+      <!-- </Container> -->
+    </Navbar>
+
+    <!-- <Stack align="center">
       <Text>Press to change the theme</Text>
       <Switch on:change={toggleTheme} />
-    </Stack>
+    </Stack> -->
 
-    <slot />
+    <Container>
+      <slot />
+    </Container>
   </AppShell>
 </SvelteUIProvider>

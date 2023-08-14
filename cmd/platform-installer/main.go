@@ -9,6 +9,7 @@ import (
 	"smatflow/platform-installer/jobs"
 	"smatflow/platform-installer/pkg/env"
 	"smatflow/platform-installer/pkg/events/subscribers"
+	frontproxy "smatflow/platform-installer/pkg/http/front_proxy"
 	"smatflow/platform-installer/pkg/ldap"
 	"smatflow/platform-installer/pkg/validators"
 
@@ -42,6 +43,11 @@ func main() {
 
 	apiJobs := r.Group("/jobs", basicAuth)
 	jobs.BindDatabaseJobsRoutes(apiJobs)
+
+	// UI (Front Proxy)
+	if env.EnvConfig.FRONT_PROXY {
+		r.Group("/ui").Any("/*proxyPath", frontproxy.Proxy)
+	}
 
 	// Start server
 	log.Println("Server running on PORT: ", port)

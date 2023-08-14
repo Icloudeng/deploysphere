@@ -2,8 +2,6 @@ package main
 
 import (
 	"net/http"
-	"smatflow/platform-installer/pkg/env"
-	frontproxy "smatflow/platform-installer/pkg/http/front_proxy"
 	"smatflow/platform-installer/pkg/http/handlers"
 
 	"github.com/gin-gonic/gin"
@@ -56,8 +54,4 @@ func BindLocalJobsRoutes(api *gin.RouterGroup) {
 
 	api.POST("/provisioning/configuration", handlers.CreateConfigurationProvisioning)
 
-	// Front Proxy
-	if env.EnvConfig.FRONT_PROXY {
-		api.Any("/ui/*all", frontproxy.Proxy)
-	}
 }
