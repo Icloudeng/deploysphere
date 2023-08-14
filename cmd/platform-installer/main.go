@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"smatflow/platform-installer/jobs"
 	"smatflow/platform-installer/pkg/env"
 	"smatflow/platform-installer/pkg/events/subscribers"
 	frontproxy "smatflow/platform-installer/pkg/http/front_proxy"
@@ -40,9 +39,6 @@ func main() {
 	// Routes
 	api := r.Group("/", basicAuth)
 	BindLocalJobsRoutes(api)
-
-	apiJobs := r.Group("/jobs", basicAuth)
-	jobs.BindDatabaseJobsRoutes(apiJobs)
 
 	// UI (Front Proxy)
 	if env.EnvConfig.FRONT_PROXY {
