@@ -35,12 +35,12 @@ source .venv/bin/activate
 $python_command -m pip install --upgrade pip
 
 # Check if Ansible is already installed
-if $python_command -c "import ansible, jmespath, telegram, dotenv, requests, netaddr" &>/dev/null; then
+if $python_command -c "import ansible, jmespath, telegram, dotenv, requests, netaddr, redis" &>/dev/null; then
     echo "Ansible is already installed."
 else
     # Install Ansible in the virtual environment
     echo "Ansible was not found, start installing..."
-    pip install ansible jmespath python-telegram-bot python-dotenv requests netaddr
+    pip install ansible jmespath python-telegram-bot python-dotenv requests netaddr redis
 fi
 
 # Ansible dependecies
@@ -68,6 +68,9 @@ extract_vars="$python_command lib/extract_vars.py"
 
 # Decode Metadata and can pass key
 get_decoded_metadata="$python_command lib/metadata.py"
+
+# Publish ansible playbook logs to a partical channel
+logs_exporter="$python_command lib/logs_exporter.py"
 
 # ############### PYTHON FUNTIONS ###############
 

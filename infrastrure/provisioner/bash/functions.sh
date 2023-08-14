@@ -19,16 +19,49 @@ get_last_n_chars() {
 }
 
 execute_ansible_playbook() {
+    if [ -n "$reference" ]; then
+        channel_publisher="$reference"
+    else
+        channel_publisher="$vm_ip"
+    fi
+
     if [ -f "./private-key.pem" ]; then
         chmod 600 ./private-key.pem
-        ansible-playbook -u "$ansible_user" -i "$vm_ip," --private-key "./private-key.pem" "$playbook_path" --extra-vars "$ansible_extra_vars" --extra-vars "@scripts/variables.yaml"
-        # Capture the exit code of the Ansible playbook command
-        playbook_result=$?
+        # Run the command in background
+        ansible-playbook -u "$ansible_user" -i "$vm_ip," --private-key "./private-key.pem" "$playbook_path" --extra-vars "$ansible_extra_vars" --extra-vars "@scripts/variables.yaml" &
+        # capture the process ID of the Ansible playbook command
+        playbook_pid=$!
+
+        # =====================
+
+        # Run the logs exports
+        $logs_exporter --channel "$channel_publisher" &
+        # capture the process ID of the Logs exporter
+        logs_exporter_pid=$!
     else
-        ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path" --extra-vars "$ansible_extra_vars" --extra-vars "@scripts/variables.yaml"
-        # Capture the exit code of the Ansible playbook command
-        playbook_result=$?
+        # Run the command in background
+        ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path" --extra-vars "$ansible_extra_vars" --extra-vars "@scripts/variables.yaml" &
+        # capture the process ID of the Ansible playbook command
+        playbook_pid=$!
+
+        # =====================
+
+        # Run the logs exports
+        $logs_exporter --channel "$channel_publisher" &
+        # capture the process ID of the Logs exporter
+        logs_exporter_pid=$!
     fi
+
+    # Wait for both commands to finish and capture their exit codes
+    wait $playbook_pid
+    # Capture the exit code of the Ansible playbook command
+    playbook_result=$?
+
+    # Wait just two second to make sure all python exportation netword process has been publish
+    sleep 5
+
+    # Kill the logs exporter process
+    kill -SIGINT $logs_exporter_pid >/dev/null 2>&1
 
     if [ $playbook_result -eq 0 ]; then
         echo "Playbook succeeded!"

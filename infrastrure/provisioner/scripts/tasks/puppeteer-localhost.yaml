@@ -18,9 +18,28 @@
   delegate_to: 127.0.0.1
   when: ansible_distribution == "Ubuntu"
 
+- name: Check if Node.js is installed
+  command: "node -v"
+  register: node_version
+  ignore_errors: true # Ignore errors if 'node' command is not found
+  delegate_to: 127.0.0.1
+
 - import_tasks: nodejs.yaml
   become: true
+  when: ansible_distribution == "Ubuntu" and node_version.rc != 0
+  delegate_to: 127.0.0.1
+
+- name: NPM | Install PNPM, YARN, PM2
+  become: true
   when: ansible_distribution == "Ubuntu"
+  npm:
+    name: "{{ item }}"
+    global: yes
+    state: latest
+  loop:
+    - pnpm
+    - yarn
+    - pm2
   delegate_to: 127.0.0.1
 
 - name: PNPM | Install dependencies
