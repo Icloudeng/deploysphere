@@ -46,5 +46,9 @@
     "wordpress": {
         "port": 8000,
         "protocol": "http"
+    },
+    "authentik": {
+        "port": 3090,
+        "protocol": "http"
     }
 }

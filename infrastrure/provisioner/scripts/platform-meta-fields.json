@@ -65,5 +65,8 @@
     ],
     "wordpress": [
         "domain"
+    ],
+    "authentik": [
+        "domain"
     ]
 }
