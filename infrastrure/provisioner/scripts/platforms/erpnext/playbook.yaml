@@ -46,7 +46,10 @@
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
-        variable: |
+        text: |
           Login
           Username=Administrator
           Password={{ app_secret }}
+        credentials:
+          username: Administrator
+          password: "{{ app_secret }}"

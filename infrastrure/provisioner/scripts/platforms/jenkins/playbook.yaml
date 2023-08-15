@@ -64,4 +64,6 @@
       ignore_errors: true
       when: initialAdminPassword.content is defined
       vars:
-        variable: "initialAdminPassword={{ initialAdminPassword['content'] | b64decode }}"
+        text: "initialAdminPassword={{ initialAdminPassword['content'] | b64decode }}"
+        credentials:
+          initial_admin_password: "{{ initialAdminPassword['content'] | b64decode }}"

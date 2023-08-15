@@ -1,3 +1,9 @@
-- name: Print returned information
+- name: Expose text variable
   ansible.builtin.debug:
-    msg: "%%%{{ variable }}%%%"
+    msg: "%%%{{ text }}%%%"
+  when: text is defined
+
+- name: Expose credentials variable
+  ansible.builtin.debug:
+    msg: "%$%{{ credentials|to_json }}%$%"
+  when: credentials is defined

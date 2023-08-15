@@ -90,7 +90,7 @@ installer_details+="Static Secret: $static_secret\n"
 message_info=$(echo "Provisioning Started..." | base64)
 $python_command lib/notifier.py --logs "$message_info" --status "info" --details "$installer_details" --metadata "$metadata"
 
-# Run Ansible playbook (Function) -> (ran_status: succeeded | failed)
+# Run Ansible playbook (Function) -> (ran_status: succeeded | failed, channel_publisher)
 execute_ansible_playbook
 
 # Create domain mapping with (nginx|treafik)
@@ -110,8 +110,16 @@ fi
 ansible_logs=$(tail -n +$logs_lines $ansible_log_file)
 ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 
+# Publish Credentials
+if [ "$ran_status" == "succeeded" ]; then
+    # Read and extract credentials exposed from ansible logs
+    exposed_credentials=$($extract_vars --text "$ansible_logs" --credentials "true")
+
+    $redis_publisher --channel "$channel_publisher-credentials" --message "$(echo "$exposed_credentials" | base64)"
+fi
+
 # Read and extract variables exposed from ansible logs
-exposed_variables=$($extract_vars "$ansible_logs")
+exposed_variables=$($extract_vars --text "$ansible_logs")
 
 # Execute python notifier script
 installer_details+="Random Secret=$random_secret\n\n$exposed_variables\n"

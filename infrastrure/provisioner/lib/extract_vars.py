@@ -1,11 +1,8 @@
+import argparse
 import re
-import sys
 
 
-def extract_content_all(input_string: str):
-    # Regular expression pattern
-    pattern = r"%%%(.*?)%%%"
-
+def extract_content_all(input_string: str, pattern: str):
     # Extract all content using regex
     content_array = re.findall(pattern, input_string)
 
@@ -14,5 +11,22 @@ def extract_content_all(input_string: str):
 
 
 if __name__ == '__main__':
-    extracted_content = extract_content_all(sys.argv[1].strip())
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--text", required=True)
+    parser.add_argument(
+        "--credentials",
+        required=False,
+        default=False,
+        type=bool
+    )
+    args = parser.parse_args()
+
+    # Regular expression pattern
+    pattern = r"%\$%(.*?)%\$%" if args.credentials else r"%%%(.*?)%%%"
+
+    extracted_content = extract_content_all(
+        input_string=args.text,
+        pattern=pattern
+    )
+
     print("\n".join(extracted_content), end="")

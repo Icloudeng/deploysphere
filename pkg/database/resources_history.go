@@ -10,7 +10,6 @@ type HistoryPostBody map[string]interface{}
 type ResourcesHistory struct {
 	gorm.Model
 	Ref              string `gorm:"index,unique"`
-	StateId          uint
 	State            datatypes.JSONType[StateType]
 	PostBody         datatypes.JSONType[HistoryPostBody]
 	ProvisioningLogs string

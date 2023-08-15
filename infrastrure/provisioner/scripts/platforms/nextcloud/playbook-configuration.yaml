@@ -24,5 +24,5 @@
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
-        variable: |
+        text: |
           Configuration Type: Keycloak SSO

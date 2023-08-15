@@ -25,7 +25,7 @@
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
-        variable: |
+        text: |
           Mysql instance details:
 
           MachineIP: {{ ansible_default_ipv4.address }}
@@ -33,3 +33,7 @@
 
           Root: root
           Password: {{ mysql_root_password }}
+
+        credentials:
+          root: "root"
+          password: "{{ mysql_root_password }}"

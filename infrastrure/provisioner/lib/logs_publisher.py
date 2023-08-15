@@ -43,10 +43,10 @@ def main(channel: str):
 
 
 if __name__ == '__main__':
-    bingLoggingConfig(prefix="Ansible Logs Exporter / ")
+    bingLoggingConfig(prefix="Ansible Logs Publisher / ")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--channel")
+    parser.add_argument("--channel", required=True)
     args = parser.parse_args()
 
     logging.info(args)

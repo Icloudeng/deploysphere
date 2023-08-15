@@ -70,7 +70,10 @@ extract_vars="$python_command lib/extract_vars.py"
 get_decoded_metadata="$python_command lib/metadata.py"
 
 # Publish ansible playbook logs to a partical channel
-logs_exporter="$python_command lib/logs_exporter.py"
+logs_publisher="$python_command lib/logs_publisher.py"
+
+# Publish message to a partical channel
+redis_publisher="$python_command lib/redis_publisher.py"
 
 # ############### PYTHON FUNTIONS ###############
 

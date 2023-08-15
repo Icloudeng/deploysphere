@@ -35,9 +35,9 @@ execute_ansible_playbook() {
         # =====================
 
         # Run the logs exports
-        $logs_exporter --channel "$channel_publisher" &
+        $logs_publisher --channel "$channel_publisher" &
         # capture the process ID of the Logs exporter
-        logs_exporter_pid=$!
+        logs_publisher_pid=$!
     else
         # Run the command in background
         ansible-playbook -u "$ansible_user" -i "'$vm_ip,'" "$playbook_path" --extra-vars "$ansible_extra_vars" --extra-vars "@scripts/variables.yaml" &
@@ -46,10 +46,10 @@ execute_ansible_playbook() {
 
         # =====================
 
-        # Run the logs exports
-        $logs_exporter --channel "$channel_publisher" &
+        # Run the logs publisher
+        $logs_publisher --channel "$channel_publisher" &
         # capture the process ID of the Logs exporter
-        logs_exporter_pid=$!
+        logs_publisher_pid=$!
     fi
 
     # Wait for both commands to finish and capture their exit codes
@@ -60,8 +60,8 @@ execute_ansible_playbook() {
     # Wait just two second to make sure all python exportation netword process has been publish
     sleep 5
 
-    # Kill the logs exporter process
-    kill -SIGINT $logs_exporter_pid >/dev/null 2>&1
+    # Kill the logs publisher process
+    kill -SIGINT $logs_publisher_pid >/dev/null 2>&1
 
     if [ $playbook_result -eq 0 ]; then
         echo "Playbook succeeded!"

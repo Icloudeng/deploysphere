@@ -42,7 +42,10 @@
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
-        variable: |
+        text: |
           Login
           Username={{ moodle_username }}
           Password={{ app_secret }}
+        credentials:
+          username: "{{ moodle_username }}"
+          password: "{{ app_secret }}"

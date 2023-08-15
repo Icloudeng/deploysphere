@@ -38,7 +38,7 @@ ansible_logs=$(tail -n +$logs_lines $ansible_log_file)
 ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 
 # Read and extract variables exposed from ansible logs
-exposed_variables=$($extract_vars "$ansible_logs")
+exposed_variables=$($extract_vars --text "$ansible_logs")
 
 # Execute python notifier script
 installer_details="EXECUTION TYPE: Configuration\n"
