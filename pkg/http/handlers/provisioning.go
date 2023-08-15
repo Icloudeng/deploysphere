@@ -36,13 +36,18 @@ func CreatePlatformProvisioning(c *gin.Context) {
 		return
 	}
 
-	queue.Queue.QueueTask(func(ctx context.Context) error {
-		// close1 := redis.ResourceProviningCredentialsEvents(json.Ref, make([]interface{}))
-		// defer close1()
+	task := queue.ResourceJob{
+		Ref:           body.MachineIp,
+		PostBody:      body,
+		Description:   "Platform Provisioning",
+		ResourceState: false,
+		Task: func(ctx context.Context) error {
+			provisioning.CreatePlatformProvisioning(*body)
+			return nil
+		},
+	}
 
-		provisioning.CreatePlatformProvisioning(*body)
-		return nil
-	})
+	queue.ResourceJobTask(task)
 
 	c.JSON(http.StatusOK, body)
 }
@@ -72,13 +77,18 @@ func CreateConfigurationProvisioning(c *gin.Context) {
 		return
 	}
 
-	queue.Queue.QueueTask(func(ctx context.Context) error {
-		// close1 := redis.ResourceProviningCredentialsEvents(json.Ref, make([]interface{}))
-		// defer close1()
+	task := queue.ResourceJob{
+		Ref:           body.MachineIp,
+		PostBody:      body,
+		Description:   "Platform Configuration Provisioning",
+		ResourceState: false,
+		Task: func(ctx context.Context) error {
+			provisioning.CreateConfigurationProvisioning(*body)
+			return nil
+		},
+	}
 
-		provisioning.CreateConfigurationProvisioning(*body)
-		return nil
-	})
+	queue.ResourceJobTask(task)
 
 	c.JSON(http.StatusOK, body)
 }

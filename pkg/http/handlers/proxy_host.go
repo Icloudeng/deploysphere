@@ -26,10 +26,18 @@ func CreateProxyHost(c *gin.Context) {
 		return
 	}
 
-	queue.Queue.QueueTask(func(ctx context.Context) error {
-		proxyhost.CreateProxyHost(json)
-		return nil
-	})
+	task := queue.ResourceJob{
+		Ref:           json.Domain,
+		PostBody:      json,
+		Description:   "Proxy Host Creation",
+		ResourceState: false,
+		Task: func(ctx context.Context) error {
+			proxyhost.CreateProxyHost(json)
+			return nil
+		},
+	}
+
+	queue.ResourceJobTask(task)
 
 	c.JSON(http.StatusOK, json)
 }
@@ -42,16 +50,24 @@ func DeleteProxyHost(c *gin.Context) {
 		return
 	}
 
-	queue.Queue.QueueTask(func(ctx context.Context) error {
-		proxyhost.DeleteProxyHost(json.Domain)
+	task := queue.ResourceJob{
+		Ref:           json.Domain,
+		PostBody:      json,
+		Description:   "Proxy Host Deletion",
+		ResourceState: false,
+		Task: func(ctx context.Context) error {
+			proxyhost.DeleteProxyHost(json.Domain)
 
-		events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
-			Status:  "info",
-			Details: "Domain: " + json.Domain,
-			Logs:    "Proxy Host deleted",
-		})
-		return nil
-	})
+			events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+				Status:  "info",
+				Details: "Domain: " + json.Domain,
+				Logs:    "Proxy Host deleted",
+			})
+			return nil
+		},
+	}
+
+	queue.ResourceJobTask(task)
 
 	c.JSON(http.StatusOK, json)
 }

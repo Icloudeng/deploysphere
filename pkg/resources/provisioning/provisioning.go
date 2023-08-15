@@ -21,7 +21,7 @@ func provisioning(prov structs.Provisioning, file string) {
 		"--vmip", prov.MachineIp,
 		"--platform", platform.Name,
 		"--metadata", metadatab64,
-		"--reference", prov.Ref,
+		// "--reference", prov.Ref, Don't uncomment this line, can cause mis functioning from redis pubsub
 	)
 
 	cmd.Dir = files.ProvisionerDir

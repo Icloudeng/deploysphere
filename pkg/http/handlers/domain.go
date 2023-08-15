@@ -80,7 +80,7 @@ func DeleteDomain(c *gin.Context) {
 		Ref:           data.Ref,
 		PostBody:      data,
 		Description:   "Domain Resource deletion",
-		ResourceState: false,
+		ResourceState: false, // Disable on resource deletion
 		Task: func(ctx context.Context) error {
 			// Remove resources
 			resources.DeleteOvhDomainZoneResource(data.Ref)

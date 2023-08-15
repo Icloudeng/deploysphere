@@ -97,8 +97,8 @@ func DeleteResources(c *gin.Context) {
 	task := queue.ResourceJob{
 		Ref:           uri.Ref,
 		PostBody:      uri,
-		ResourceState: true,
-		Description:   "Resources creation",
+		Description:   "Resources deletion",
+		ResourceState: false, // Disable on resource deletion
 		Task: func(ctx context.Context) error {
 			// Remove resources
 			resources.DeleteOvhDomainZoneResource(uri.Ref)
