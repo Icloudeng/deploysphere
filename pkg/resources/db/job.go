@@ -28,6 +28,8 @@ func JobCreate(ref string, postBody interface{}, Description string) *database.J
 
 func JobPutRunningDone(job *database.Job, Success bool) {
 	rep := database.JobRepository{}
+	// refresh the job
+	job = rep.Get(job.ID)
 
 	job.Running = false
 
@@ -37,6 +39,8 @@ func JobPutRunningDone(job *database.Job, Success bool) {
 
 	rep.UpdateOrCreate(job)
 }
+
+// =============== Redis Events Listener ============= //
 
 func Job_ListenResourceProviningLogs(playload redis_events.ResourceRedisEventPayload) {
 	rep := database.JobRepository{}

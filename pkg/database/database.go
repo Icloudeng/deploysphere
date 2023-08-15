@@ -12,7 +12,7 @@ import (
 
 type MapInterface map[string]interface{}
 
-var db *gorm.DB
+var dbConn *gorm.DB
 
 func init() {
 	dsn := fmt.Sprintf(
@@ -31,7 +31,7 @@ func init() {
 			PrepareStmt: true,
 		})
 
-		if db = _db; err != nil {
+		if dbConn = _db; err != nil {
 			log.Fatal(err.Error())
 		}
 	} else {
@@ -39,7 +39,7 @@ func init() {
 			PrepareStmt: true,
 		})
 
-		if db = _db; err != nil {
+		if dbConn = _db; err != nil {
 			log.Fatal(err.Error())
 		}
 	}

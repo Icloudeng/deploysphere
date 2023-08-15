@@ -25,23 +25,39 @@ func (r *ResourcesStatesRepository) GetByRef(ref string) *ResourcesState {
 		Ref: ref,
 	}
 
-	db.Last(res)
+	dbConn.Last(res)
+
+	if res.ID == 0 {
+		return nil
+	}
 
 	return res
 }
 
+func (r *ResourcesStatesRepository) Get(ID uint) *ResourcesState {
+	object := &ResourcesState{}
+
+	dbConn.Last(object, ID)
+
+	if object.ID == 0 {
+		return nil
+	}
+
+	return object
+}
+
 func (r *ResourcesStatesRepository) Create(res *ResourcesState) {
-	db.Create(res)
+	dbConn.Create(res)
 }
 
 func (r *ResourcesStatesRepository) UpdateOrCreate(res *ResourcesState) {
-	db.Save(res)
+	dbConn.Save(res)
 }
 
 func (r *ResourcesStatesRepository) Delete(ID uint) {
-	db.Delete(&ResourcesState{}, ID)
+	dbConn.Delete(&ResourcesState{}, ID)
 }
 
 func init() {
-	db.AutoMigrate(&ResourcesState{})
+	dbConn.AutoMigrate(&ResourcesState{})
 }

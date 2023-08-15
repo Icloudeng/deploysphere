@@ -19,27 +19,43 @@ type Job struct {
 type JobRepository struct{}
 
 func (r *JobRepository) GetByRef(ref string) *Job {
-	res := &Job{
+	object := &Job{
 		Ref: ref,
 	}
 
-	db.Last(res)
+	dbConn.Last(object)
 
-	return res
+	if object.ID == 0 {
+		return nil
+	}
+
+	return object
 }
 
-func (r *JobRepository) Create(res *Job) {
-	db.Create(res)
+func (r *JobRepository) Get(ID uint) *Job {
+	object := &Job{}
+
+	dbConn.Last(object, ID)
+
+	if object.ID == 0 {
+		return nil
+	}
+
+	return object
 }
 
-func (r *JobRepository) UpdateOrCreate(res *Job) {
-	db.Save(res)
+func (r *JobRepository) Create(object *Job) {
+	dbConn.Create(object)
+}
+
+func (r *JobRepository) UpdateOrCreate(object *Job) {
+	dbConn.Save(object)
 }
 
 func (r *JobRepository) Delete(ID uint) {
-	db.Delete(&Job{}, ID)
+	dbConn.Delete(&Job{}, ID)
 }
 
 func init() {
-	db.AutoMigrate(&Job{})
+	dbConn.AutoMigrate(&Job{})
 }

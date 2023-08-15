@@ -27,6 +27,9 @@ func ResourceStatePutTerraformState(resource_state *database.ResourcesState) {
 	stateModule := terraform.Tf.Show()
 	repository := database.ResourcesStatesRepository{}
 
+	// Refresh Object
+	resource_state = repository.Get(resource_state.ID)
+
 	if stateModule == nil {
 		return
 	}
@@ -48,6 +51,8 @@ func ResourceStatePutTerraformState(resource_state *database.ResourcesState) {
 
 	repository.UpdateOrCreate(resource_state)
 }
+
+// =============== Redis Events Listener ============= //
 
 func ResourceState_ListenResourceProviningCredentials(playload redis_events.ResourceRedisEventPayload) {
 	rep := database.ResourcesStatesRepository{}
