@@ -37,6 +37,9 @@ func CreatePlatformProvisioning(c *gin.Context) {
 	}
 
 	queue.Queue.QueueTask(func(ctx context.Context) error {
+		// close1 := redis.ResourceProviningCredentialsEvents(json.Ref, make([]interface{}))
+		// defer close1()
+
 		provisioning.CreatePlatformProvisioning(*body)
 		return nil
 	})
@@ -70,6 +73,9 @@ func CreateConfigurationProvisioning(c *gin.Context) {
 	}
 
 	queue.Queue.QueueTask(func(ctx context.Context) error {
+		// close1 := redis.ResourceProviningCredentialsEvents(json.Ref, make([]interface{}))
+		// defer close1()
+
 		provisioning.CreateConfigurationProvisioning(*body)
 		return nil
 	})

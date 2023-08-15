@@ -66,6 +66,11 @@ func CreateResources(c *gin.Context) {
 	}
 
 	queue.Queue.QueueTask(func(ctx context.Context) error {
+		// close1 := redis.ResourceProviningCredentialsEvents(json.Ref, make([]interface{}))
+		// close2 := redis.ResourceProviningCredentialsEvents(json.Ref, make([]interface{}))
+		// defer close1()
+		// defer close2()
+
 		// Reset unmutable vm fields
 		structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform, json.Ref)
 		// Create or update resources
