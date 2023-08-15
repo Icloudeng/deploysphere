@@ -1,4 +1,4 @@
-package database
+package db
 
 import (
 	"smatflow/platform-installer/pkg/database"
@@ -7,7 +7,7 @@ import (
 	"gorm.io/datatypes"
 )
 
-func ResourceStateCreate(ref string, job database.Job) {
+func ResourceStateCreate(ref string, job database.Job) *database.ResourcesState {
 	rep := database.ResourcesStatesRepository{}
 
 	resource_state := &database.ResourcesState{
@@ -17,6 +17,8 @@ func ResourceStateCreate(ref string, job database.Job) {
 	}
 
 	rep.Create(resource_state)
+
+	return resource_state
 }
 
 func ResourceStatePutTerraformState(resource_state *database.ResourcesState) {

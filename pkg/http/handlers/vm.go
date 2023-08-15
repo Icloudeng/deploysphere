@@ -50,21 +50,22 @@ func CreateVm(c *gin.Context) {
 		}
 	}
 
-	queue.Queue.QueueTask(func(ctx context.Context) error {
-		// close1 := redis.ResourceProviningCredentialsEvents(json.Ref, make([]interface{}))
-		// close2 := redis.ResourceProviningCredentialsEvents(json.Ref, make([]interface{}))
-		// defer close1()
-		// defer close2()
+	task := queue.ResourceJob{
+		Ref:           json.Ref,
+		PostBody:      json,
+		ResourceState: true,
+		Description:   "VM Resource creation",
+		Task: func(ctx context.Context) error {
+			// Reset unmutable vm fields
+			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform, json.Ref)
+			// Create or update resources
+			resources.WriteProxmoxVmQemuResource(json.Ref, json.Vm)
+			// Terraform Apply changes
+			return terraform.Tf.Apply(true)
+		},
+	}
 
-		// Reset unmutable vm fields
-		structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform, json.Ref)
-		// Create or update resources
-		resources.CreateOrWriteProxmoxResource(json.Ref, json.Vm)
-
-		// Terraform Apply changes
-		terraform.Tf.Apply(true)
-		return nil
-	})
+	queue.ResourceJobTask(task)
 
 	c.JSON(http.StatusOK, json)
 }
@@ -77,21 +78,30 @@ func DeleteVm(c *gin.Context) {
 		return
 	}
 
-	queue.Queue.QueueTask(func(ctx context.Context) error {
-		// Remove resources
-		resources.DeleteProxmoxVmQemuResource(data.Ref)
+	task := queue.ResourceJob{
+		Ref:           data.Ref,
+		PostBody:      data,
+		ResourceState: false,
+		Description:   "VM Resource deletion",
+		Task: func(ctx context.Context) error {
+			// Remove resources
+			resources.DeleteProxmoxVmQemuResource(data.Ref)
 
-		// Terraform Apply changes
-		if err := terraform.Tf.Apply(true); err == nil {
-			events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
-				Status:  "info",
-				Details: "Ref: " + data.Ref,
-				Logs:    "VM Resource deleted",
-			})
-		}
+			// Terraform Apply changes
+			err := terraform.Tf.Apply(true)
+			if err == nil {
+				events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+					Status:  "info",
+					Details: "Ref: " + data.Ref,
+					Logs:    "VM Resource deleted",
+				})
+			}
 
-		return nil
-	})
+			return err
+		},
+	}
+
+	queue.ResourceJobTask(task)
 
 	c.JSON(http.StatusOK, data)
 }

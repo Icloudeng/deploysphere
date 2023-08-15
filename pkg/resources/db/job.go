@@ -1,4 +1,4 @@
-package database
+package db
 
 import (
 	"encoding/json"
@@ -7,15 +7,16 @@ import (
 	"gorm.io/datatypes"
 )
 
-func JobCreate(ref string, postBody interface{}) *database.Job {
+func JobCreate(ref string, postBody interface{}, Description string) *database.Job {
 	rep := database.JobRepository{}
 	postBodyJson, _ := json.Marshal(postBody)
 
 	job := &database.Job{
-		Ref:      ref,
-		Running:  true,
-		Success:  true,
-		PostBody: datatypes.JSON(postBodyJson),
+		Ref:         ref,
+		Running:     true,
+		Success:     true,
+		PostBody:    datatypes.JSON(postBodyJson),
+		Description: Description,
 	}
 
 	rep.Create(job)

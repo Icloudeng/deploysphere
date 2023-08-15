@@ -40,19 +40,30 @@ func CreateDomain(c *gin.Context) {
 		}
 	}
 
-	queue.Queue.QueueTask(func(ctx context.Context) error {
-		// Create or update resources
-		resources.CreateOrWriteOvhResource(json.Ref, json.Domain)
-		// Terraform Apply changes
-		if err := terraform.Tf.Apply(true); err == nil {
-			events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
-				Status:  "succeeded",
-				Details: "Ref: " + json.Ref,
-				Logs:    "Domain Resource created",
-			})
-		}
-		return nil
-	})
+	task := queue.ResourceJob{
+		Ref:           json.Ref,
+		PostBody:      json,
+		Description:   "Domain Resource Creation",
+		ResourceState: true,
+		Task: func(ctx context.Context) error {
+			// Create or update resources
+			resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
+
+			// Terraform Apply changes
+			err := terraform.Tf.Apply(true)
+			if err == nil {
+				events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+					Status:  "succeeded",
+					Details: "Ref: " + json.Ref,
+					Logs:    "Domain Resource created",
+				})
+			}
+
+			return err
+		},
+	}
+
+	queue.ResourceJobTask(task)
 
 	c.JSON(http.StatusOK, json)
 }
@@ -65,21 +76,30 @@ func DeleteDomain(c *gin.Context) {
 		return
 	}
 
-	queue.Queue.QueueTask(func(ctx context.Context) error {
-		// Remove resources
-		resources.DeleteOvhDomainZoneResource(data.Ref)
+	task := queue.ResourceJob{
+		Ref:           data.Ref,
+		PostBody:      data,
+		Description:   "Domain Resource deletion",
+		ResourceState: false,
+		Task: func(ctx context.Context) error {
+			// Remove resources
+			resources.DeleteOvhDomainZoneResource(data.Ref)
 
-		// Terraform Apply changes
-		if err := terraform.Tf.Apply(true); err == nil {
-			events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
-				Status:  "info",
-				Details: "Ref: " + data.Ref,
-				Logs:    "Domain Resource deleted",
-			})
-		}
+			// Terraform Apply changes
+			err := terraform.Tf.Apply(true)
+			if err == nil {
+				events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+					Status:  "info",
+					Details: "Ref: " + data.Ref,
+					Logs:    "Domain Resource deleted",
+				})
+			}
 
-		return nil
-	})
+			return err
+		},
+	}
+
+	queue.ResourceJobTask(task)
 
 	c.JSON(http.StatusOK, data)
 }

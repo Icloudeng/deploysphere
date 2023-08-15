@@ -7,12 +7,13 @@ import (
 
 type Job struct {
 	gorm.Model
-	Ref      string `gorm:"index"`
-	PostBody datatypes.JSON
-	Logs     string
-	Group    string
-	Running  bool
-	Success  bool
+	Ref         string `gorm:"index"`
+	PostBody    datatypes.JSON
+	Logs        string
+	Group       string
+	Description string
+	Running     bool
+	Success     bool
 }
 
 type JobRepository struct{}
