@@ -1,3 +1,4 @@
+import base64
 import signal
 import sys
 import subprocess
@@ -36,7 +37,12 @@ def main(channel: str):
             # Read new lines from the tail process
             new_line = tail_process.stdout.readline()
             if new_line:
-                redis_client.publish(CHANNEL, new_line.strip())
+                encoded_data = base64.b64encode(
+                    new_line.strip().encode('utf-8')
+                ).decode('utf-8')
+
+                redis_client.publish(CHANNEL, encoded_data)
+
     except KeyboardInterrupt:
         # Stop the tail process if the user presses Ctrl+C
         tail_process.terminate()
