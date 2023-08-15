@@ -3,6 +3,7 @@ package redis_events
 import (
 	"context"
 	"fmt"
+	"smatflow/platform-installer/pkg/queue"
 	"smatflow/platform-installer/pkg/redis"
 )
 
@@ -31,14 +32,17 @@ func events(reference string, eventType string, subscribers []SubscriberFunc) fu
 				break
 			}
 
-			for _, subscriber := range subscribers {
-				subscriber(ResourceRedisEventPayload{
-					Type:      eventType,
-					Reference: reference,
-					Channel:   msg.Channel,
-					Payload:   msg.Payload,
-				})
-			}
+			queue.JobsQueue.QueueTask(func(ctx context.Context) error {
+				for _, subscriber := range subscribers {
+					subscriber(ResourceRedisEventPayload{
+						Type:      eventType,
+						Reference: reference,
+						Channel:   msg.Channel,
+						Payload:   msg.Payload,
+					})
+				}
+				return nil
+			})
 		}
 	}()
 
