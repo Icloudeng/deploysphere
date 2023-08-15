@@ -2,6 +2,7 @@ package redis_events
 
 import (
 	"context"
+	"fmt"
 	"smatflow/platform-installer/pkg/redis"
 )
 
@@ -16,14 +17,17 @@ type SubscriberFunc func(playload ResourceRedisEventPayload)
 
 func events(reference string, eventType string, subscribers []SubscriberFunc) func() {
 	ctx := context.Background()
-	pubsub := redis.Client.Subscribe(ctx, reference+"-"+eventType)
-	// Close the subscription when we are done.
-	defer pubsub.Close()
+	channel := reference + "-" + eventType
+	pubsub := redis.Client.Subscribe(ctx, channel)
 
 	go func() {
+		// Close the subscription when we are done.
+		defer pubsub.Close()
+
 		for {
 			msg, err := pubsub.ReceiveMessage(ctx)
 			if err != nil {
+				fmt.Println("Close Redis Channel Subscribe", channel)
 				break
 			}
 

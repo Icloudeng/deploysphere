@@ -37,6 +37,21 @@ execute_ansible_playbook
 ansible_logs=$(tail -n +$logs_lines $ansible_log_file)
 ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 
+# Publish Credentials
+if [ "$ran_status" == "succeeded" ]; then
+    # Read and extract credentials exposed from ansible logs
+    exposed_credentials=$($extract_vars --text "$ansible_logs" --credentials "true")
+
+    # Publish credentials if not empty
+    if [ -n "$exposed_credentials" ]; then
+        $redis_publisher --channel "$channel_publisher-credentials" --message "$(echo "$exposed_credentials" | base64)"
+    fi
+
+fi
+
+# Publish playbook run status
+$redis_publisher --channel "$channel_publisher-status" --message "$(echo "$ran_status" | base64)"
+
 # Read and extract variables exposed from ansible logs
 exposed_variables=$($extract_vars --text "$ansible_logs")
 
