@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"smatflow/platform-installer/pkg/queue"
+	"smatflow/platform-installer/pkg/resources/jobs"
 	"smatflow/platform-installer/pkg/resources/provisioning"
 	"smatflow/platform-installer/pkg/structs"
 	"smatflow/platform-installer/pkg/validators"
@@ -36,7 +36,7 @@ func CreatePlatformProvisioning(c *gin.Context) {
 		return
 	}
 
-	task := queue.ResourceJob{
+	task := jobs.ResourcesJob{
 		Ref:           body.MachineIp,
 		PostBody:      body,
 		Description:   "Platform Provisioning",
@@ -47,7 +47,7 @@ func CreatePlatformProvisioning(c *gin.Context) {
 		},
 	}
 
-	queue.ResourceJobTask(task)
+	jobs.ResourcesJobTask(task)
 
 	c.JSON(http.StatusOK, body)
 }
@@ -77,7 +77,7 @@ func CreateConfigurationProvisioning(c *gin.Context) {
 		return
 	}
 
-	task := queue.ResourceJob{
+	task := jobs.ResourcesJob{
 		Ref:           body.MachineIp,
 		PostBody:      body,
 		Description:   "Platform Configuration Provisioning",
@@ -88,7 +88,7 @@ func CreateConfigurationProvisioning(c *gin.Context) {
 		},
 	}
 
-	queue.ResourceJobTask(task)
+	jobs.ResourcesJobTask(task)
 
 	c.JSON(http.StatusOK, body)
 }

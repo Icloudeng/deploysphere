@@ -1,26 +1,27 @@
-package queue
+package jobs
 
 import (
 	"context"
 	"smatflow/platform-installer/pkg/database"
+	"smatflow/platform-installer/pkg/queue"
 	"smatflow/platform-installer/pkg/resources/db"
 
-	"github.com/golang-queue/queue"
+	goqueue "github.com/golang-queue/queue"
 )
 
-type ResourceJob struct {
+type ResourcesJob struct {
 	Ref           string
-	Task          queue.TaskFunc
+	Task          goqueue.TaskFunc
 	PostBody      interface{}
 	ResourceState bool
 	Description   string
 }
 
-func ResourceJobTask(task ResourceJob) {
+func ResourcesJobTask(task ResourcesJob) {
 	// Create new JOB
 	job := db.JobCreate(task.Ref, task.PostBody, task.Description)
 
-	Queue.QueueTask(func(ctx context.Context) error {
+	queue.Queue.QueueTask(func(ctx context.Context) error {
 		res_state := &database.ResourcesState{}
 
 		// Create Resource State

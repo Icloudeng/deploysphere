@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"smatflow/platform-installer/pkg/events"
 	"smatflow/platform-installer/pkg/files"
-	"smatflow/platform-installer/pkg/queue"
+	"smatflow/platform-installer/pkg/resources/jobs"
 	proxyhost "smatflow/platform-installer/pkg/resources/proxy_host"
 	"smatflow/platform-installer/pkg/structs"
 
@@ -26,7 +26,7 @@ func CreateProxyHost(c *gin.Context) {
 		return
 	}
 
-	task := queue.ResourceJob{
+	task := jobs.ResourcesJob{
 		Ref:           json.Domain,
 		PostBody:      json,
 		Description:   "Proxy Host Creation",
@@ -37,7 +37,7 @@ func CreateProxyHost(c *gin.Context) {
 		},
 	}
 
-	queue.ResourceJobTask(task)
+	jobs.ResourcesJobTask(task)
 
 	c.JSON(http.StatusOK, json)
 }
@@ -50,7 +50,7 @@ func DeleteProxyHost(c *gin.Context) {
 		return
 	}
 
-	task := queue.ResourceJob{
+	task := jobs.ResourcesJob{
 		Ref:           json.Domain,
 		PostBody:      json,
 		Description:   "Proxy Host Deletion",
@@ -67,7 +67,7 @@ func DeleteProxyHost(c *gin.Context) {
 		},
 	}
 
-	queue.ResourceJobTask(task)
+	jobs.ResourcesJobTask(task)
 
 	c.JSON(http.StatusOK, json)
 }

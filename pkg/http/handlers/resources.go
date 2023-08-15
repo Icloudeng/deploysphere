@@ -8,8 +8,8 @@ import (
 
 	"smatflow/platform-installer/pkg/events"
 	"smatflow/platform-installer/pkg/files"
-	"smatflow/platform-installer/pkg/queue"
 	"smatflow/platform-installer/pkg/resources"
+	"smatflow/platform-installer/pkg/resources/jobs"
 	"smatflow/platform-installer/pkg/structs"
 	"smatflow/platform-installer/pkg/terraform"
 	"smatflow/platform-installer/pkg/validators"
@@ -65,7 +65,7 @@ func CreateResources(c *gin.Context) {
 		}
 	}
 
-	task := queue.ResourceJob{
+	task := jobs.ResourcesJob{
 		Ref:           json.Ref,
 		PostBody:      json,
 		ResourceState: true,
@@ -82,7 +82,7 @@ func CreateResources(c *gin.Context) {
 		},
 	}
 
-	queue.ResourceJobTask(task)
+	jobs.ResourcesJobTask(task)
 
 	c.JSON(http.StatusOK, json)
 }
@@ -94,7 +94,7 @@ func DeleteResources(c *gin.Context) {
 		return
 	}
 
-	task := queue.ResourceJob{
+	task := jobs.ResourcesJob{
 		Ref:           uri.Ref,
 		PostBody:      uri,
 		Description:   "Resources deletion",
@@ -118,7 +118,7 @@ func DeleteResources(c *gin.Context) {
 		},
 	}
 
-	queue.ResourceJobTask(task)
+	jobs.ResourcesJobTask(task)
 
 	c.JSON(http.StatusOK, uri)
 }

@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 	"smatflow/platform-installer/pkg/events"
-	"smatflow/platform-installer/pkg/queue"
 	"smatflow/platform-installer/pkg/resources"
+	"smatflow/platform-installer/pkg/resources/jobs"
 	"smatflow/platform-installer/pkg/structs"
 	"smatflow/platform-installer/pkg/terraform"
 	"smatflow/platform-installer/pkg/validators"
@@ -50,7 +50,7 @@ func CreateVm(c *gin.Context) {
 		}
 	}
 
-	task := queue.ResourceJob{
+	task := jobs.ResourcesJob{
 		Ref:           json.Ref,
 		PostBody:      json,
 		Description:   "VM Resource creation",
@@ -65,7 +65,7 @@ func CreateVm(c *gin.Context) {
 		},
 	}
 
-	queue.ResourceJobTask(task)
+	jobs.ResourcesJobTask(task)
 
 	c.JSON(http.StatusOK, json)
 }
@@ -78,7 +78,7 @@ func DeleteVm(c *gin.Context) {
 		return
 	}
 
-	task := queue.ResourceJob{
+	task := jobs.ResourcesJob{
 		Ref:           data.Ref,
 		PostBody:      data,
 		Description:   "VM Resource deletion",
@@ -101,7 +101,7 @@ func DeleteVm(c *gin.Context) {
 		},
 	}
 
-	queue.ResourceJobTask(task)
+	jobs.ResourcesJobTask(task)
 
 	c.JSON(http.StatusOK, data)
 }

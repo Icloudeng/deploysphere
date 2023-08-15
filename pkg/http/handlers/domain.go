@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 	"smatflow/platform-installer/pkg/events"
-	"smatflow/platform-installer/pkg/queue"
 	"smatflow/platform-installer/pkg/resources"
+	"smatflow/platform-installer/pkg/resources/jobs"
 	"smatflow/platform-installer/pkg/structs"
 	"smatflow/platform-installer/pkg/terraform"
 
@@ -40,7 +40,7 @@ func CreateDomain(c *gin.Context) {
 		}
 	}
 
-	task := queue.ResourceJob{
+	task := jobs.ResourcesJob{
 		Ref:           json.Ref,
 		PostBody:      json,
 		Description:   "Domain Resource Creation",
@@ -63,7 +63,7 @@ func CreateDomain(c *gin.Context) {
 		},
 	}
 
-	queue.ResourceJobTask(task)
+	jobs.ResourcesJobTask(task)
 
 	c.JSON(http.StatusOK, json)
 }
@@ -76,7 +76,7 @@ func DeleteDomain(c *gin.Context) {
 		return
 	}
 
-	task := queue.ResourceJob{
+	task := jobs.ResourcesJob{
 		Ref:           data.Ref,
 		PostBody:      data,
 		Description:   "Domain Resource deletion",
@@ -99,7 +99,7 @@ func DeleteDomain(c *gin.Context) {
 		},
 	}
 
-	queue.ResourceJobTask(task)
+	jobs.ResourcesJobTask(task)
 
 	c.JSON(http.StatusOK, data)
 }
