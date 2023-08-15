@@ -7,7 +7,19 @@ import (
 	"gorm.io/datatypes"
 )
 
-func StoreOrUpdateResourceState(ref string) {
+func ResourceStateCreate(ref string, job database.Job) {
+	rep := database.ResourcesStatesRepository{}
+
+	resource_state := &database.ResourcesState{
+		Ref:   ref,
+		JobID: job.ID,
+		Job:   job,
+	}
+
+	rep.Create(resource_state)
+}
+
+func ResourceStatePutTerraformState(resource_state *database.ResourcesState) {
 	stateModule := terraform.Tf.Show()
 	repository := database.ResourcesStatesRepository{}
 
@@ -17,20 +29,18 @@ func StoreOrUpdateResourceState(ref string) {
 
 	childModules := stateModule.ChildModules
 
-	current_res := repository.GetByRef(ref)
-	current_state := current_res.State.Data()
+	current_state := resource_state.State.Data()
 
 	for _, module := range childModules {
 		address := module.Address
 		for _, resource := range module.Resources {
-			if resource.Name == ref {
+			if resource.Name == resource_state.Ref {
 				current_state[address] = resource
 			}
 		}
 	}
 
-	current_res.Ref = ref
-	current_res.State = datatypes.NewJSONType(current_state)
+	resource_state.State = datatypes.NewJSONType(current_state)
 
-	repository.UpdateOrCreate(current_res)
+	repository.UpdateOrCreate(resource_state)
 }

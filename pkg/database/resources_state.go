@@ -11,8 +11,11 @@ type StateType map[string]*tfjson.StateResource
 
 type ResourcesState struct {
 	gorm.Model
-	Ref   string `gorm:"index,unique"`
-	State datatypes.JSONType[StateType]
+	Ref         string `gorm:"index"`
+	State       datatypes.JSONType[StateType]
+	Credentials datatypes.JSON
+	JobID       uint
+	Job         Job `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 type ResourcesStatesRepository struct{}
@@ -22,7 +25,7 @@ func (r *ResourcesStatesRepository) GetByRef(ref string) *ResourcesState {
 		Ref: ref,
 	}
 
-	db.First(res)
+	db.Last(res)
 
 	return res
 }

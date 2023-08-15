@@ -10,6 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
+type MapInterface map[string]interface{}
+
 var db *gorm.DB
 
 func init() {
