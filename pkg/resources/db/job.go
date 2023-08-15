@@ -3,6 +3,7 @@ package db
 import (
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"smatflow/platform-installer/pkg/database"
 	"smatflow/platform-installer/pkg/events/redis_events"
 
@@ -52,7 +53,8 @@ func Job_ListenResourceProviningLogs(playload redis_events.ResourceRedisEventPay
 		return
 	}
 
-	job.Logs = job.Logs + string(decodedBytes)
+	// job.Logs = fmt.Sprintf("%s%s\\n", job.Logs, string(decodedBytes))
+	job.Logs = fmt.Sprintf("%s%s\n", job.Logs, string(decodedBytes))
 
 	rep.UpdateOrCreate(job)
 }
