@@ -1,4 +1,4 @@
-package redis
+package redis_events
 
 import (
 	"context"
@@ -12,7 +12,9 @@ type ResourceRedisEventPayload struct {
 	Payload   string
 }
 
-func events(reference string, eventType string, subscribers []func(playload ResourceRedisEventPayload)) func() {
+type SubscriberFunc func(playload ResourceRedisEventPayload)
+
+func events(reference string, eventType string, subscribers []SubscriberFunc) func() {
 	ctx := context.Background()
 	pubsub := redis.Client.Subscribe(ctx, reference+"-"+eventType)
 	// Close the subscription when we are done.
@@ -41,10 +43,14 @@ func events(reference string, eventType string, subscribers []func(playload Reso
 	}
 }
 
-func ResourceProviningLogsEvents(reference string, subscribers []func(playload ResourceRedisEventPayload)) func() {
+func ResourceProviningLogsEvents(reference string, subscribers []SubscriberFunc) func() {
 	return events(reference, "logs", subscribers)
 }
 
-func ResourceProviningCredentialsEvents(reference string, subscribers []func(playload ResourceRedisEventPayload)) func() {
+func ResourceProviningCredentialsEvents(reference string, subscribers []SubscriberFunc) func() {
 	return events(reference, "credentials", subscribers)
+}
+
+func ResourceProviningStatusEvents(reference string, subscribers []SubscriberFunc) func() {
+	return events(reference, "status", subscribers)
 }

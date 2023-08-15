@@ -1,8 +1,10 @@
 package db
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"smatflow/platform-installer/pkg/database"
+	"smatflow/platform-installer/pkg/events/redis_events"
 
 	"gorm.io/datatypes"
 )
@@ -29,7 +31,39 @@ func JobPutRunningDone(job *database.Job, Success bool) {
 
 	job.Running = false
 
-	job.Success = Success
+	if !Success {
+		job.Success = Success
+	}
+
+	rep.UpdateOrCreate(job)
+}
+
+func Job_ListenResourceProviningLogs(playload redis_events.ResourceRedisEventPayload) {
+	rep := database.JobRepository{}
+	job := rep.GetByRef(playload.Reference)
+
+	decodedBytes, err := base64.StdEncoding.DecodeString(playload.Payload)
+
+	if job == nil || err != nil {
+		return
+	}
+
+	job.Logs = job.Logs + string(decodedBytes)
+
+	rep.UpdateOrCreate(job)
+}
+
+func Job_ListenResourceProviningStatus(playload redis_events.ResourceRedisEventPayload) {
+	rep := database.JobRepository{}
+	job := rep.GetByRef(playload.Reference)
+
+	decodedBytes, err := base64.StdEncoding.DecodeString(playload.Payload)
+
+	if job == nil || err != nil {
+		return
+	}
+
+	job.Success = string(decodedBytes) == "succeeded"
 
 	rep.UpdateOrCreate(job)
 }
