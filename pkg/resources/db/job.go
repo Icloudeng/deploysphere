@@ -53,8 +53,7 @@ func Job_ListenResourceProviningLogs(playload redis_events.ResourceRedisEventPay
 		return
 	}
 
-	// job.Logs = fmt.Sprintf("%s%s\\n", job.Logs, string(decodedBytes))
-	job.Logs = fmt.Sprintln(job.Logs, string(decodedBytes))
+	job.Logs = fmt.Sprintf("%s%s\\n", job.Logs, string(decodedBytes))
 
 	rep.UpdateOrCreate(job)
 }
