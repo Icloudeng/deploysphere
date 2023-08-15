@@ -2,6 +2,7 @@ package db
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"smatflow/platform-installer/pkg/database"
 	"smatflow/platform-installer/pkg/events/redis_events"
 	"smatflow/platform-installer/pkg/terraform"
@@ -36,18 +37,20 @@ func ResourceStatePutTerraformState(resource_state *database.ResourcesState) {
 
 	childModules := stateModule.ChildModules
 
-	current_state := resource_state.State.Data()
+	state := map[string]interface{}{}
 
 	for _, module := range childModules {
 		address := module.Address
 		for _, resource := range module.Resources {
 			if resource.Name == resource_state.Ref {
-				current_state[address] = resource
+				state[address] = resource
 			}
 		}
 	}
 
-	resource_state.State = datatypes.NewJSONType(current_state)
+	state_encoded, _ := json.Marshal(state)
+
+	resource_state.State = datatypes.JSON(state_encoded)
 
 	repository.UpdateOrCreate(resource_state)
 }

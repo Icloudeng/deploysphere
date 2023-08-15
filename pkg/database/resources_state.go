@@ -12,7 +12,7 @@ type StateType map[string]*tfjson.StateResource
 type ResourcesState struct {
 	gorm.Model
 	Ref         string `gorm:"index"`
-	State       datatypes.JSONType[StateType]
+	State       datatypes.JSON
 	Credentials datatypes.JSON
 	JobID       uint
 	Job         Job `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
