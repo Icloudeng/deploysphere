@@ -13,10 +13,17 @@ import (
 func ResourceStateCreate(ref string, job database.Job) *database.ResourcesState {
 	rep := database.ResourcesStatesRepository{}
 
+	// Use credentials of the last ref object
+	var credentials datatypes.JSON
+	if last_rs := rep.GetByRef(ref); last_rs != nil {
+		credentials = last_rs.Credentials
+	}
+
 	resource_state := &database.ResourcesState{
-		Ref:   ref,
-		JobID: job.ID,
-		Job:   job,
+		Ref:         ref,
+		JobID:       job.ID,
+		Job:         job,
+		Credentials: credentials,
 	}
 
 	rep.Create(resource_state)
