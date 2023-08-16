@@ -25,6 +25,7 @@
 		"@svelteuidev/core": "^0.14.0",
 		"@svelteuidev/prism": "^0.14.0",
 		"keyv": "^4.5.3",
-		"radix-icons-svelte": "^1.2.1"
+		"radix-icons-svelte": "^1.2.1",
+		"socket.io-client": "2.5.0"
 	}
 }

@@ -1,6 +1,7 @@
 package frontproxy
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -12,7 +13,8 @@ import (
 func Proxy(c *gin.Context) {
 	remote, err := url.Parse(env.EnvConfig.FRONT_URL)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(remote)

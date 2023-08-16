@@ -4,3 +4,4 @@ platform-installer-*
 *.log
 tmp
 .data.db
+*.sqlite

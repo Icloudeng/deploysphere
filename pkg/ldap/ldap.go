@@ -45,7 +45,7 @@ func parseUserBindTemplate(username string) string {
 	var buf bytes.Buffer
 	err := tmpl.Execute(&buf, data)
 	if err != nil {
-		panic(err)
+		log.Panicln(err)
 	}
 
 	// Retrieve the result from the buffer as a string

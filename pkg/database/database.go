@@ -35,7 +35,7 @@ func init() {
 			log.Fatal(err.Error())
 		}
 	} else {
-		_db, err := gorm.Open(sqlite.Open(".data.db"), &gorm.Config{
+		_db, err := gorm.Open(sqlite.Open(".data.sqlite"), &gorm.Config{
 			PrepareStmt: true,
 		})
 
