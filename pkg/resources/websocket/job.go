@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"smatflow/platform-installer/pkg/database"
 	"smatflow/platform-installer/pkg/events"
-	"smatflow/platform-installer/pkg/events/redis_events"
 )
 
 func EmitJobEvent(job *database.Job) {
@@ -15,7 +14,7 @@ func EmitJobEvent(job *database.Job) {
 	}
 
 	if playload_json, err := json.Marshal(playload); err == nil {
-		EmitRedisEvent(redis_events.ResourceRedisEventPayload{
+		EmitRedisEvent(events.NetworkEventPayload{
 			Type:      events.REDIS_EVENT_TYPE_JOBS,
 			Channel:   job.Ref + "-" + events.REDIS_EVENT_TYPE_JOBS,
 			Reference: job.Ref,

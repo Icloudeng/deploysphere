@@ -7,14 +7,7 @@ import (
 	"smatflow/platform-installer/pkg/redis"
 )
 
-type ResourceRedisEventPayload struct {
-	Type      string
-	Reference string
-	Channel   string
-	Payload   string
-}
-
-type SubscriberFunc func(playload ResourceRedisEventPayload)
+type SubscriberFunc func(playload events.NetworkEventPayload)
 
 func subscribe(reference string, eventType string, subscribers []SubscriberFunc) func() {
 	ctx := context.Background()
@@ -34,7 +27,7 @@ func subscribe(reference string, eventType string, subscribers []SubscriberFunc)
 
 			// queue.JobsQueue.QueueTask(func(ctx context.Context) error {
 			for _, subscriber := range subscribers {
-				subscriber(ResourceRedisEventPayload{
+				subscriber(events.NetworkEventPayload{
 					Type:      eventType,
 					Reference: reference,
 					Channel:   msg.Channel,

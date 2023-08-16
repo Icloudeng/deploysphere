@@ -3,11 +3,11 @@ package websocket
 import (
 	"encoding/base64"
 	"encoding/json"
-	"smatflow/platform-installer/pkg/events/redis_events"
+	"smatflow/platform-installer/pkg/events"
 	"smatflow/platform-installer/pkg/http/ws"
 )
 
-func EmitRedisEvent(playload redis_events.ResourceRedisEventPayload) {
+func EmitRedisEvent(playload events.NetworkEventPayload) {
 	data := playload
 	decodedBytes, err := base64.StdEncoding.DecodeString(playload.Payload)
 	if err != nil {

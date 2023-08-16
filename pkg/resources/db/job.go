@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"smatflow/platform-installer/pkg/database"
-	"smatflow/platform-installer/pkg/events/redis_events"
+	"smatflow/platform-installer/pkg/events"
 	"time"
 
 	"gorm.io/datatypes"
@@ -56,7 +56,7 @@ func JobUpdateStatus(job *database.Job, Status string) *database.Job {
 
 // =============== Redis Events Listener ============= //
 
-func Job_ListenResourceProviningLogs(playload redis_events.ResourceRedisEventPayload) {
+func Job_ListenResourceProviningLogs(playload events.NetworkEventPayload) {
 	rep := database.JobRepository{}
 	job := rep.GetByRef(playload.Reference)
 
@@ -71,7 +71,7 @@ func Job_ListenResourceProviningLogs(playload redis_events.ResourceRedisEventPay
 	rep.UpdateOrCreate(job)
 }
 
-func Job_ListenResourceProviningStatus(playload redis_events.ResourceRedisEventPayload) {
+func Job_ListenResourceProviningStatus(playload events.NetworkEventPayload) {
 	rep := database.JobRepository{}
 	job := rep.GetByRef(playload.Reference)
 

@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"smatflow/platform-installer/pkg/database"
-	"smatflow/platform-installer/pkg/events/redis_events"
+	"smatflow/platform-installer/pkg/events"
 	"smatflow/platform-installer/pkg/terraform"
 
 	"gorm.io/datatypes"
@@ -57,7 +57,7 @@ func ResourceStatePutTerraformState(resource_state *database.ResourcesState) {
 
 // =============== Redis Events Listener ============= //
 
-func ResourceState_ListenResourceProviningCredentials(playload redis_events.ResourceRedisEventPayload) {
+func ResourceState_ListenResourceProviningCredentials(playload events.NetworkEventPayload) {
 	rep := database.ResourcesStatesRepository{}
 	resource_state := rep.GetByRef(playload.Reference)
 
