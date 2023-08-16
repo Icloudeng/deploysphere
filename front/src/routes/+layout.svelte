@@ -7,12 +7,12 @@
     Navbar,
   } from "@svelteuidev/core";
   import NavbarContent from "./components/NavbarContent.svelte";
-  import { onMount } from "svelte";
-  import { connectWs } from "$lib/utils/ws";
+  // import { onMount } from "svelte";
+  // import { connectWs } from "$lib/utils/ws";
 
-  onMount(() => {
-    connectWs();
-  });
+  // onMount(() => {
+  //   connectWs();
+  // });
 </script>
 
 <SvelteUIProvider withGlobalStyles themeObserver={$colorScheme}>
