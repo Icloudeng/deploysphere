@@ -9,6 +9,7 @@ import (
 	"smatflow/platform-installer/pkg/env"
 	"smatflow/platform-installer/pkg/events/subscribers"
 	frontproxy "smatflow/platform-installer/pkg/http/front_proxy"
+	"smatflow/platform-installer/pkg/http/ws"
 	"smatflow/platform-installer/pkg/ldap"
 	"smatflow/platform-installer/pkg/validators"
 
@@ -44,6 +45,18 @@ func main() {
 	if env.EnvConfig.FRONT_PROXY {
 		r.Group("/ui").Any("/*proxyPath", frontproxy.Proxy)
 	}
+
+	// Websocket bind
+	wsServer := ws.CreateWebsocketServer()
+	defer wsServer.Close()
+
+	go func() {
+		if err := wsServer.Serve(); err != nil {
+			log.Fatalf("socketio listen error: %s\n", err)
+		}
+	}()
+
+	api.Any("/socket.io/*any", gin.WrapH(wsServer))
 
 	// Start server
 	log.Println("Server running on PORT: ", port)
