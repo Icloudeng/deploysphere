@@ -6,20 +6,29 @@ import (
 	"fmt"
 	"smatflow/platform-installer/pkg/database"
 	"smatflow/platform-installer/pkg/events/redis_events"
+	"time"
 
 	"gorm.io/datatypes"
 )
 
-func JobCreate(ref string, postBody interface{}, Description string) *database.Job {
+type JobCreateParam struct {
+	Ref         string
+	PostBody    interface{}
+	Description string
+	Group       string
+}
+
+func JobCreate(data JobCreateParam) *database.Job {
 	rep := database.JobRepository{}
-	postBodyJson, _ := json.Marshal(postBody)
+	postBodyJson, _ := json.Marshal(data.PostBody)
 
 	job := &database.Job{
-		Ref:         ref,
+		Ref:         data.Ref,
 		Running:     true,
 		Success:     true,
 		PostBody:    datatypes.JSON(postBodyJson),
-		Description: Description,
+		Description: data.Description,
+		Group:       data.Group,
 	}
 
 	rep.Create(job)
@@ -33,6 +42,7 @@ func JobPutRunningDone(job *database.Job, Success bool) {
 	job = rep.Get(job.ID)
 
 	job.Running = false
+	job.FinishedAt = time.Now()
 
 	if !Success {
 		job.Success = Success

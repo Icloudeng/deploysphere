@@ -1,6 +1,8 @@
 package database
 
 import (
+	"time"
+
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
@@ -14,6 +16,7 @@ type Job struct {
 	Description string
 	Running     bool
 	Success     bool
+	FinishedAt  time.Time
 }
 
 type JobRepository struct{}
