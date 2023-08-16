@@ -1,3 +1,4 @@
+import base64
 import sys
 import argparse
 import redis
@@ -10,7 +11,11 @@ def main(channel: str, message: str):
     redis_url = REDIS_URL.split(":")
     redis_client = redis.Redis(host=redis_url[0], port=int(redis_url[1]), db=0)
 
-    redis_client.publish(channel=channel, message=message)
+    encoded_message = base64.b64encode(
+        message.strip().encode('utf-8')
+    ).decode('utf-8')
+
+    redis_client.publish(channel=channel, message=encoded_message)
 
     redis_client.close()
 

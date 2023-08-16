@@ -5,6 +5,7 @@ import (
 	"smatflow/platform-installer/pkg/database"
 	"smatflow/platform-installer/pkg/queue"
 	"smatflow/platform-installer/pkg/resources/db"
+	"smatflow/platform-installer/pkg/resources/websocket"
 
 	goqueue "github.com/golang-queue/queue"
 )
@@ -25,10 +26,18 @@ func ResourcesJobTask(task ResourcesJob) {
 		PostBody:    task.PostBody,
 		Description: task.Description,
 		Group:       task.Group,
+		Status:      database.JOB_STATUS_IDLE,
 	})
+
+	//Emit ws events
+	websocket.EmitJobEvent(job)
 
 	queue.Queue.QueueTask(func(ctx context.Context) error {
 		res_state := &database.ResourcesState{}
+
+		job = db.JobUpdateStatus(job, database.JOB_STATUS_RUNNING)
+		//Emit ws events
+		websocket.EmitJobEvent(job)
 
 		// Listen to Redis Provisining events
 		close := redis_pub_listeners(task.Ref)
@@ -46,7 +55,14 @@ func ResourcesJobTask(task ResourcesJob) {
 			db.ResourceStatePutTerraformState(res_state)
 		}
 
-		db.JobPutRunningDone(job, err == nil)
+		if err == nil {
+			job = db.JobUpdateStatus(job, database.JOB_STATUS_COMPLETED)
+		} else {
+			job = db.JobUpdateStatus(job, database.JOB_STATUS_FAILED)
+		}
+
+		//Emit ws events
+		websocket.EmitJobEvent(job)
 
 		return nil
 	})

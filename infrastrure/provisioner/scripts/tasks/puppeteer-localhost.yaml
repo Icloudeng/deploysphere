@@ -19,10 +19,10 @@
   when: ansible_distribution == "Ubuntu"
 
 - name: Check if Node.js is installed
-  command: "node -v"
-  register: node_version
+  shell: "node -v"
   ignore_errors: true # Ignore errors if 'node' command is not found
   delegate_to: 127.0.0.1
+  register: node_version
 
 - import_tasks: nodejs.yaml
   become: true

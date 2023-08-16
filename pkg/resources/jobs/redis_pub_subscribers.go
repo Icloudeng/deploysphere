@@ -3,6 +3,7 @@ package jobs
 import (
 	"smatflow/platform-installer/pkg/events/redis_events"
 	"smatflow/platform-installer/pkg/resources/db"
+	"smatflow/platform-installer/pkg/resources/websocket"
 )
 
 func redis_pub_listeners(Ref string) func() {
@@ -11,6 +12,7 @@ func redis_pub_listeners(Ref string) func() {
 		Ref,
 		[]redis_events.SubscriberFunc{
 			db.Job_ListenResourceProviningLogs,
+			websocket.EmitRedisEvent,
 		},
 	)
 
@@ -19,6 +21,7 @@ func redis_pub_listeners(Ref string) func() {
 		Ref,
 		[]redis_events.SubscriberFunc{
 			db.Job_ListenResourceProviningStatus,
+			websocket.EmitRedisEvent,
 		},
 	)
 
@@ -27,6 +30,7 @@ func redis_pub_listeners(Ref string) func() {
 		Ref,
 		[]redis_events.SubscriberFunc{
 			db.ResourceState_ListenResourceProviningCredentials,
+			websocket.EmitRedisEvent,
 		},
 	)
 

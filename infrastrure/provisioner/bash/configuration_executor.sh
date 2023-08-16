@@ -50,7 +50,7 @@ if [ "$ran_status" == "succeeded" ]; then
 fi
 
 # Publish playbook run status
-$redis_publisher --channel "$channel_publisher-status" --message "$(echo "$ran_status" | base64)"
+$redis_publisher --channel "$channel_publisher-status" --message "$ran_status"
 
 # Read and extract variables exposed from ansible logs
 exposed_variables=$($extract_vars --text "$ansible_logs")

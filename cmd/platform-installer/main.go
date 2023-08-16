@@ -47,16 +47,7 @@ func main() {
 	}
 
 	// Websocket bind
-	wsServer := ws.CreateWebsocketServer()
-	defer wsServer.Close()
-
-	go func() {
-		if err := wsServer.Serve(); err != nil {
-			log.Fatalf("socketio listen error: %s\n", err)
-		}
-	}()
-
-	api.Any("/socket.io/*any", gin.WrapH(wsServer))
+	api.Any("/ws", ws.ServeWs)
 
 	// Start server
 	log.Println("Server running on PORT: ", port)

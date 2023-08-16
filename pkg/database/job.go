@@ -7,6 +7,16 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	JOB_STATUS_IDLE = "idle"
+
+	JOB_STATUS_COMPLETED = "completed"
+
+	JOB_STATUS_FAILED = "failed"
+
+	JOB_STATUS_RUNNING = "running"
+)
+
 type Job struct {
 	gorm.Model
 	Ref         string `gorm:"index"`
@@ -14,8 +24,7 @@ type Job struct {
 	Logs        string
 	Group       string
 	Description string
-	Running     bool
-	Success     bool
+	Status      string
 	FinishedAt  time.Time
 }
 

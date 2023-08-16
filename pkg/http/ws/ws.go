@@ -3,36 +3,38 @@ package ws
 import (
 	"log"
 
-	socketio "github.com/googollee/go-socket.io"
+	"github.com/gin-gonic/gin"
 )
 
-var sessionGroupMap = make(map[string]socketio.Conn)
+// Use One global Hub
+var hub *Hub
 
-func CreateWebsocketServer() *socketio.Server {
-	server := socketio.NewServer(nil)
+// serveWs handles websocket requests from the peer.
+func ServeWs(ginContext *gin.Context) {
+	conn, err := upgrader.Upgrade(ginContext.Writer, ginContext.Request, nil)
 
-	server.OnConnect("/", func(s socketio.Conn) error {
-		s.SetContext("")
-		log.Println("connected:", s.ID())
-		sessionGroupMap[s.ID()] = s
-		return nil
-	})
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-	server.OnError("/", func(s socketio.Conn, e error) {
-		delete(sessionGroupMap, s.ID())
-		log.Println("meet error:", e)
-	})
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
+	client.hub.register <- client
 
-	server.OnDisconnect("/", func(s socketio.Conn, reason string) {
-		delete(sessionGroupMap, s.ID())
-		log.Println("closed", reason)
-	})
-
-	return server
+	// Allow collection of memory referenced by the caller by doing all work in
+	// new goroutines.
+	go client.writePump()
+	go client.readPump()
 }
 
-func Broadcast(threadName string, messageContent []byte) {
-	for _, wsSession := range sessionGroupMap {
-		wsSession.Emit(threadName, messageContent)
-	}
+// Broadcast data to the global hub
+func Broadcast(data []byte) {
+	hub.broadcast <- data
+}
+
+func init() {
+	// Init our global hub
+	hub = newHub()
+
+	go hub.run()
 }

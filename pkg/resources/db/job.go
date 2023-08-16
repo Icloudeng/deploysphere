@@ -16,6 +16,7 @@ type JobCreateParam struct {
 	PostBody    interface{}
 	Description string
 	Group       string
+	Status      string
 }
 
 func JobCreate(data JobCreateParam) *database.Job {
@@ -24,11 +25,10 @@ func JobCreate(data JobCreateParam) *database.Job {
 
 	job := &database.Job{
 		Ref:         data.Ref,
-		Running:     true,
-		Success:     true,
 		PostBody:    datatypes.JSON(postBodyJson),
 		Description: data.Description,
 		Group:       data.Group,
+		Status:      data.Status,
 	}
 
 	rep.Create(job)
@@ -36,19 +36,22 @@ func JobCreate(data JobCreateParam) *database.Job {
 	return job
 }
 
-func JobPutRunningDone(job *database.Job, Success bool) {
+func JobUpdateStatus(job *database.Job, Status string) *database.Job {
 	rep := database.JobRepository{}
 	// refresh the job
 	job = rep.Get(job.ID)
 
-	job.Running = false
-	job.FinishedAt = time.Now()
+	if job.Status != database.JOB_STATUS_FAILED {
+		job.Status = Status
+	}
 
-	if !Success {
-		job.Success = Success
+	if Status == database.JOB_STATUS_COMPLETED || Status == database.JOB_STATUS_FAILED {
+		job.FinishedAt = time.Now()
 	}
 
 	rep.UpdateOrCreate(job)
+
+	return job
 }
 
 // =============== Redis Events Listener ============= //
@@ -78,7 +81,11 @@ func Job_ListenResourceProviningStatus(playload redis_events.ResourceRedisEventP
 		return
 	}
 
-	job.Success = string(decodedBytes) == "succeeded"
+	if string(decodedBytes) == "succeeded" {
+		job.Status = database.JOB_STATUS_COMPLETED
+	} else {
+		job.Status = database.JOB_STATUS_FAILED
+	}
 
 	rep.UpdateOrCreate(job)
 }
