@@ -13,7 +13,7 @@ import (
 func connect() *ldap.Conn {
 	l, err := ldap.DialURL(env.EnvConfig.LDAP_SERVER_URL)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	return l

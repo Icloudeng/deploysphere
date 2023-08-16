@@ -32,7 +32,7 @@ func init() {
 		})
 
 		if dbConn = _db; err != nil {
-			log.Fatal(err.Error())
+			log.Fatalln(err.Error(), "DSN: ", dsn)
 		}
 	} else {
 		_db, err := gorm.Open(sqlite.Open(".data.sqlite"), &gorm.Config{
@@ -40,7 +40,7 @@ func init() {
 		})
 
 		if dbConn = _db; err != nil {
-			log.Fatal(err.Error())
+			log.Fatalln(err.Error())
 		}
 	}
 }

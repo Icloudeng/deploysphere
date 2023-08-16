@@ -51,7 +51,7 @@ func (r *ResourceJSONData) ParseResourcesJSON() error {
 func (r *ResourceJSONData) WriteResources() {
 	data, err := json.Marshal(r)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 	var isEmpty = true
 

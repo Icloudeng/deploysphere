@@ -51,7 +51,7 @@ func main() {
 
 	// Start server
 	log.Println("Server running on PORT: ", port)
-	log.Fatal(r.Run(":" + port))
+	log.Fatalln(r.Run(":" + port))
 }
 
 func basicAuth(c *gin.Context) {

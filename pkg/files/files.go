@@ -31,7 +31,7 @@ func createIfNotExists(filePath string) bool {
 	if !isFileExist {
 		file, err := os.Create(filePath)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalln(err)
 		}
 		defer file.Close()
 	}
@@ -42,12 +42,12 @@ func createIfNotExists(filePath string) bool {
 func WriteInFile(filePath string, content string) {
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 	defer file.Close()
 
 	if _, err := file.WriteString(content); err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 }
 
@@ -55,7 +55,7 @@ func ReadFile(filePath string) []byte {
 	content, err := os.ReadFile(filePath)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	return content
@@ -72,7 +72,7 @@ func CreateIfNotExistsWithContent(filePath string, content string) {
 func ExistsProvisionerPlaformReadDir(platform string) bool {
 	entries, err := os.ReadDir(path.Join(ProvisionerDir, "scripts/platforms"))
 	if err != nil {
-		log.Panicf("failed reading directory: %s", err)
+		log.Panicln("failed reading directory:", err)
 	}
 
 	exists := false
