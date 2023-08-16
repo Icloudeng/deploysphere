@@ -63,9 +63,9 @@ func CreateDomain(c *gin.Context) {
 		},
 	}
 
-	jobs.ResourcesJobTask(task)
+	job := jobs.ResourcesJobTask(task)
 
-	c.JSON(http.StatusOK, json)
+	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
 func DeleteDomain(c *gin.Context) {
@@ -99,7 +99,7 @@ func DeleteDomain(c *gin.Context) {
 		},
 	}
 
-	jobs.ResourcesJobTask(task)
+	job := jobs.ResourcesJobTask(task)
 
-	c.JSON(http.StatusOK, data)
+	c.JSON(http.StatusOK, gin.H{"data": data, "job": job})
 }

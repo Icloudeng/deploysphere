@@ -82,9 +82,9 @@ func CreateResources(c *gin.Context) {
 		},
 	}
 
-	jobs.ResourcesJobTask(task)
+	job := jobs.ResourcesJobTask(task)
 
-	c.JSON(http.StatusOK, json)
+	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
 func DeleteResources(c *gin.Context) {
@@ -118,9 +118,9 @@ func DeleteResources(c *gin.Context) {
 		},
 	}
 
-	jobs.ResourcesJobTask(task)
+	job := jobs.ResourcesJobTask(task)
 
-	c.JSON(http.StatusOK, uri)
+	c.JSON(http.StatusOK, gin.H{"data": uri, "job": job})
 }
 
 // Get resources state from terraform

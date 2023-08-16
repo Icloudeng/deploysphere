@@ -47,9 +47,9 @@ func CreatePlatformProvisioning(c *gin.Context) {
 		},
 	}
 
-	jobs.ResourcesJobTask(task)
+	job := jobs.ResourcesJobTask(task)
 
-	c.JSON(http.StatusOK, body)
+	c.JSON(http.StatusOK, gin.H{"data": body, "job": job})
 }
 
 func CreateConfigurationProvisioning(c *gin.Context) {
@@ -88,7 +88,7 @@ func CreateConfigurationProvisioning(c *gin.Context) {
 		},
 	}
 
-	jobs.ResourcesJobTask(task)
+	job := jobs.ResourcesJobTask(task)
 
-	c.JSON(http.StatusOK, body)
+	c.JSON(http.StatusOK, gin.H{"data": body, "job": job})
 }

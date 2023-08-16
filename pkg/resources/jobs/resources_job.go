@@ -19,7 +19,7 @@ type ResourcesJob struct {
 	Group         string
 }
 
-func ResourcesJobTask(task ResourcesJob) {
+func ResourcesJobTask(task ResourcesJob) *database.Job {
 	// Create new JOB
 	job := db.JobCreate(db.JobCreateParam{
 		Ref:         task.Ref,
@@ -67,4 +67,5 @@ func ResourcesJobTask(task ResourcesJob) {
 		return nil
 	})
 
+	return job
 }

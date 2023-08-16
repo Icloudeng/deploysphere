@@ -37,9 +37,9 @@ func CreateProxyHost(c *gin.Context) {
 		},
 	}
 
-	jobs.ResourcesJobTask(task)
+	job := jobs.ResourcesJobTask(task)
 
-	c.JSON(http.StatusOK, json)
+	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
 func DeleteProxyHost(c *gin.Context) {
@@ -67,7 +67,7 @@ func DeleteProxyHost(c *gin.Context) {
 		},
 	}
 
-	jobs.ResourcesJobTask(task)
+	job := jobs.ResourcesJobTask(task)
 
-	c.JSON(http.StatusOK, json)
+	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
