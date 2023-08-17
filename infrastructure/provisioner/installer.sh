@@ -117,7 +117,7 @@ if [ "$ran_status" == "succeeded" ]; then
 
     # Publish credentials if not empty
     if [ -n "$exposed_credentials" ]; then
-        $redis_publisher --channel "$channel_publisher-credentials" --message "$(echo "$exposed_credentials" | base64)"
+        $redis_publisher --channel "$channel_publisher-credentials" --message "$exposed_credentials"
     fi
 
 fi
