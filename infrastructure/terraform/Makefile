@@ -4,4 +4,4 @@ plan:
 
 .PHONY: apply
 apply:
-    terraform apply -var-file="variables.tfvars"
+	@terraform apply -var-file="variables.tfvars"
