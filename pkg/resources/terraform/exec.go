@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 	"path"
-	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/filesystem"
 	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/structs"
 
@@ -22,7 +22,7 @@ type exec struct {
 var Exec = &exec{}
 
 func init() {
-	pwd := files.GetPwd()
+	pwd := filesystem.GetPwd()
 
 	installer := &releases.ExactVersion{
 		Product:    product.Terraform,
@@ -35,7 +35,7 @@ func init() {
 		log.Fatalf("error installing Terraform: %s", err)
 	}
 
-	tf, err := tfexec.NewTerraform(files.TerraformDir, execPath)
+	tf, err := tfexec.NewTerraform(filesystem.TerraformDir, execPath)
 	if err != nil {
 		log.Fatalf("error running NewTerraform: %s", err)
 	}

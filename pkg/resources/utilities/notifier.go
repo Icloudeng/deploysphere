@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/filesystem"
 	"smatflow/platform-installer/pkg/structs"
 )
 
@@ -20,7 +20,7 @@ func SendNotification(notifier structs.Notifier) {
 		"--metadata", base64.StdEncoding.EncodeToString([]byte(notifier.Metadata)),
 	)
 
-	cmd.Dir = files.ProvisionerDir
+	cmd.Dir = filesystem.ProvisionerDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 

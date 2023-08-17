@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"path"
-	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/filesystem"
 	"smatflow/platform-installer/pkg/structs"
 )
 
@@ -32,16 +32,16 @@ func (j *ResourceJSONData) GetResource() *Resource {
 }
 
 func (j *ResourceJSONData) GetFile() string {
-	return path.Join(files.TerraformDir, "modules/ovh/resource_auto.tf.json")
+	return path.Join(filesystem.TerraformDir, "modules/ovh/resource_auto.tf.json")
 }
 
 func (r ResourceJSONData) InitResourcesFiles() {
 	// Create file if not exist
-	files.CreateIfNotExistsWithContent(r.GetFile(), "{}")
+	filesystem.CreateIfNotExistsWithContent(r.GetFile(), "{}")
 }
 
 func (r *ResourceJSONData) ParseResourcesJSON() error {
-	err := json.Unmarshal(files.ReadFile(r.GetFile()), &r)
+	err := json.Unmarshal(filesystem.ReadFile(r.GetFile()), &r)
 	if err != nil {
 		return err
 	}
@@ -64,10 +64,10 @@ func (r *ResourceJSONData) WriteResources() {
 	}
 
 	if isEmpty {
-		files.WriteInFile(r.GetFile(), "{}")
+		filesystem.WriteInFile(r.GetFile(), "{}")
 		return
 	}
-	files.WriteInFile(r.GetFile(), string(data))
+	filesystem.WriteInFile(r.GetFile(), string(data))
 }
 
 // Resource methods

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/filesystem"
 	"smatflow/platform-installer/pkg/structs"
 	"strings"
 )
@@ -29,7 +29,7 @@ func DeleteProxyHost(domain string) {
 		"--metadata", base64.StdEncoding.EncodeToString(metadata),
 	)
 
-	cmd.Dir = files.ProvisionerDir
+	cmd.Dir = filesystem.ProvisionerDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -52,7 +52,7 @@ func CreateProxyHost(proxyhost structs.ProxyHost) {
 		"--metadata", base64.StdEncoding.EncodeToString(metadata),
 	)
 
-	cmd.Dir = files.ProvisionerDir
+	cmd.Dir = filesystem.ProvisionerDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 

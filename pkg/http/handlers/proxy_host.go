@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/filesystem"
 	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/resources/jobs"
 	proxyhost "smatflow/platform-installer/pkg/resources/proxy_host"
@@ -21,7 +21,7 @@ func CreateProxyHost(c *gin.Context) {
 	}
 
 	// Check if plaform exists
-	if !files.ExistsProvisionerPlaformReadDir(json.Platform) {
+	if !filesystem.ExistsProvisionerPlaformReadDir(json.Platform) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Cannot found the correspoding platform"})
 		return
 	}

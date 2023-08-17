@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/filesystem"
 	"smatflow/platform-installer/pkg/resources/terraform"
 	"smatflow/platform-installer/pkg/structs"
 
@@ -14,13 +14,13 @@ import (
 func ValidatePlatformMetadata(c *gin.Context, platform structs.Platform) bool {
 	if len(platform.Name) > 0 {
 		// Check if plaform has provisionner script
-		if !files.ExistsProvisionerPlaformReadDir(platform.Name) {
+		if !filesystem.ExistsProvisionerPlaformReadDir(platform.Name) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Cannot found the correspoding platform"})
 			return false
 		}
 
 		// Check if platform meta fields exist
-		requiredFields := files.ReadPlatformMetadataFields()
+		requiredFields := filesystem.ReadPlatformMetadataFields()
 		meta := structs.PlatformMetadataFields{}
 		json.Unmarshal(requiredFields, &meta)
 
@@ -45,13 +45,13 @@ func ValidatePlatformMetadata(c *gin.Context, platform structs.Platform) bool {
 func ValidateConfigurationMetadata(c *gin.Context, platform structs.Platform) bool {
 	if len(platform.Name) > 0 {
 		// Check if plaform has provisionner script
-		if !files.ExistsProvisionerPlaformReadDir(platform.Name) {
+		if !filesystem.ExistsProvisionerPlaformReadDir(platform.Name) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Cannot found the correspoding platform"})
 			return false
 		}
 
 		// Check if platform meta fields exist
-		requiredFields := files.ReadConfigurationMetadataFields()
+		requiredFields := filesystem.ReadConfigurationMetadataFields()
 		meta := structs.ConfigurationMetadataFields{}
 		json.Unmarshal(requiredFields, &meta)
 

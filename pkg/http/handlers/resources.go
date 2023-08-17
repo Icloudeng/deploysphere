@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/filesystem"
 	"smatflow/platform-installer/pkg/http/validators"
 	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/resources/jobs"
@@ -158,5 +158,5 @@ func GetResourcesByReference(c *gin.Context) {
 }
 
 func GetPlatforms(c *gin.Context) {
-	c.JSON(http.StatusOK, files.ReadProvisionerPlaforms())
+	c.JSON(http.StatusOK, filesystem.ReadProvisionerPlaforms())
 }

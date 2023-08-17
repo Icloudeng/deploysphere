@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"os/exec"
-	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/filesystem"
 	"smatflow/platform-installer/pkg/structs"
 )
 
@@ -24,7 +24,7 @@ func provisioning(prov structs.Provisioning, file string) {
 		// "--reference", prov.Ref, Don't uncomment this line, can cause mis functioning from redis pubsub
 	)
 
-	cmd.Dir = files.ProvisionerDir
+	cmd.Dir = filesystem.ProvisionerDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
