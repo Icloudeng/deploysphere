@@ -17,7 +17,7 @@
 
 <SvelteUIProvider withGlobalStyles themeObserver={$colorScheme}>
   <AppShell class="app-shell">
-    <Navbar slot="navbar" pt="md" height="auto" fixed>
+    <Navbar slot="navbar" px="16" pt="md" height="auto" fixed>
       <div class="container">
         <NavbarContent />
       </div>
