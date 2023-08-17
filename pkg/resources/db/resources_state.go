@@ -11,7 +11,7 @@ import (
 )
 
 func ResourceStateCreate(ref string, job database.Job) *database.ResourcesState {
-	rep := database.ResourcesStatesRepository{}
+	rep := database.ResourcesStateRepository{}
 
 	// Use credentials of the last ref object
 	var credentials datatypes.JSON
@@ -33,7 +33,7 @@ func ResourceStateCreate(ref string, job database.Job) *database.ResourcesState 
 
 func ResourceStatePutTerraformState(resource_state *database.ResourcesState) {
 	stateModule := terraform.Tf.Show()
-	repository := database.ResourcesStatesRepository{}
+	repository := database.ResourcesStateRepository{}
 
 	// Refresh Object
 	resource_state = repository.Get(resource_state.ID)
@@ -65,7 +65,7 @@ func ResourceStatePutTerraformState(resource_state *database.ResourcesState) {
 // =============== Redis Events Listener ============= //
 
 func ResourceState_ListenResourceProviningCredentials(playload events.NetworkEventPayload) {
-	rep := database.ResourcesStatesRepository{}
+	rep := database.ResourcesStateRepository{}
 	resource_state := rep.GetByRef(playload.Reference)
 
 	decodedBytes, err := base64.StdEncoding.DecodeString(playload.Payload)

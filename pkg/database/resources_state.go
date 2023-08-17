@@ -18,9 +18,9 @@ type ResourcesState struct {
 	Job         Job `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
-type ResourcesStatesRepository struct{}
+type ResourcesStateRepository struct{}
 
-func (r *ResourcesStatesRepository) GetByRef(ref string) *ResourcesState {
+func (r *ResourcesStateRepository) GetByRef(ref string) *ResourcesState {
 	res := &ResourcesState{
 		Ref: ref,
 	}
@@ -34,7 +34,7 @@ func (r *ResourcesStatesRepository) GetByRef(ref string) *ResourcesState {
 	return res
 }
 
-func (r *ResourcesStatesRepository) Get(ID uint) *ResourcesState {
+func (r *ResourcesStateRepository) Get(ID uint) *ResourcesState {
 	object := &ResourcesState{}
 
 	dbConn.Last(object, ID)
@@ -46,15 +46,15 @@ func (r *ResourcesStatesRepository) Get(ID uint) *ResourcesState {
 	return object
 }
 
-func (r *ResourcesStatesRepository) Create(res *ResourcesState) {
+func (r *ResourcesStateRepository) Create(res *ResourcesState) {
 	dbConn.Create(res)
 }
 
-func (r *ResourcesStatesRepository) UpdateOrCreate(res *ResourcesState) {
+func (r *ResourcesStateRepository) UpdateOrCreate(res *ResourcesState) {
 	dbConn.Save(res)
 }
 
-func (r *ResourcesStatesRepository) Delete(ID uint) {
+func (r *ResourcesStateRepository) Delete(ID uint) {
 	dbConn.Delete(&ResourcesState{}, ID)
 }
 

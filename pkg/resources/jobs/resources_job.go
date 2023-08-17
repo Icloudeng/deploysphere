@@ -64,6 +64,9 @@ func ResourcesJobTask(task ResourcesJob) *database.Job {
 		//Emit ws events
 		websocket.EmitJobEvent(job)
 
+		// Allocate memory for backup
+		go db.CreateNewResourcesBackup()
+
 		return nil
 	})
 
