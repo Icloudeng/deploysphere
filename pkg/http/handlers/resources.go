@@ -6,13 +6,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"smatflow/platform-installer/pkg/events"
 	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/http/validators"
+	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/resources"
 	"smatflow/platform-installer/pkg/resources/jobs"
 	"smatflow/platform-installer/pkg/structs"
 	"smatflow/platform-installer/pkg/terraform"
-	"smatflow/platform-installer/pkg/validators"
 )
 
 // Store resources and apply
@@ -109,7 +109,7 @@ func DeleteResources(c *gin.Context) {
 			// Terraform Apply changes
 			err := terraform.Tf.Apply(true)
 			if err == nil {
-				events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "info",
 					Details: "Ref: " + uri.Ref,
 					Logs:    "Resources deleted",

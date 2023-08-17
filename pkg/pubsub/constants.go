@@ -1,4 +1,4 @@
-package events
+package pubsub
 
 const (
 	REDIS_EVENT_TYPE_LOGS = "logs"

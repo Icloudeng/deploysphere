@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"smatflow/platform-installer/pkg/events"
+	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/resources"
 	"smatflow/platform-installer/pkg/resources/jobs"
 	"smatflow/platform-installer/pkg/structs"
@@ -53,7 +53,7 @@ func CreateDomain(c *gin.Context) {
 			// Terraform Apply changes
 			err := terraform.Tf.Apply(true)
 			if err == nil {
-				events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "succeeded",
 					Details: "Ref: " + json.Ref,
 					Logs:    "Domain Resource created",
@@ -90,7 +90,7 @@ func DeleteDomain(c *gin.Context) {
 			// Terraform Apply changes
 			err := terraform.Tf.Apply(true)
 			if err == nil {
-				events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "info",
 					Details: "Ref: " + data.Ref,
 					Logs:    "Domain Resource deleted",

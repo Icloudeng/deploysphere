@@ -3,8 +3,8 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"smatflow/platform-installer/pkg/events"
 	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/resources/jobs"
 	proxyhost "smatflow/platform-installer/pkg/resources/proxy_host"
 	"smatflow/platform-installer/pkg/structs"
@@ -60,7 +60,7 @@ func DeleteProxyHost(c *gin.Context) {
 		Task: func(ctx context.Context) error {
 			proxyhost.DeleteProxyHost(json.Domain)
 
-			events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+			pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 				Status:  "info",
 				Details: "Domain: " + json.Domain,
 				Logs:    "Proxy Host deleted",

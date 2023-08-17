@@ -7,11 +7,11 @@ import (
 	"strconv"
 
 	"smatflow/platform-installer/pkg/env"
-	"smatflow/platform-installer/pkg/events/subscribers"
 	frontproxy "smatflow/platform-installer/pkg/http/front_proxy"
+	"smatflow/platform-installer/pkg/http/validators"
 	"smatflow/platform-installer/pkg/http/ws"
 	"smatflow/platform-installer/pkg/ldap"
-	"smatflow/platform-installer/pkg/validators"
+	"smatflow/platform-installer/pkg/pubsub/subscribers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

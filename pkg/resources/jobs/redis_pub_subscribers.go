@@ -1,7 +1,7 @@
 package jobs
 
 import (
-	"smatflow/platform-installer/pkg/events/redis_events"
+	"smatflow/platform-installer/pkg/pubsub/redis_events"
 	"smatflow/platform-installer/pkg/resources/db"
 	"smatflow/platform-installer/pkg/resources/websocket"
 )

@@ -3,23 +3,23 @@ package redis_events
 import (
 	"context"
 	"fmt"
-	"smatflow/platform-installer/pkg/events"
+	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/redis"
 )
 
-type SubscriberFunc func(playload events.NetworkEventPayload)
+type SubscriberFunc func(playload pubsub.NetworkEventPayload)
 
 func subscribe(reference string, eventType string, subscribers []SubscriberFunc) func() {
 	ctx := context.Background()
 	channel := reference + "-" + eventType
-	pubsub := redis.Client.Subscribe(ctx, channel)
+	redis_pubsub := redis.Client.Subscribe(ctx, channel)
 
 	go func() {
 		// Close the subscription when we are done.
-		defer pubsub.Close()
+		defer redis_pubsub.Close()
 
 		for {
-			msg, err := pubsub.ReceiveMessage(ctx)
+			msg, err := redis_pubsub.ReceiveMessage(ctx)
 			if err != nil {
 				fmt.Println("Close Redis Channel Subscribe", channel)
 				break
@@ -27,7 +27,7 @@ func subscribe(reference string, eventType string, subscribers []SubscriberFunc)
 
 			// queue.JobsQueue.QueueTask(func(ctx context.Context) error {
 			for _, subscriber := range subscribers {
-				subscriber(events.NetworkEventPayload{
+				subscriber(pubsub.NetworkEventPayload{
 					Type:      eventType,
 					Reference: reference,
 					Channel:   msg.Channel,
@@ -40,18 +40,18 @@ func subscribe(reference string, eventType string, subscribers []SubscriberFunc)
 	}()
 
 	return func() {
-		pubsub.Close()
+		redis_pubsub.Close()
 	}
 }
 
 func ResourceProviningLogsEvents(reference string, subscribers []SubscriberFunc) func() {
-	return subscribe(reference, events.REDIS_EVENT_TYPE_LOGS, subscribers)
+	return subscribe(reference, pubsub.REDIS_EVENT_TYPE_LOGS, subscribers)
 }
 
 func ResourceProviningCredentialsEvents(reference string, subscribers []SubscriberFunc) func() {
-	return subscribe(reference, events.REDIS_EVENT_TYPE_CREDENTIALS, subscribers)
+	return subscribe(reference, pubsub.REDIS_EVENT_TYPE_CREDENTIALS, subscribers)
 }
 
 func ResourceProviningStatusEvents(reference string, subscribers []SubscriberFunc) func() {
-	return subscribe(reference, events.REDIS_EVENT_TYPE_STATUS, subscribers)
+	return subscribe(reference, pubsub.REDIS_EVENT_TYPE_STATUS, subscribers)
 }

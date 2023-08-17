@@ -3,10 +3,10 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"smatflow/platform-installer/pkg/http/validators"
 	"smatflow/platform-installer/pkg/resources/jobs"
 	"smatflow/platform-installer/pkg/resources/provisioning"
 	"smatflow/platform-installer/pkg/structs"
-	"smatflow/platform-installer/pkg/validators"
 
 	"github.com/gin-gonic/gin"
 )

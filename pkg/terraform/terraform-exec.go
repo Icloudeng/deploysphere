@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 	"path"
-	"smatflow/platform-installer/pkg/events"
 	"smatflow/platform-installer/pkg/files"
+	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/structs"
 
 	"github.com/hashicorp/go-version"
@@ -61,7 +61,7 @@ func (t *Terrafrom) Plan(notifier bool) error {
 
 		if notifier {
 			go func() {
-				events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "failed",
 					Details: "Terraform Plan",
 					Logs:    err.Error(),
@@ -104,7 +104,7 @@ func (t *Terrafrom) Apply(notifier bool) error {
 	if err != nil {
 		if notifier {
 			go func() {
-				events.BusEvent.Publish(events.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "failed",
 					Details: "Terraform Apply",
 					Logs:    err.Error(),
