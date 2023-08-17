@@ -1,3 +1,14 @@
+- name: install utilities and dependencies
+  apt:
+    name: aptitude
+    state: present
+    update_cache: yes
+
+- name: Install apache httpd
+  ansible.builtin.apt:
+    name: apache2
+    state: present
+
 - name: Install PHP
   include_role:
     name: "{{ item }}"
@@ -11,17 +22,6 @@
 - include_tasks: ../../tasks/mysql.yaml
   vars:
     mysql_db_name: "{{ platform_name }}"
-
-- name: install utilities and dependencies
-  apt:
-    name: aptitude
-    state: present
-    update_cache: yes
-
-- name: Install apache httpd
-  ansible.builtin.apt:
-    name: apache2
-    state: present
 
 - name: Download and Extract WorPress
   unarchive:
