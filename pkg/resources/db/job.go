@@ -18,6 +18,7 @@ type JobCreateParam struct {
 	Group       string
 	Status      string
 	Handler     string
+	Method      string
 }
 
 func JobCreate(data JobCreateParam) *database.Job {
@@ -31,6 +32,7 @@ func JobCreate(data JobCreateParam) *database.Job {
 		Group:       data.Group,
 		Status:      data.Status,
 		Handler:     data.Handler,
+		Method:      data.Method,
 	}
 
 	rep.Create(job)

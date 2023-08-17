@@ -15,6 +15,7 @@ type ResourcesJob struct {
 	Task          goqueue.TaskFunc
 	PostBody      interface{}
 	ResourceState bool
+	Method        string
 	Description   string
 	Group         string
 	Handler       string
@@ -28,6 +29,7 @@ func ResourcesJobTask(task ResourcesJob) *database.Job {
 		Description: task.Description,
 		Group:       task.Group,
 		Handler:     task.Handler,
+		Method:      task.Method,
 		Status:      database.JOB_STATUS_IDLE,
 	})
 

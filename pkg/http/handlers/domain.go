@@ -45,6 +45,7 @@ func CreateDomain(c *gin.Context) {
 		Description:   "Domain Resource Creation",
 		ResourceState: true,
 		Handler:       c.Request.URL.String(),
+		Method:        c.Request.Method,
 		Task: func(ctx context.Context) error {
 			// Create or update resources
 			terraform.Resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
@@ -81,6 +82,7 @@ func DeleteDomain(c *gin.Context) {
 		PostBody:      data,
 		Description:   "Domain Resource deletion",
 		Handler:       c.Request.URL.String(),
+		Method:        c.Request.Method,
 		ResourceState: false, // Disable on resource deletion
 		Task: func(ctx context.Context) error {
 			// Remove resources

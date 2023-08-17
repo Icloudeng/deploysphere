@@ -70,6 +70,7 @@ func CreateResources(c *gin.Context) {
 		ResourceState: true,
 		Description:   "Resources creation",
 		Handler:       c.Request.URL.String(),
+		Method:        c.Request.Method,
 		Task: func(ctx context.Context) error {
 			// Reset unmutable vm fields
 			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform, json.Ref)
@@ -100,6 +101,7 @@ func DeleteResources(c *gin.Context) {
 		Description:   "Resources deletion",
 		ResourceState: false, // Disable on resource deletion
 		Handler:       c.Request.URL.String(),
+		Method:        c.Request.Method,
 		Task: func(ctx context.Context) error {
 			// Remove resources
 			terraform.Resources.DeleteOvhDomainZoneResource(uri.Ref)

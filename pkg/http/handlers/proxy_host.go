@@ -32,6 +32,7 @@ func CreateProxyHost(c *gin.Context) {
 		Description:   "Proxy Host Creation",
 		ResourceState: false,
 		Handler:       c.Request.URL.String(),
+		Method:        c.Request.Method,
 		Task: func(ctx context.Context) error {
 			proxyhost.CreateProxyHost(json)
 			return nil
@@ -57,6 +58,7 @@ func DeleteProxyHost(c *gin.Context) {
 		Description:   "Proxy Host Deletion",
 		ResourceState: false,
 		Handler:       c.Request.URL.String(),
+		Method:        c.Request.Method,
 		Task: func(ctx context.Context) error {
 			proxyhost.DeleteProxyHost(json.Domain)
 
