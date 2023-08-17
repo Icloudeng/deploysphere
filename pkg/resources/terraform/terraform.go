@@ -1,17 +1,16 @@
-package resources
+package terraform
 
 import (
-	"smatflow/platform-installer/pkg/terraform"
 	"strings"
 
 	tfjson "github.com/hashicorp/terraform-json"
 )
 
-type TerraformResourceState struct {
+type ResourceState struct {
 	Module string
 }
 
-func (f TerraformResourceState) getResourceByRef(module *tfjson.StateModule, ref string) *tfjson.StateResource {
+func (f ResourceState) getResourceByRef(module *tfjson.StateModule, ref string) *tfjson.StateResource {
 	if strings.Contains(module.Address, f.Module) {
 		for _, resource := range module.Resources {
 			if resource.Name == ref {
@@ -23,8 +22,8 @@ func (f TerraformResourceState) getResourceByRef(module *tfjson.StateModule, ref
 	return nil
 }
 
-func (f TerraformResourceState) GetResourceState(ref string) *tfjson.StateResource {
-	stateModule := terraform.Tf.Show()
+func (f ResourceState) GetResourceState(ref string) *tfjson.StateResource {
+	stateModule := Exec.Show()
 
 	if stateModule == nil {
 		return nil

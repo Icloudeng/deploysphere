@@ -5,10 +5,9 @@ import (
 	"net/http"
 	"smatflow/platform-installer/pkg/http/validators"
 	"smatflow/platform-installer/pkg/pubsub"
-	"smatflow/platform-installer/pkg/resources"
 	"smatflow/platform-installer/pkg/resources/jobs"
+	"smatflow/platform-installer/pkg/resources/terraform"
 	"smatflow/platform-installer/pkg/structs"
-	"smatflow/platform-installer/pkg/terraform"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,7 +36,7 @@ func CreateVm(c *gin.Context) {
 
 	// Check if Resource when post request
 	if c.Request.Method == "POST" {
-		_vm := resources.GetProxmoxVmQemuResource(json.Ref)
+		_vm := terraform.Resources.GetProxmoxVmQemuResource(json.Ref)
 
 		if _vm != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -60,9 +59,9 @@ func CreateVm(c *gin.Context) {
 			// Reset unmutable vm fields
 			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform, json.Ref)
 			// Create or update resources
-			resources.WriteProxmoxVmQemuResource(json.Ref, json.Vm)
+			terraform.Resources.WriteProxmoxVmQemuResource(json.Ref, json.Vm)
 			// Terraform Apply changes
-			return terraform.Tf.Apply(true)
+			return terraform.Exec.Apply(true)
 		},
 	}
 
@@ -87,10 +86,10 @@ func DeleteVm(c *gin.Context) {
 		Handler:       c.Request.URL.String(),
 		Task: func(ctx context.Context) error {
 			// Remove resources
-			resources.DeleteProxmoxVmQemuResource(data.Ref)
+			terraform.Resources.DeleteProxmoxVmQemuResource(data.Ref)
 
 			// Terraform Apply changes
-			err := terraform.Tf.Apply(true)
+			err := terraform.Exec.Apply(true)
 			if err == nil {
 				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "info",

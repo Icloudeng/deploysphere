@@ -3,23 +3,22 @@ package db
 import (
 	"encoding/json"
 	"smatflow/platform-installer/pkg/database"
-	"smatflow/platform-installer/pkg/resources"
-	"smatflow/platform-installer/pkg/terraform"
+	"smatflow/platform-installer/pkg/resources/terraform"
 
 	"gorm.io/datatypes"
 )
 
 func CreateNewResourcesBackup() {
 	// Terraform state
-	stateModule := terraform.Tf.Show()
+	stateModule := terraform.Exec.Show()
 	var state interface{} = map[string]interface{}{}
 	if stateModule != nil {
 		state = stateModule
 	}
 
 	// Local state
-	ovh := resources.GetOvhResource()
-	proxmox := resources.GetProxmoxResource()
+	ovh := terraform.Resources.GetOvhResource()
+	proxmox := terraform.Resources.GetProxmoxResource()
 
 	// Fill Reourses type here
 	resources_list := map[string]interface{}{

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"smatflow/platform-installer/pkg/files"
-	"smatflow/platform-installer/pkg/resources"
+	"smatflow/platform-installer/pkg/resources/terraform"
 	"smatflow/platform-installer/pkg/structs"
 
 	"github.com/gin-gonic/gin"
@@ -107,7 +107,7 @@ func ValidateConfigurationMetadata(c *gin.Context, platform structs.Platform) bo
 
 func ValidatePlatformProvisionAndBindResourceState(body *structs.Provisioning) bool {
 	if len(body.Ref) > 0 {
-		resourceState := resources.TerraformResourceState{Module: "proxmox"}
+		resourceState := terraform.ResourceState{Module: "proxmox"}
 		vm_resource := resourceState.GetResourceState(body.Ref)
 
 		if vm_resource != nil {

@@ -15,11 +15,11 @@ import (
 	tfjson "github.com/hashicorp/terraform-json"
 )
 
-type Terrafrom struct {
+type exec struct {
 	tk *tfexec.Terraform
 }
 
-var Tf = &Terrafrom{}
+var Exec = &exec{}
 
 func init() {
 	pwd := files.GetPwd()
@@ -45,10 +45,10 @@ func init() {
 		log.Fatalf("error running Init: %s", err)
 	}
 
-	Tf.tk = tf
+	Exec.tk = tf
 }
 
-func (t *Terrafrom) Plan(notifier bool) error {
+func (t *exec) Plan(notifier bool) error {
 	tf := t.tk
 	ctx := context.Background()
 
@@ -78,7 +78,7 @@ func (t *Terrafrom) Plan(notifier bool) error {
 	return nil
 }
 
-func (t *Terrafrom) Show() *tfjson.StateModule {
+func (t *exec) Show() *tfjson.StateModule {
 	tf := t.tk
 	ctx := context.Background()
 
@@ -91,7 +91,7 @@ func (t *Terrafrom) Show() *tfjson.StateModule {
 	return state.Values.RootModule
 }
 
-func (t *Terrafrom) Apply(notifier bool) error {
+func (t *exec) Apply(notifier bool) error {
 	if err := t.Plan(notifier); err != nil {
 		return err
 	}

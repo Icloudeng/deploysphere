@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"smatflow/platform-installer/pkg/database"
 	"smatflow/platform-installer/pkg/pubsub"
-	"smatflow/platform-installer/pkg/terraform"
+	"smatflow/platform-installer/pkg/resources/terraform"
 
 	"gorm.io/datatypes"
 )
@@ -32,7 +32,7 @@ func ResourceStateCreate(ref string, job database.Job) *database.ResourcesState 
 }
 
 func ResourceStatePutTerraformState(resource_state *database.ResourcesState) {
-	stateModule := terraform.Tf.Show()
+	stateModule := terraform.Exec.Show()
 	repository := database.ResourcesStateRepository{}
 
 	// Refresh Object

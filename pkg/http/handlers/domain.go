@@ -4,10 +4,9 @@ import (
 	"context"
 	"net/http"
 	"smatflow/platform-installer/pkg/pubsub"
-	"smatflow/platform-installer/pkg/resources"
 	"smatflow/platform-installer/pkg/resources/jobs"
+	"smatflow/platform-installer/pkg/resources/terraform"
 	"smatflow/platform-installer/pkg/structs"
-	"smatflow/platform-installer/pkg/terraform"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,7 +26,7 @@ func CreateDomain(c *gin.Context) {
 
 	// Check if Resource when post request
 	if c.Request.Method == "POST" {
-		_ovh := resources.GetOvhDomainZoneResource(json.Ref)
+		_ovh := terraform.Resources.GetOvhDomainZoneResource(json.Ref)
 
 		if _ovh != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -48,10 +47,10 @@ func CreateDomain(c *gin.Context) {
 		Handler:       c.Request.URL.String(),
 		Task: func(ctx context.Context) error {
 			// Create or update resources
-			resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
+			terraform.Resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
 
 			// Terraform Apply changes
-			err := terraform.Tf.Apply(true)
+			err := terraform.Exec.Apply(true)
 			if err == nil {
 				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "succeeded",
@@ -85,10 +84,10 @@ func DeleteDomain(c *gin.Context) {
 		ResourceState: false, // Disable on resource deletion
 		Task: func(ctx context.Context) error {
 			// Remove resources
-			resources.DeleteOvhDomainZoneResource(data.Ref)
+			terraform.Resources.DeleteOvhDomainZoneResource(data.Ref)
 
 			// Terraform Apply changes
-			err := terraform.Tf.Apply(true)
+			err := terraform.Exec.Apply(true)
 			if err == nil {
 				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "info",

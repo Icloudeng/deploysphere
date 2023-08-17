@@ -9,10 +9,9 @@ import (
 	"smatflow/platform-installer/pkg/files"
 	"smatflow/platform-installer/pkg/http/validators"
 	"smatflow/platform-installer/pkg/pubsub"
-	"smatflow/platform-installer/pkg/resources"
 	"smatflow/platform-installer/pkg/resources/jobs"
+	"smatflow/platform-installer/pkg/resources/terraform"
 	"smatflow/platform-installer/pkg/structs"
-	"smatflow/platform-installer/pkg/terraform"
 )
 
 // Store resources and apply
@@ -50,8 +49,8 @@ func CreateResources(c *gin.Context) {
 
 	// Check if Resource when post request
 	if c.Request.Method == "POST" {
-		_vm := resources.GetProxmoxVmQemuResource(json.Ref)
-		_domain := resources.GetOvhDomainZoneResource(json.Ref)
+		_vm := terraform.Resources.GetProxmoxVmQemuResource(json.Ref)
+		_domain := terraform.Resources.GetOvhDomainZoneResource(json.Ref)
 
 		if _vm != nil || _domain != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -75,11 +74,11 @@ func CreateResources(c *gin.Context) {
 			// Reset unmutable vm fields
 			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform, json.Ref)
 			// Create or update resources
-			resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
-			resources.WriteProxmoxVmQemuResource(json.Ref, json.Vm)
+			terraform.Resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
+			terraform.Resources.WriteProxmoxVmQemuResource(json.Ref, json.Vm)
 
 			// Terraform Apply changes
-			return terraform.Tf.Apply(true)
+			return terraform.Exec.Apply(true)
 		},
 	}
 
@@ -103,11 +102,11 @@ func DeleteResources(c *gin.Context) {
 		Handler:       c.Request.URL.String(),
 		Task: func(ctx context.Context) error {
 			// Remove resources
-			resources.DeleteOvhDomainZoneResource(uri.Ref)
-			resources.DeleteProxmoxVmQemuResource(uri.Ref)
+			terraform.Resources.DeleteOvhDomainZoneResource(uri.Ref)
+			terraform.Resources.DeleteProxmoxVmQemuResource(uri.Ref)
 
 			// Terraform Apply changes
-			err := terraform.Tf.Apply(true)
+			err := terraform.Exec.Apply(true)
 			if err == nil {
 				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "info",
@@ -127,7 +126,7 @@ func DeleteResources(c *gin.Context) {
 
 // Get resources state from terraform
 func GetResourcesState(c *gin.Context) {
-	state := terraform.Tf.Show()
+	state := terraform.Exec.Show()
 
 	if state == nil {
 		c.JSON(http.StatusOK, struct{}{})
@@ -139,8 +138,8 @@ func GetResourcesState(c *gin.Context) {
 
 func GetResources(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"Proxmox": resources.GetProxmoxResource(),
-		"Ovh":     resources.GetOvhResource(),
+		"Proxmox": terraform.Resources.GetProxmoxResource(),
+		"Ovh":     terraform.Resources.GetOvhResource(),
 	})
 }
 
@@ -152,8 +151,8 @@ func GetResourcesByReference(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"Vm":     resources.GetProxmoxVmQemuResource(uri.Ref),
-		"Domain": resources.GetOvhDomainZoneResource(uri.Ref),
+		"Vm":     terraform.Resources.GetProxmoxVmQemuResource(uri.Ref),
+		"Domain": terraform.Resources.GetOvhDomainZoneResource(uri.Ref),
 		"Ref":    uri.Ref,
 	})
 }

@@ -1,14 +1,18 @@
-package resources
+package terraform
 
 import (
-	"smatflow/platform-installer/pkg/resources/ovh"
-	"smatflow/platform-installer/pkg/resources/proxmox"
+	"smatflow/platform-installer/pkg/resources/terraform/ovh"
+	"smatflow/platform-installer/pkg/resources/terraform/proxmox"
 	"smatflow/platform-installer/pkg/structs"
 )
 
+type resources struct{}
+
+var Resources resources
+
 //######################## OVH Resources ############################//
 
-func GetOvhResource() *ovh.Resource {
+func (r resources) GetOvhResource() *ovh.Resource {
 	// Working on ovh resource
 	ovh_resource := ovh.ResourceJSONData{}
 	ovh_resource.ParseResourcesJSON()
@@ -16,12 +20,12 @@ func GetOvhResource() *ovh.Resource {
 	return ovh_resource.GetResource()
 }
 
-func GetOvhDomainZoneResource(ref string) *structs.DomainZoneRecord {
-	return GetOvhResource().GetDomainZoneRerordStruct(ref)
+func (r resources) GetOvhDomainZoneResource(ref string) *structs.DomainZoneRecord {
+	return r.GetOvhResource().GetDomainZoneRerordStruct(ref)
 }
 
 /* OVH Domain creation resource functions */
-func WriteOvhDomainZoneResource(ref string, domain *structs.DomainZoneRecord) {
+func (r resources) WriteOvhDomainZoneResource(ref string, domain *structs.DomainZoneRecord) {
 	// Working on ovh resource
 	ovh_resource := ovh.ResourceJSONData{}
 	ovh_resource.ParseResourcesJSON()
@@ -31,7 +35,7 @@ func WriteOvhDomainZoneResource(ref string, domain *structs.DomainZoneRecord) {
 	ovh_resource.GetResource().AddDomainZoneRerord(ref, domain)
 }
 
-func DeleteOvhDomainZoneResource(ref string) {
+func (r resources) DeleteOvhDomainZoneResource(ref string) {
 	// Working on ovh resource
 	ovh_resource := ovh.ResourceJSONData{}
 	ovh_resource.ParseResourcesJSON()
@@ -44,7 +48,7 @@ func DeleteOvhDomainZoneResource(ref string) {
 
 //######################## Promox Resources ############################//
 
-func GetProxmoxResource() *proxmox.Resource {
+func (r resources) GetProxmoxResource() *proxmox.Resource {
 	// Working on prpxmox vm resource
 	proxmox_resource := proxmox.ResourceJSONData{}
 	proxmox_resource.ParseResourcesJSON()
@@ -52,11 +56,11 @@ func GetProxmoxResource() *proxmox.Resource {
 	return proxmox_resource.GetResource()
 }
 
-func GetProxmoxVmQemuResource(ref string) *structs.ProxmoxVmQemu {
-	return GetProxmoxResource().GetProxmoxVmQemuStruct(ref)
+func (r resources) GetProxmoxVmQemuResource(ref string) *structs.ProxmoxVmQemu {
+	return r.GetProxmoxResource().GetProxmoxVmQemuStruct(ref)
 }
 
-func WriteProxmoxVmQemuResource(ref string, pm *structs.ProxmoxVmQemu) {
+func (r resources) WriteProxmoxVmQemuResource(ref string, pm *structs.ProxmoxVmQemu) {
 	// Working on Proxmox resource
 	proxmox_resource := proxmox.ResourceJSONData{}
 	proxmox_resource.ParseResourcesJSON()
@@ -66,7 +70,7 @@ func WriteProxmoxVmQemuResource(ref string, pm *structs.ProxmoxVmQemu) {
 	proxmox_resource.GetResource().AddProxmoxVmQemu(ref, pm)
 }
 
-func DeleteProxmoxVmQemuResource(ref string) {
+func (r resources) DeleteProxmoxVmQemuResource(ref string) {
 	// Working on Proxmox resource
 	proxmox_resource := proxmox.ResourceJSONData{}
 	proxmox_resource.ParseResourcesJSON()
