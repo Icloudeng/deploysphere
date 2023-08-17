@@ -128,14 +128,14 @@ func newProxmoxProvisioner(platform Platform, ref string) [1]interface{} {
 		local_exec.LocalExec[0] = &PmLocalExec{
 			// Run our ansible scripts here
 			Command: fmt.Sprintf("chmod +x installer.sh && ./installer.sh --reference %s --ansible-user ${self.ciuser} --vmip ${self.default_ipv4_address} --platform %s --metadata %s", ref, name, metadatab64),
-			// Relative to infrastrure/terraform
+			// Relative to infrastructure/terraform
 			WorkingDir: "../provisioner",
 		}
 	} else {
 		local_exec.LocalExec[0] = &PmLocalExec{
 			// Run our ansible scripts here
 			Command: "echo hey....",
-			// Relative to infrastrure/terraform
+			// Relative to infrastructure/terraform
 			WorkingDir: "../provisioner",
 		}
 	}

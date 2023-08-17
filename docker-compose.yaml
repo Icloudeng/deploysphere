@@ -15,9 +15,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./.env:/app/.env
-      - ./infrastrure/terraform/variables.tfvars:/app/infrastrure/terraform/variables.tfvars
-      - server-logs:/app/infrastrure/provisioner/logs
-      - server-terraform:/app/infrastrure/terraform
+      - ./infrastructure/terraform/variables.tfvars:/app/infrastructure/terraform/variables.tfvars
+      - server-logs:/app/infrastructure/provisioner/logs
+      - server-terraform:/app/infrastructure/terraform
     ports:
       - 8088:8088
 

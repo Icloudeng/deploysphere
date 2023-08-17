@@ -28,9 +28,9 @@ RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -
 
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/bin /app/bin
-COPY --from=builder /app/infrastrure /app/infrastrure
+COPY --from=builder /app/infrastructure /app/infrastructure
 
-RUN mkdir -p /app/infrastrure/provisioner/.venv
+RUN mkdir -p /app/infrastructure/provisioner/.venv
 
 # Run the web service on container startup.
 CMD ["/app/bin/server"]

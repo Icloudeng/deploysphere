@@ -112,6 +112,6 @@ func ReadProvisionerPlaforms() []string {
 
 func init() {
 	pwd := GetPwd()
-	ProvisionerDir = path.Join(pwd, "infrastrure/provisioner")
-	TerraformDir = path.Join(pwd, "infrastrure/terraform")
+	ProvisionerDir = path.Join(pwd, "infrastructure/provisioner")
+	TerraformDir = path.Join(pwd, "infrastructure/terraform")
 }
