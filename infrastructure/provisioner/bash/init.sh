@@ -1,14 +1,14 @@
 # Check if Python or Python 3 is installed
-if command -v python &>/dev/null; then
-    echo "Python is installed."
-    python_version=$(python --version 2>&1)
-    echo "Python version: $python_version"
-    python_command="python"
-elif command -v python3 &>/dev/null; then
+if command -v python3 &>/dev/null; then
     echo "Python 3 is installed."
     python_version=$(python3 --version 2>&1)
     echo "Python 3 version: $python_version"
     python_command="python3"
+elif command -v python &>/dev/null; then
+    echo "Python is installed."
+    python_version=$(python --version 2>&1)
+    echo "Python version: $python_version"
+    python_command="python"
 else
     echo "Python or Python 3 is not installed. Please install Python and try again."
     exit 1
