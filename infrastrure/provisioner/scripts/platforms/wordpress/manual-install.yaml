@@ -22,6 +22,7 @@
 - include_tasks: ../../tasks/mysql.yaml
   vars:
     mysql_db_name: "{{ platform_name }}"
+    mysql_root_password: "{{ app_secret }}"
 
 - name: Download and Extract WorPress
   unarchive:
