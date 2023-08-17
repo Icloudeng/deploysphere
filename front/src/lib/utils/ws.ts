@@ -30,8 +30,8 @@ export class Ws {
       throw Error("The browser does not support WebSockets.");
     }
 
-    const params = new URLSearchParams(headers);
-    const queries = params.size > 0 ? `?${params.toString()}` : "";
+    const params = new URLSearchParams(headers).toString();
+    const queries = params.length > 0 ? `?${params}` : "";
     const host = url.origin.replace("http", "ws") + "/ws" + queries;
 
     // Create WebSocket Connection
