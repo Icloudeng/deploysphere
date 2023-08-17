@@ -54,7 +54,6 @@ REDIS_URL=
 
 ```
 touch infrastructure/terraform/variables.tfvars
-
 ```
 
 - Please check all required variables in `infrastructure/terraform/variables.tf`
