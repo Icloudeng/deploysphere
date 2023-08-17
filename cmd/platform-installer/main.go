@@ -42,7 +42,7 @@ func main() {
 	BindLocalJobsRoutes(api)
 
 	// UI (Front Proxy)
-	if env.EnvConfig.FRONT_PROXY {
+	if env.Config.FRONT_PROXY {
 		r.Group("/ui").Any("/*proxyPath", frontproxy.Proxy)
 	}
 
@@ -56,7 +56,7 @@ func main() {
 
 func basicAuth(c *gin.Context) {
 	// If LDAP_AUTH disable then authorize all request
-	if !env.EnvConfig.LDAP_AUTH {
+	if !env.Config.LDAP_AUTH {
 		c.Next()
 		return
 	}

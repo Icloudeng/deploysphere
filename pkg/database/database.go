@@ -17,16 +17,16 @@ var dbConn *gorm.DB
 func init() {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
-		env.EnvConfig.DB_PG_HOST,
-		env.EnvConfig.DB_PG_USER,
-		env.EnvConfig.DB_PG_PASSWORD,
-		env.EnvConfig.DB_PG_DBNAME,
-		env.EnvConfig.DB_PG_PORT,
-		env.EnvConfig.DB_PG_SSLMODE,
-		env.EnvConfig.DB_PG_TIMEZONE,
+		env.Config.DB_PG_HOST,
+		env.Config.DB_PG_USER,
+		env.Config.DB_PG_PASSWORD,
+		env.Config.DB_PG_DBNAME,
+		env.Config.DB_PG_PORT,
+		env.Config.DB_PG_SSLMODE,
+		env.Config.DB_PG_TIMEZONE,
 	)
 
-	if env.EnvConfig.DB_TYPE == "postgres" {
+	if env.Config.DB_TYPE == "postgres" {
 		_db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 			PrepareStmt: true,
 		})

@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type Config struct {
+type config struct {
 	LDAP_AUTH          bool   `env:"LDAP_AUTH" envDefault:"false"`
 	LDAP_SERVER_URL    string `env:"LDAP_SERVER_URL"`
 	LDAP_BIND_TEMPLATE string `env:"LDAP_BIND_TEMPLATE"`
@@ -29,7 +29,7 @@ type Config struct {
 	REDIS_URL string `env:"REDIS_URL,required"`
 }
 
-var EnvConfig Config
+var Config config
 
 func init() {
 	// Loading the environment variables from '.env' file.
@@ -38,7 +38,7 @@ func init() {
 		log.Fatalf("unable to load .env file: %e", err)
 	}
 
-	err = env.Parse(&EnvConfig) // 👈 Parse environment variables into `Config`
+	err = env.Parse(&Config) // 👈 Parse environment variables into `Config`
 	if err != nil {
 		log.Fatalf("unable to parse ennvironment variables: %e", err)
 	}

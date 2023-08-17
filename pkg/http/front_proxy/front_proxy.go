@@ -11,7 +11,7 @@ import (
 )
 
 func Proxy(c *gin.Context) {
-	remote, err := url.Parse(env.EnvConfig.FRONT_URL)
+	remote, err := url.Parse(env.Config.FRONT_URL)
 	if err != nil {
 		fmt.Println(err)
 		return
