@@ -4,6 +4,9 @@ collections:
     version: 2.1.0
 
 roles:
+  - name: geerlingguy.php
+    version: 5.0.1
+
   - name: geerlingguy.php-versions
     version: 5.0.1
 
