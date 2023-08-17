@@ -13,7 +13,7 @@ type ResourcesBackup struct {
 
 type ResourcesBackupRepository struct{}
 
-func (r *ResourcesBackupRepository) Get(ID uint) *ResourcesBackup {
+func (r *ResourcesBackupRepository) Get() *ResourcesBackup {
 	object := &ResourcesBackup{}
 
 	dbConn.Last(object)
