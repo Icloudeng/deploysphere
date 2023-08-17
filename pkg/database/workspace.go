@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Workspace struct {
 	gorm.Model
-	Name string `gorm:"index,unique"`
+	Name string `gorm:"uniqueIndex,unique"`
 }
 
 type WorkspaceRepository struct{}
