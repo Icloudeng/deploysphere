@@ -22,24 +22,20 @@
   shell: "node -v"
   ignore_errors: true # Ignore errors if 'node' command is not found
   delegate_to: 127.0.0.1
-  register: node_version
+  register: version_result
 
 - import_tasks: nodejs.yaml
   become: true
-  when: ansible_distribution == "Ubuntu" and node_version.rc != 0
+  when: ansible_distribution == "Ubuntu" and version_result.rc != 0
   delegate_to: 127.0.0.1
 
 - name: NPM | Install PNPM, YARN, PM2
   become: true
   when: ansible_distribution == "Ubuntu"
   npm:
-    name: "{{ item }}"
+    name: "pnpm"
     global: yes
     state: latest
-  loop:
-    - pnpm
-    - yarn
-    - pm2
   delegate_to: 127.0.0.1
 
 - name: PNPM | Install dependencies

@@ -4,7 +4,7 @@
   become: true
   gather_facts: true
   vars:
-    node_version: 18
+    nodejs_version: 18
     frappe_version: 14
 
   tasks:

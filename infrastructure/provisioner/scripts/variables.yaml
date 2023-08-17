@@ -1,5 +1,4 @@
 ---
 keycloak_client_id: "apps-authenticator"
 keycloak_realm: "master"
-
-node_version: 18
+nodejs_version: 18
