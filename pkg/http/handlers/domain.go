@@ -45,6 +45,7 @@ func CreateDomain(c *gin.Context) {
 		PostBody:      json,
 		Description:   "Domain Resource Creation",
 		ResourceState: true,
+		Handler:       c.Request.URL.String(),
 		Task: func(ctx context.Context) error {
 			// Create or update resources
 			resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
@@ -80,6 +81,7 @@ func DeleteDomain(c *gin.Context) {
 		Ref:           data.Ref,
 		PostBody:      data,
 		Description:   "Domain Resource deletion",
+		Handler:       c.Request.URL.String(),
 		ResourceState: false, // Disable on resource deletion
 		Task: func(ctx context.Context) error {
 			// Remove resources

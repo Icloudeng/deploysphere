@@ -25,6 +25,7 @@ type Job struct {
 	Group       string
 	Description string
 	Status      string
+	Handler     string
 	FinishedAt  time.Time
 }
 

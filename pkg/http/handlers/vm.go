@@ -55,6 +55,7 @@ func CreateVm(c *gin.Context) {
 		PostBody:      json,
 		Description:   "VM Resource creation",
 		ResourceState: true,
+		Handler:       c.Request.URL.String(),
 		Task: func(ctx context.Context) error {
 			// Reset unmutable vm fields
 			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform, json.Ref)
@@ -83,6 +84,7 @@ func DeleteVm(c *gin.Context) {
 		PostBody:      data,
 		Description:   "VM Resource deletion",
 		ResourceState: false, // Disable on resource deletion
+		Handler:       c.Request.URL.String(),
 		Task: func(ctx context.Context) error {
 			// Remove resources
 			resources.DeleteProxmoxVmQemuResource(data.Ref)

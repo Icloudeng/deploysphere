@@ -17,6 +17,7 @@ type ResourcesJob struct {
 	ResourceState bool
 	Description   string
 	Group         string
+	Handler       string
 }
 
 func ResourcesJobTask(task ResourcesJob) *database.Job {
@@ -26,6 +27,7 @@ func ResourcesJobTask(task ResourcesJob) *database.Job {
 		PostBody:    task.PostBody,
 		Description: task.Description,
 		Group:       task.Group,
+		Handler:     task.Handler,
 		Status:      database.JOB_STATUS_IDLE,
 	})
 
@@ -64,7 +66,7 @@ func ResourcesJobTask(task ResourcesJob) *database.Job {
 		//Emit ws events
 		websocket.EmitJobEvent(job)
 
-		// Allocate memory for backup
+		// Allocate memory for resource db backup
 		go db.CreateNewResourcesBackup()
 
 		return nil

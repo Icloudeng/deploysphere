@@ -41,6 +41,7 @@ func CreatePlatformProvisioning(c *gin.Context) {
 		PostBody:      body,
 		Description:   "Platform Provisioning",
 		ResourceState: false,
+		Handler:       c.Request.URL.String(),
 		Task: func(ctx context.Context) error {
 			provisioning.CreatePlatformProvisioning(*body)
 			return nil
@@ -82,6 +83,7 @@ func CreateConfigurationProvisioning(c *gin.Context) {
 		PostBody:      body,
 		Description:   "Platform Configuration Provisioning",
 		ResourceState: false,
+		Handler:       c.Request.URL.String(),
 		Task: func(ctx context.Context) error {
 			provisioning.CreateConfigurationProvisioning(*body)
 			return nil
