@@ -76,11 +76,13 @@
     - NONCE_KEY
     - AUTH_SALT
     - SECURE_AUTH_SALT
+    - LOGGED_IN_SALT
+    - NONCE_SALT
 
 - name: Behind a proxy server and using HTTPS
   ansible.builtin.blockinfile:
     path: "/var/www/wordpress/wp-config.php"
-    insertbefore: "(?m)define\\( 'WP_DEBUG'.*"
+    insertafter: "(?m)define\\( 'WP_DEBUG'.*"
     block: |
       // If we're behind a proxy server and using HTTPS, we need to alert WordPress of that fact
       // see also https://wordpress.org/support/article/administration-over-ssl/#using-a-reverse-proxy
