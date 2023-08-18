@@ -64,14 +64,11 @@
         "line": "define( 'DB_PASSWORD', '{{ database_password }}' );",
       }
 
-- set_fact:
-    unique_key_wp: "{{ 1000 | random | to_uuid | upper }}"
-
 - name: Update Wordpress config file
   lineinfile:
     path: /var/www/wordpress/wp-config.php
     regexp: "define\\( '{{ item }}', '(.)+' \\);"
-    line: "define( '{{ item }}', '{{ unique_key_wp }}' );"
+    line: "define( '{{ item }}', '{{ 1000 | random | to_uuid | upper }}' );"
   with_items:
     - AUTH_KEY
     - SECURE_AUTH_KEY
