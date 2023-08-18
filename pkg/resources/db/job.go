@@ -40,6 +40,18 @@ func JobCreate(data JobCreateParam) *database.Job {
 	return job
 }
 
+func JobUpdateLogs(job *database.Job, Logs string) *database.Job {
+	rep := database.JobRepository{}
+	// refresh the job
+	job = rep.Get(job.ID)
+
+	job.Logs = fmt.Sprintf("%s%s\\n", job.Logs, Logs)
+
+	rep.UpdateOrCreate(job)
+
+	return job
+}
+
 func JobUpdateStatus(job *database.Job, Status string) *database.Job {
 	rep := database.JobRepository{}
 	// refresh the job

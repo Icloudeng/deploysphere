@@ -62,6 +62,7 @@ func ResourcesJobTask(task ResourcesJob) *database.Job {
 		if err == nil {
 			job = db.JobUpdateStatus(job, database.JOB_STATUS_COMPLETED)
 		} else {
+			job = db.JobUpdateLogs(job, err.Error())
 			job = db.JobUpdateStatus(job, database.JOB_STATUS_FAILED)
 		}
 

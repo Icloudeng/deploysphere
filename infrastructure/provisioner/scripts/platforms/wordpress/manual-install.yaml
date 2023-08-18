@@ -69,7 +69,7 @@
     path: "/var/www/wordpress/wp-config.php"
     insertbefore: "(?m)define\\( 'AUTH_KEY'.*"
     block: |
-      define( 'WP_SITEURL', '{{ domain }}' );
+      define( 'WP_SITEURL', 'https://{{ domain }}' );
 
 - name: Update ownership to Apache user
   file:
