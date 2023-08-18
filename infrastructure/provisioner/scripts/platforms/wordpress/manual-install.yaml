@@ -71,7 +71,7 @@
   lineinfile:
     path: /var/www/wordpress/wp-config.php
     regexp: "define\\( '{{ item }}', '(.)+' \\);"
-    line: "{{ unique_key_wp }}"
+    line: "define( '{{ item }}', '{{ unique_key_wp }}' );"
   with_items:
     - AUTH_KEY
     - SECURE_AUTH_KEY
