@@ -67,9 +67,9 @@
 - name: Update Wordpress config file
   lineinfile:
     path: /var/www/wordpress/wp-config.php
-    regexp: "define\\( '{{ item }}', '(.)+' \\);"
+    regexp: "define\\( '{{ item }}'.*"
     line: "define( '{{ item }}', '{{ 1000 | random | to_uuid | upper }}' );"
-  with_items:
+  loop:
     - AUTH_KEY
     - SECURE_AUTH_KEY
     - LOGGED_IN_KEY
@@ -77,13 +77,16 @@
     - AUTH_SALT
     - SECURE_AUTH_SALT
 
-- name: Insert/Update surrounded by custom markers before AUTH_KEY line
+- name: Behind a proxy server and using HTTPS
   ansible.builtin.blockinfile:
     path: "/var/www/wordpress/wp-config.php"
-    insertbefore: "(?m)define\\( 'AUTH_KEY'.*"
+    insertbefore: "(?m)define\\( 'WP_DEBUG'.*"
     block: |
-      // define( 'WP_HOME', 'https://{{ domain }}' );
-      define( 'WP_SITEURL', 'https://{{ domain }}' );
+      // If we're behind a proxy server and using HTTPS, we need to alert WordPress of that fact
+      // see also https://wordpress.org/support/article/administration-over-ssl/#using-a-reverse-proxy
+      if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strpos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false) {
+              $_SERVER['HTTPS'] = 'on';
+      }
 
 - name: Update ownership to Apache user
   file:
