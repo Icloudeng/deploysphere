@@ -1,7 +1,6 @@
 package websocket
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"smatflow/platform-installer/pkg/database"
 	"smatflow/platform-installer/pkg/pubsub"
@@ -14,11 +13,11 @@ func EmitJobEvent(job *database.Job) {
 	}
 
 	if playload_json, err := json.Marshal(playload); err == nil {
-		EmitRedisEvent(pubsub.NetworkEventPayload{
+		EmitDecodedEvent(pubsub.NetworkEventPayload{
 			Type:      pubsub.REDIS_EVENT_TYPE_JOBS,
 			Channel:   job.Ref + "-" + pubsub.REDIS_EVENT_TYPE_JOBS,
 			Reference: job.Ref,
-			Payload:   base64.StdEncoding.EncodeToString(playload_json),
+			Payload:   string(playload_json),
 		})
 	}
 }

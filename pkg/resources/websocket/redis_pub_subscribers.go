@@ -7,9 +7,15 @@ import (
 	"smatflow/platform-installer/pkg/pubsub"
 )
 
-func EmitRedisEvent(playload pubsub.NetworkEventPayload) {
+func EmitDecodedEvent(playload pubsub.NetworkEventPayload) {
+	if json_data, err := json.Marshal(playload); err == nil {
+		ws.Broadcast(json_data)
+	}
+}
+
+func EmitEncodedEvent(playload pubsub.NetworkEventPayload) {
 	data := playload
-	decodedBytes, err := base64.StdEncoding.DecodeString(playload.Payload)
+	decodedBytes, err := base64.StdEncoding.DecodeString(data.Payload)
 	if err != nil {
 		return
 	}
