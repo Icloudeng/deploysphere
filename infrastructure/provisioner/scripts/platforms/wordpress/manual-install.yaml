@@ -64,6 +64,13 @@
         "line": "define( 'DB_PASSWORD', '{{ database_password }}' );",
       }
 
+- name: Insert/Update surrounded by custom markers before AUTH_KEY line
+  ansible.builtin.blockinfile:
+    path: "/var/www/wordpress/wp-config.php"
+    insertbefore: "(?m)define\\( 'AUTH_KEY'.*"
+    block: |
+      define( 'WP_SITEURL', '{{ domain }}' );
+
 - name: Update ownership to Apache user
   file:
     path: /var/www/wordpress/
