@@ -55,5 +55,5 @@ func BindLocalJobsRoutes(api *gin.RouterGroup) {
 	api.POST("/provisioning/configuration", handlers.Provisioning.CreateConfigurationProvisioning)
 
 	// Jobs
-	// api.GET("/jobs/:id", handlers.Resources.GetResourcesByReference)
+	api.GET("/jobs/:id", handlers.Jobs.GetJobsByID)
 }
