@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"smatflow/platform-installer/pkg/database"
 	"smatflow/platform-installer/pkg/filesystem"
 	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/resources/jobs"
@@ -37,7 +38,7 @@ func (proxyHostHandler) CreateProxyHost(c *gin.Context) {
 		ResourceState: false,
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context) error {
+		Task: func(ctx context.Context, job database.Job) error {
 			proxyhost.CreateProxyHost(json)
 			return nil
 		},
@@ -63,7 +64,7 @@ func (proxyHostHandler) DeleteProxyHost(c *gin.Context) {
 		ResourceState: false,
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context) error {
+		Task: func(ctx context.Context, job database.Job) error {
 			proxyhost.DeleteProxyHost(json.Domain)
 
 			pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{

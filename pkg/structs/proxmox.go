@@ -78,8 +78,15 @@ type PmRemoteExecProvisioner struct {
 	RemoteExec [1]*PmRemoteExec `json:"remote-exec"`
 }
 
+type ResetProxmoxVmQemuFields struct {
+	Vm       *ProxmoxVmQemu
+	Platform Platform
+	Ref      string
+	JobID    uint
+}
+
 func NewProxmoxVmQemu(ref string) *ProxmoxVmQemu {
-	pm := ProxmoxVmQemu{
+	vm := ProxmoxVmQemu{
 		Vmid:      0,
 		FullClone: true,
 		OsType:    "cloud-init",
@@ -94,15 +101,19 @@ func NewProxmoxVmQemu(ref string) *ProxmoxVmQemu {
 		Tags:      "platform-installer",
 	}
 
-	pm.Network = append(pm.Network, &PmVmQemuNetwork{
+	vm.Network = append(vm.Network, &PmVmQemuNetwork{
 		Bridge: "vmbr0",
 		Model:  "virtio",
 		Tag:    -1,
 	})
 
-	ResetUnmutableProxmoxVmQemu(&pm, Platform{}, ref)
+	ResetUnmutableProxmoxVmQemu(ResetProxmoxVmQemuFields{
+		Vm:       &vm,
+		Platform: Platform{},
+		Ref:      ref,
+	})
 
-	return &pm
+	return &vm
 }
 
 func newProxmoxResourceLifecycle() *PmResourceLifecycle {
@@ -116,9 +127,10 @@ func newProxmoxResourceLifecycle() *PmResourceLifecycle {
 	return &lifecycle
 }
 
-func newProxmoxProvisioner(platform Platform, ref string) [1]interface{} {
+func newProxmoxProvisioner(platform Platform, ref string, jobid uint) [1]interface{} {
 	// Provisioner local-exec
 	local_exec := &PmLocalExecProvisioner{}
+	job_id := string(rune(jobid))
 
 	if len(platform.Name) > 0 {
 		name := platform.Name
@@ -127,7 +139,7 @@ func newProxmoxProvisioner(platform Platform, ref string) [1]interface{} {
 
 		local_exec.LocalExec[0] = &PmLocalExec{
 			// Run our ansible scripts here
-			Command: fmt.Sprintf("chmod +x installer.sh && ./installer.sh --reference %s --ansible-user ${self.ciuser} --vmip ${self.default_ipv4_address} --platform %s --metadata %s", ref, name, metadatab64),
+			Command: fmt.Sprintf("chmod +x installer.sh && ./installer.sh --reference %s --ansible-user ${self.ciuser} --vmip ${self.default_ipv4_address} --job-id %s --platform %s --metadata %s", ref, job_id, name, metadatab64),
 			// Relative to infrastructure/terraform
 			WorkingDir: "../provisioner",
 		}
@@ -150,9 +162,9 @@ func newProxmoxProvisioner(platform Platform, ref string) [1]interface{} {
 	return [1]interface{}{local_exec}
 }
 
-func ResetUnmutableProxmoxVmQemu(pm *ProxmoxVmQemu, platform Platform, ref string) {
-	pm.Lifecycle = nil
-	pm.Lifecycle = append(pm.Lifecycle, newProxmoxResourceLifecycle())
+func ResetUnmutableProxmoxVmQemu(data ResetProxmoxVmQemuFields) {
+	data.Vm.Lifecycle = nil
+	data.Vm.Lifecycle = append(data.Vm.Lifecycle, newProxmoxResourceLifecycle())
 
-	pm.Provisioner = newProxmoxProvisioner(platform, ref)
+	data.Vm.Provisioner = newProxmoxProvisioner(data.Platform, data.Ref, data.JobID)
 }

@@ -5,4 +5,5 @@ type Provisioning struct {
 	MachineUser string    `json:"machine_user" binding:"required_without=Ref"`
 	MachineIp   string    `json:"machine_ip" binding:"required_without=Ref"`
 	Platform    *Platform `json:"platform" binding:"required"`
+	JobID       uint
 }

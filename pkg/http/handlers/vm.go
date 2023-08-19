@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"smatflow/platform-installer/pkg/database"
 	"smatflow/platform-installer/pkg/http/validators"
 	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/resources/jobs"
@@ -62,9 +63,14 @@ func (vmHandler) CreateVm(c *gin.Context) {
 		ResourceState: true,
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context) error {
+		Task: func(ctx context.Context, job database.Job) error {
 			// Reset unmutable vm fields
-			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform, json.Ref)
+			structs.ResetUnmutableProxmoxVmQemu(structs.ResetProxmoxVmQemuFields{
+				Vm:       json.Vm,
+				Platform: *json.Platform,
+				Ref:      json.Ref,
+				JobID:    job.ID,
+			})
 			// Create or update resources
 			terraform.Resources.WriteProxmoxVmQemuResource(json.Ref, json.Vm)
 			// Terraform Apply changes
@@ -92,7 +98,7 @@ func (vmHandler) DeleteVm(c *gin.Context) {
 		ResourceState: false, // Disable on resource deletion
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context) error {
+		Task: func(ctx context.Context, job database.Job) error {
 			// Remove resources
 			terraform.Resources.DeleteProxmoxVmQemuResource(data.Ref)
 

@@ -6,13 +6,13 @@ import (
 	"smatflow/platform-installer/pkg/queue"
 	"smatflow/platform-installer/pkg/resources/db"
 	"smatflow/platform-installer/pkg/resources/websocket"
-
-	goqueue "github.com/golang-queue/queue"
 )
+
+type TaskFunc func(context.Context, database.Job) error
 
 type ResourcesJob struct {
 	Ref           string
-	Task          goqueue.TaskFunc
+	Task          TaskFunc
 	PostBody      interface{}
 	ResourceState bool
 	Method        string
@@ -53,7 +53,7 @@ func ResourcesJobTask(task ResourcesJob) *database.Job {
 		}
 
 		// Run task
-		err := task.Task(ctx)
+		err := task.Task(ctx, *job)
 
 		if err == nil && task.ResourceState {
 			db.ResourceState.ResourceStatePutTerraformState(res_state)

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"smatflow/platform-installer/pkg/database"
 	"smatflow/platform-installer/pkg/filesystem"
 	"smatflow/platform-installer/pkg/http/validators"
 	"smatflow/platform-installer/pkg/pubsub"
@@ -76,9 +77,14 @@ func (resourcesHandler) CreateResources(c *gin.Context) {
 		Description:   "Resources creation",
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context) error {
+		Task: func(ctx context.Context, job database.Job) error {
 			// Reset unmutable vm fields
-			structs.ResetUnmutableProxmoxVmQemu(json.Vm, *json.Platform, json.Ref)
+			structs.ResetUnmutableProxmoxVmQemu(structs.ResetProxmoxVmQemuFields{
+				Vm:       json.Vm,
+				Platform: *json.Platform,
+				Ref:      json.Ref,
+				JobID:    job.ID,
+			})
 			// Create or update resources
 			terraform.Resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
 			terraform.Resources.WriteProxmoxVmQemuResource(json.Ref, json.Vm)
@@ -108,13 +114,14 @@ func (resourcesHandler) DeleteResources(c *gin.Context) {
 		ResourceState: false, // Disable on resource deletion
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context) error {
+		Task: func(ctx context.Context, job database.Job) error {
 			// Remove resources
 			terraform.Resources.DeleteOvhDomainZoneResource(uri.Ref)
 			terraform.Resources.DeleteProxmoxVmQemuResource(uri.Ref)
 
 			// Terraform Apply changes
 			err := terraform.Exec.Apply(true)
+
 			if err == nil {
 				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "info",

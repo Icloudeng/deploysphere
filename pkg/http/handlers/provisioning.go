@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"smatflow/platform-installer/pkg/database"
 	"smatflow/platform-installer/pkg/http/validators"
 	"smatflow/platform-installer/pkg/resources/jobs"
 	"smatflow/platform-installer/pkg/resources/provisioning"
@@ -49,8 +50,11 @@ func (provisioningHandler) CreatePlatformProvisioning(c *gin.Context) {
 		ResourceState: false,
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context) error {
+		Task: func(ctx context.Context, job database.Job) error {
+			body.JobID = job.ID
+
 			provisioning.CreatePlatformProvisioning(*body)
+
 			return nil
 		},
 	}
@@ -92,8 +96,11 @@ func (provisioningHandler) CreateConfigurationProvisioning(c *gin.Context) {
 		ResourceState: false,
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context) error {
+		Task: func(ctx context.Context, job database.Job) error {
+			body.JobID = job.ID
+
 			provisioning.CreateConfigurationProvisioning(*body)
+
 			return nil
 		},
 	}
