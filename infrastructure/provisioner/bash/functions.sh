@@ -77,3 +77,70 @@ get_platform_static_secret() {
     static_secret=$($python_command -c "import hashlib; print(hashlib.sha256('$static_secret_name'.encode()).hexdigest()[:32])")
     echo $static_secret
 }
+
+create_domain_mapping() {
+    if [ "$ran_status" == "succeeded" ]; then
+
+        if [ "$PROXY_MANAGER" == "nginx" ]; then
+            # Execute Nginx Proxy Manager (Domain mapping)
+            $python_command lib/nginx_pm.py --action "create" --metadata "$metadata" --platform "$platform" --ip "$vm_ip"
+        elif [ "$PROXY_MANAGER" == "treafik" ]; then
+
+            echo "Proxy manager with treafik"
+        fi
+
+    fi
+
+}
+
+publish_redis_playbook_details() {
+    # Publish Credentials
+    if [ "$ran_status" == "succeeded" ]; then
+        # Read and extract credentials exposed from ansible logs
+        exposed_credentials=$($extract_vars --text "$ansible_logs" --credentials "true")
+
+        # Publish credentials if not empty
+        if [ -n "$exposed_credentials" ]; then
+            $redis_publisher --channel "$channel_publisher-credentials" --message "$exposed_credentials"
+        fi
+
+    fi
+
+    # Publish playbook run status
+    $redis_publisher --channel "$channel_publisher-status" --message "$ran_status"
+}
+
+fill_installer_details_installer() {
+    installer_details=""
+
+    if [ -n "$reference" ]; then
+        installer_details+="Reference: $reference\n\n"
+    fi
+
+    if [ -n "$job_id" ]; then
+        installer_details+="Job ID: $job_id\n"
+    fi
+
+    installer_details+="Platform: $platform\n"
+    installer_details+="Machine User: $ansible_user\n"
+    installer_details+="Machine IP: $vm_ip\n\n"
+
+    installer_details+="Static Secret: $static_secret\n"
+    installer_details+="Random Secret=$random_secret\n\n"
+}
+
+fill_installer_details_configuration() {
+    installer_details="EXECUTION TYPE: Configuration\n"
+
+    if [ -n "$reference" ]; then
+        installer_details+="Reference: $reference\n\n"
+    fi
+
+    if [ -n "$job_id" ]; then
+        installer_details+="Job ID: $job_id\n"
+    fi
+
+    installer_details+="Platform: $platform\n"
+    installer_details+="Machine User: $ansible_user\nMachine IP: $vm_ip\n\n"
+    installer_details+="$exposed_variables"
+}

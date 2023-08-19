@@ -37,30 +37,15 @@ execute_ansible_playbook
 ansible_logs=$(tail -n +$logs_lines $ansible_log_file)
 ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 
-# Publish Credentials
-if [ "$ran_status" == "succeeded" ]; then
-    # Read and extract credentials exposed from ansible logs
-    exposed_credentials=$($extract_vars --text "$ansible_logs" --credentials "true")
-
-    # Publish credentials if not empty
-    if [ -n "$exposed_credentials" ]; then
-        $redis_publisher --channel "$channel_publisher-credentials" --message "$exposed_credentials"
-    fi
-
-fi
-
-# Publish playbook run status
-$redis_publisher --channel "$channel_publisher-status" --message "$ran_status"
+# @@Function@@
+publish_redis_playbook_details
 
 # Read and extract variables exposed from ansible logs
 exposed_variables=$($extract_vars --text "$ansible_logs")
 
-# Execute python notifier script
-installer_details="EXECUTION TYPE: Configuration\n"
-installer_details+="Reference: $reference\n\n"
+# @@Function@@ -> (var: installer_details)
+fill_installer_details_configuration
 
-installer_details+="Platform: $platform\n"
-installer_details+="Machine User: $ansible_user\nMachine IP: $vm_ip\n\n"
-installer_details+="$exposed_variables"
+# Execute python notifier script
 
 $python_command lib/notifier.py --logs "$ansible_logs_4096" --status "$ran_status" --details "$installer_details" --metadata "$metadata"

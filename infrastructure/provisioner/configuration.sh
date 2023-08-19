@@ -8,6 +8,7 @@ platform=""
 vm_ip=""
 metadata=""
 reference=""
+job_id=""
 
 # Parse named arguments
 while [[ $# -gt 0 ]]; do
@@ -31,6 +32,11 @@ while [[ $# -gt 0 ]]; do
         ;;
     --metadata)
         metadata="$2"
+        shift
+        shift
+        ;;
+    --job-id)
+        job_id="$2"
         shift
         shift
         ;;

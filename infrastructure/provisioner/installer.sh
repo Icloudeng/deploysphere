@@ -7,6 +7,7 @@ PROXY_MANAGER="nginx" # nginx | treafik
 ansible_user=""
 platform=""
 vm_ip=""
+job_id=""
 metadata=""
 reference=""
 
@@ -32,6 +33,11 @@ while [[ $# -gt 0 ]]; do
         ;;
     --metadata)
         metadata="$2"
+        shift
+        shift
+        ;;
+    --job-id)
+        job_id="$2"
         shift
         shift
         ;;
@@ -80,56 +86,31 @@ ansible_extra_vars+=" static_secret=$static_secret"                          # M
 ansible_extra_vars+=" vm_ip=$vm_ip"                                          # Must start with empty space
 
 # Notification Installer details
-installer_details="Reference: $reference\n\n"
-
-installer_details+="Platform: $platform\n"
-installer_details+="Machine User: $ansible_user\nMachine IP: $vm_ip\n\n"
-installer_details+="Static Secret: $static_secret\n"
+# @@Function@@ -> (var: installer_details)
+fill_installer_details_installer
 
 # Notify before playbook
 message_info=$(echo "Provisioning Started..." | base64)
 $python_command lib/notifier.py --logs "$message_info" --status "info" --details "$installer_details" --metadata "$metadata"
 
-# Run Ansible playbook (Function) -> (ran_status: succeeded | failed, channel_publisher)
+# @@Function@@ (Run Ansible playbook) -> (ran_status: succeeded | failed, channel_publisher)
 execute_ansible_playbook
 
-# Create domain mapping with (nginx|treafik)
-if [ "$ran_status" == "succeeded" ]; then
-
-    if [ "$PROXY_MANAGER" == "nginx" ]; then
-        # Execute Nginx Proxy Manager (Domain mapping)
-        $python_command lib/nginx_pm.py --action "create" --metadata "$metadata" --platform "$platform" --ip "$vm_ip"
-    elif [ "$PROXY_MANAGER" == "treafik" ]; then
-
-        echo "Proxy manager with treafik"
-    fi
-
-fi
+# @@Function@@  Create domain mapping with (nginx|treafik)
+create_domain_mapping
 
 # Get the ansible logs content from last run and pipe it to base64
 ansible_logs=$(tail -n +$logs_lines $ansible_log_file)
 ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 
-# Publish Credentials
-if [ "$ran_status" == "succeeded" ]; then
-    # Read and extract credentials exposed from ansible logs
-    exposed_credentials=$($extract_vars --text "$ansible_logs" --credentials "true")
-
-    # Publish credentials if not empty
-    if [ -n "$exposed_credentials" ]; then
-        $redis_publisher --channel "$channel_publisher-credentials" --message "$exposed_credentials"
-    fi
-
-fi
-
-# Publish playbook run status
-$redis_publisher --channel "$channel_publisher-status" --message "$ran_status"
+# @@Function@@
+publish_redis_playbook_details
 
 # Read and extract variables exposed from ansible logs
 exposed_variables=$($extract_vars --text "$ansible_logs")
-
 # Execute python notifier script
-installer_details+="Random Secret=$random_secret\n\n$exposed_variables\n"
+installer_details+="$exposed_variables\n"
+
 $python_command lib/notifier.py --logs "$ansible_logs_4096" --status "$ran_status" --details "$installer_details" --metadata "$metadata"
 
 # Deactivate the virtual environment
