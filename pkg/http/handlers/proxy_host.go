@@ -12,7 +12,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateProxyHost(c *gin.Context) {
+type (
+	proxyHost struct{}
+)
+
+var ProxyHost proxyHost
+
+func (p proxyHost) CreateProxyHost(c *gin.Context) {
 	var json structs.ProxyHost
 
 	if err := c.ShouldBindJSON(&json); err != nil {
@@ -44,7 +50,7 @@ func CreateProxyHost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
-func DeleteProxyHost(c *gin.Context) {
+func (p proxyHost) DeleteProxyHost(c *gin.Context) {
 	var json structs.ProxyHostDomain
 
 	if err := c.ShouldBindJSON(&json); err != nil {

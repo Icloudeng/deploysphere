@@ -11,13 +11,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Domain struct {
-	Ref    string                    `json:"ref" binding:"required,resourceref"`
-	Domain *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
-}
+type (
+	domainBody struct {
+		Ref    string                    `json:"ref" binding:"required,resourceref"`
+		Domain *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
+	}
 
-func CreateDomain(c *gin.Context) {
-	var json Domain
+	domain struct{}
+)
+
+var Domain domain
+
+func (d domain) CreateDomain(c *gin.Context) {
+	var json domainBody
 
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -69,8 +75,8 @@ func CreateDomain(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
-func DeleteDomain(c *gin.Context) {
-	var data ResourcesRef
+func (d domain) DeleteDomain(c *gin.Context) {
+	var data resourcesRefUri
 
 	if err := c.ShouldBindUri(&data); err != nil {
 		c.AbortWithStatusJSON(400, gin.H{"msg": err})

@@ -15,24 +15,29 @@ import (
 )
 
 // Store resources and apply
-type Resources struct {
-	Ref      string                    `json:"ref" binding:"required,resourceref"`
-	Domain   *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
-	Vm       *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
-	Platform *structs.Platform         `json:"platform"`
-}
+type (
+	resourcesBody struct {
+		Ref      string                    `json:"ref" binding:"required,resourceref"`
+		Domain   *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
+		Vm       *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
+		Platform *structs.Platform         `json:"platform"`
+	}
 
-// Delete resources and apply
-type ResourcesRef struct {
-	Ref string `uri:"ref" binding:"required,resourceref"`
-}
+	resourcesRefUri struct {
+		Ref string `uri:"ref" binding:"required,resourceref"`
+	}
+
+	resources struct{}
+)
+
+var Resources resources
 
 const ResourceExistsError = `The resource reference already exists. If you plan to create a new resource, 
 please use a different resource reference name or use PUT method to update resource.
 `
 
-func CreateResources(c *gin.Context) {
-	json := Resources{
+func (r resources) CreateResources(c *gin.Context) {
+	json := resourcesBody{
 		Vm:       structs.NewProxmoxVmQemu(""),
 		Platform: &structs.Platform{Metadata: &map[string]interface{}{}},
 	}
@@ -88,8 +93,9 @@ func CreateResources(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
-func DeleteResources(c *gin.Context) {
-	var uri ResourcesRef
+func (r resources) DeleteResources(c *gin.Context) {
+	var uri resourcesRefUri
+
 	if err := c.ShouldBindUri(&uri); err != nil {
 		c.AbortWithStatusJSON(400, gin.H{"msg": err.Error()})
 		return
@@ -127,7 +133,7 @@ func DeleteResources(c *gin.Context) {
 }
 
 // Get resources state from terraform
-func GetResourcesState(c *gin.Context) {
+func (r resources) GetResourcesState(c *gin.Context) {
 	state := terraform.Exec.Show()
 
 	if state == nil {
@@ -138,15 +144,16 @@ func GetResourcesState(c *gin.Context) {
 	c.JSON(http.StatusOK, state)
 }
 
-func GetResources(c *gin.Context) {
+func (r resources) GetResources(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"Proxmox": terraform.Resources.GetProxmoxResource(),
 		"Ovh":     terraform.Resources.GetOvhResource(),
 	})
 }
 
-func GetResourcesByReference(c *gin.Context) {
-	var uri ResourcesRef
+func (r resources) GetResourcesByReference(c *gin.Context) {
+	var uri resourcesRefUri
+
 	if err := c.ShouldBindUri(&uri); err != nil {
 		c.AbortWithStatusJSON(400, gin.H{"msg": err.Error()})
 		return
@@ -159,6 +166,6 @@ func GetResourcesByReference(c *gin.Context) {
 	})
 }
 
-func GetPlatforms(c *gin.Context) {
+func (r resources) GetPlatforms(c *gin.Context) {
 	c.JSON(http.StatusOK, filesystem.ReadProvisionerPlaforms())
 }

@@ -15,43 +15,45 @@ func BindLocalJobsRoutes(api *gin.RouterGroup) {
 	})
 
 	// Resources
-	api.POST("/resources", handlers.CreateResources)
+	api.POST("/resources", handlers.Resources.CreateResources)
 
-	api.PUT("/resources", handlers.CreateResources)
+	api.PUT("/resources", handlers.Resources.CreateResources)
 
-	api.DELETE("/resources/:ref", handlers.DeleteResources)
+	api.DELETE("/resources/:ref", handlers.Resources.DeleteResources)
 
-	api.GET("/resources/:ref", handlers.GetResourcesByReference)
+	api.GET("/resources/:ref", handlers.Resources.GetResourcesByReference)
 
-	api.GET("/resources", handlers.GetResources)
+	api.GET("/resources", handlers.Resources.GetResources)
 
-	api.GET("/resources/state", handlers.GetResourcesState)
+	api.GET("/resources/state", handlers.Resources.GetResourcesState)
 
 	// Domain
-	api.POST("/resources/domain", handlers.CreateDomain)
+	api.POST("/resources/domain", handlers.Domain.CreateDomain)
 
-	api.PUT("/resources/domain", handlers.CreateDomain)
+	api.PUT("/resources/domain", handlers.Domain.CreateDomain)
 
-	api.DELETE("/resources/domain/:ref", handlers.DeleteDomain)
+	api.DELETE("/resources/domain/:ref", handlers.Domain.DeleteDomain)
 
 	//VM
-	api.POST("/resources/vm", handlers.CreateVm)
+	api.POST("/resources/vm", handlers.Vm.CreateVm)
 
-	api.PUT("/resources/vm", handlers.CreateVm)
+	api.PUT("/resources/vm", handlers.Vm.CreateVm)
 
-	api.DELETE("/resources/vm/:ref", handlers.DeleteVm)
+	api.DELETE("/resources/vm/:ref", handlers.Vm.DeleteVm)
 
 	// Platforms
-	api.GET("/platforms", handlers.GetPlatforms)
+	api.GET("/platforms", handlers.Resources.GetPlatforms)
 
 	// Proxy host
-	api.POST("/proxy-host", handlers.CreateProxyHost)
+	api.POST("/proxy-host", handlers.ProxyHost.CreateProxyHost)
 
-	api.DELETE("/proxy-host", handlers.DeleteProxyHost)
+	api.DELETE("/proxy-host", handlers.ProxyHost.DeleteProxyHost)
 
 	// The Provisioning
-	api.POST("/provisioning", handlers.CreatePlatformProvisioning)
+	api.POST("/provisioning", handlers.Provisioning.CreatePlatformProvisioning)
 
-	api.POST("/provisioning/configuration", handlers.CreateConfigurationProvisioning)
+	api.POST("/provisioning/configuration", handlers.Provisioning.CreateConfigurationProvisioning)
 
+	// Jobs
+	// api.GET("/jobs/:id", handlers.Resources.GetResourcesByReference)
 }

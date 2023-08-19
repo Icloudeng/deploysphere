@@ -12,14 +12,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Vm struct {
-	Ref      string                 `json:"ref" binding:"required,resourceref"`
-	Vm       *structs.ProxmoxVmQemu `json:"vm" binding:"required,json"`
-	Platform *structs.Platform      `json:"platform"`
-}
+type (
+	vmBody struct {
+		Ref      string                 `json:"ref" binding:"required,resourceref"`
+		Vm       *structs.ProxmoxVmQemu `json:"vm" binding:"required,json"`
+		Platform *structs.Platform      `json:"platform"`
+	}
 
-func CreateVm(c *gin.Context) {
-	json := Vm{
+	vm struct{}
+)
+
+var Vm vm
+
+func (v vm) CreateVm(c *gin.Context) {
+	json := vmBody{
 		Vm:       structs.NewProxmoxVmQemu(""),
 		Platform: &structs.Platform{Metadata: &map[string]interface{}{}},
 	}
@@ -71,8 +77,8 @@ func CreateVm(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
-func DeleteVm(c *gin.Context) {
-	var data ResourcesRef
+func (v vm) DeleteVm(c *gin.Context) {
+	var data resourcesRefUri
 
 	if err := c.ShouldBindUri(&data); err != nil {
 		c.AbortWithStatusJSON(400, gin.H{"msg": err})

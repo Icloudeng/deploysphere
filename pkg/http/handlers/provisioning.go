@@ -11,7 +11,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreatePlatformProvisioning(c *gin.Context) {
+type (
+	provisioningHandler struct{}
+)
+
+var Provisioning provisioningHandler
+
+func (p provisioningHandler) CreatePlatformProvisioning(c *gin.Context) {
 	body := &structs.Provisioning{
 		Platform: &structs.Platform{
 			Metadata: &map[string]interface{}{},
@@ -54,7 +60,7 @@ func CreatePlatformProvisioning(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": body, "job": job})
 }
 
-func CreateConfigurationProvisioning(c *gin.Context) {
+func (p provisioningHandler) CreateConfigurationProvisioning(c *gin.Context) {
 	body := &structs.Provisioning{
 		Platform: &structs.Platform{
 			Metadata: &map[string]interface{}{},
