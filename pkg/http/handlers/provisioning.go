@@ -51,9 +51,7 @@ func (provisioningHandler) CreatePlatformProvisioning(c *gin.Context) {
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
 		Task: func(ctx context.Context, job database.Job) error {
-			body.JobID = job.ID
-
-			provisioning.CreatePlatformProvisioning(*body)
+			provisioning.CreatePlatformProvisioning(*body, job.ID)
 
 			return nil
 		},
@@ -97,9 +95,7 @@ func (provisioningHandler) CreateConfigurationProvisioning(c *gin.Context) {
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
 		Task: func(ctx context.Context, job database.Job) error {
-			body.JobID = job.ID
-
-			provisioning.CreateConfigurationProvisioning(*body)
+			provisioning.CreateConfigurationProvisioning(*body, job.ID)
 
 			return nil
 		},

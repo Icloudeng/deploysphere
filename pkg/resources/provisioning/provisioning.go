@@ -3,13 +3,14 @@ package provisioning
 import (
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/exec"
 	"smatflow/platform-installer/pkg/filesystem"
 	"smatflow/platform-installer/pkg/structs"
 )
 
-func provisioning(prov structs.Provisioning, file string) {
+func provisioning(prov structs.Provisioning, file string, jobId uint) {
 	platform := prov.Platform
 
 	metadata, _ := json.Marshal(platform.Metadata)
@@ -21,7 +22,7 @@ func provisioning(prov structs.Provisioning, file string) {
 		"--vmip", prov.MachineIp,
 		"--platform", platform.Name,
 		"--metadata", metadatab64,
-		"--job-id", string(rune(prov.JobID)),
+		"--job-id", fmt.Sprintf("%d", jobId),
 		// "--reference", prov.Ref, Don't uncomment this line, can cause mis functioning from redis pubsub
 	)
 
@@ -32,10 +33,10 @@ func provisioning(prov structs.Provisioning, file string) {
 	cmd.Run()
 }
 
-func CreatePlatformProvisioning(prov structs.Provisioning) {
-	provisioning(prov, "installer.sh")
+func CreatePlatformProvisioning(prov structs.Provisioning, jobId uint) {
+	provisioning(prov, "installer.sh", jobId)
 }
 
-func CreateConfigurationProvisioning(prov structs.Provisioning) {
-	provisioning(prov, "configuration.sh")
+func CreateConfigurationProvisioning(prov structs.Provisioning, jobId uint) {
+	provisioning(prov, "configuration.sh", jobId)
 }
