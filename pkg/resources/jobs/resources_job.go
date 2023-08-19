@@ -49,14 +49,14 @@ func ResourcesJobTask(task ResourcesJob) *database.Job {
 
 		// Create Resource State
 		if task.ResourceState {
-			res_state = db.ResourceStateCreate(task.Ref, *job)
+			res_state = db.ResourceState.ResourceStateCreate(task.Ref, *job)
 		}
 
 		// Run task
 		err := task.Task(ctx)
 
 		if err == nil && task.ResourceState {
-			db.ResourceStatePutTerraformState(res_state)
+			db.ResourceState.ResourceStatePutTerraformState(res_state)
 		}
 
 		if err == nil {
@@ -70,7 +70,7 @@ func ResourcesJobTask(task ResourcesJob) *database.Job {
 		websocket.EmitJobEvent(job)
 
 		// Allocate memory for resource db backup
-		go db.CreateNewResourcesBackup()
+		go db.ResourcesBackup.CreateNewResourcesBackup()
 
 		return nil
 	})

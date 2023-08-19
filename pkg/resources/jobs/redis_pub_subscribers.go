@@ -29,7 +29,7 @@ func redis_pub_listeners(Ref string) func() {
 	close3 := redis_events.ResourceProviningCredentialsEvents(
 		Ref,
 		[]redis_events.SubscriberFunc{
-			db.ResourceState_ListenResourceProviningCredentials,
+			db.ResourceState.ResourceState_ListenResourceProviningCredentials,
 			websocket.EmitEncodedEvent,
 		},
 	)

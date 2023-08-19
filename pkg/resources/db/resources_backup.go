@@ -8,7 +8,13 @@ import (
 	"gorm.io/datatypes"
 )
 
-func CreateNewResourcesBackup() {
+type (
+	resourcesBackup struct{}
+)
+
+var ResourcesBackup resourcesBackup
+
+func (resourcesBackup) CreateNewResourcesBackup() {
 	// Terraform state
 	stateModule := terraform.Exec.Show()
 	var state interface{} = map[string]interface{}{}

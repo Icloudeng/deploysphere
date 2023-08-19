@@ -10,7 +10,13 @@ import (
 	"gorm.io/datatypes"
 )
 
-func ResourceStateCreate(ref string, job database.Job) *database.ResourcesState {
+type (
+	resourceState struct{}
+)
+
+var ResourceState resourceState
+
+func (resourceState) ResourceStateCreate(ref string, job database.Job) *database.ResourcesState {
 	rep := database.ResourcesStateRepository{}
 
 	// Use credentials of the last ref object
@@ -31,7 +37,7 @@ func ResourceStateCreate(ref string, job database.Job) *database.ResourcesState 
 	return resource_state
 }
 
-func ResourceStatePutTerraformState(resource_state *database.ResourcesState) {
+func (resourceState) ResourceStatePutTerraformState(resource_state *database.ResourcesState) {
 	stateModule := terraform.Exec.Show()
 	repository := database.ResourcesStateRepository{}
 
@@ -64,7 +70,7 @@ func ResourceStatePutTerraformState(resource_state *database.ResourcesState) {
 
 // =============== Redis Events Listener ============= //
 
-func ResourceState_ListenResourceProviningCredentials(playload pubsub.NetworkEventPayload) {
+func (resourceState) ResourceState_ListenResourceProviningCredentials(playload pubsub.NetworkEventPayload) {
 	rep := database.ResourcesStateRepository{}
 	resource_state := rep.GetByRef(playload.Reference)
 
