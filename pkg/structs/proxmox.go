@@ -130,7 +130,6 @@ func newProxmoxResourceLifecycle() *PmResourceLifecycle {
 func newProxmoxProvisioner(platform Platform, ref string, jobid uint) [1]interface{} {
 	// Provisioner local-exec
 	local_exec := &PmLocalExecProvisioner{}
-	job_id := string(rune(jobid))
 
 	if len(platform.Name) > 0 {
 		name := platform.Name
@@ -139,7 +138,7 @@ func newProxmoxProvisioner(platform Platform, ref string, jobid uint) [1]interfa
 
 		local_exec.LocalExec[0] = &PmLocalExec{
 			// Run our ansible scripts here
-			Command: fmt.Sprintf("chmod +x installer.sh && ./installer.sh --reference %s --ansible-user ${self.ciuser} --vmip ${self.default_ipv4_address} --job-id %s --platform %s --metadata %s", ref, job_id, name, metadatab64),
+			Command: fmt.Sprintf("chmod +x installer.sh && ./installer.sh --ansible-user ${self.ciuser} --vmip ${self.default_ipv4_address} --reference %s --job-id %d --platform %s --metadata %s", ref, jobid, name, metadatab64),
 			// Relative to infrastructure/terraform
 			WorkingDir: "../provisioner",
 		}

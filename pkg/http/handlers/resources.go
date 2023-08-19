@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -125,7 +126,7 @@ func (resourcesHandler) DeleteResources(c *gin.Context) {
 			if err == nil {
 				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "info",
-					Details: "Ref: " + uri.Ref,
+					Details: fmt.Sprintf("Job Id: %d \n Ref: %s", job.ID, uri.Ref),
 					Logs:    "Resources deleted",
 				})
 			}

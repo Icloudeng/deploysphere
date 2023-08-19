@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"smatflow/platform-installer/pkg/database"
 	"smatflow/platform-installer/pkg/filesystem"
@@ -69,7 +70,7 @@ func (proxyHostHandler) DeleteProxyHost(c *gin.Context) {
 
 			pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 				Status:  "info",
-				Details: "Domain: " + json.Domain,
+				Details: fmt.Sprintf("Job Id: %d \n Domain: %s", job.ID, json.Domain),
 				Logs:    "Proxy Host deleted",
 			})
 			return nil
