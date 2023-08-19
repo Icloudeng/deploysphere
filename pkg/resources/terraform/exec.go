@@ -60,13 +60,11 @@ func (t *exec) Plan(notifier bool) error {
 	if err != nil {
 
 		if notifier {
-			go func() {
-				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
-					Status:  "failed",
-					Details: "Terraform Plan",
-					Logs:    err.Error(),
-				})
-			}()
+			go pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+				Status:  "failed",
+				Details: "Terraform Plan",
+				Logs:    err.Error(),
+			})
 		}
 
 		log.Printf("error running Show: %s", err.Error())
@@ -103,13 +101,11 @@ func (t *exec) Apply(notifier bool) error {
 	err := t.tk.Apply(context.Background(), options...)
 	if err != nil {
 		if notifier {
-			go func() {
-				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
-					Status:  "failed",
-					Details: "Terraform Apply",
-					Logs:    err.Error(),
-				})
-			}()
+			go pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
+				Status:  "failed",
+				Details: "Terraform Apply",
+				Logs:    err.Error(),
+			})
 		}
 
 		log.Printf("Error running Show: %s", err)

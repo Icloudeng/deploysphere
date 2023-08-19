@@ -9,7 +9,7 @@ type Workspace struct {
 
 type WorkspaceRepository struct{}
 
-func (r *WorkspaceRepository) Get() []Workspace {
+func (WorkspaceRepository) Get() []Workspace {
 	var objects []Workspace
 
 	dbConn.Find(&objects)
@@ -17,7 +17,7 @@ func (r *WorkspaceRepository) Get() []Workspace {
 	return objects
 }
 
-func (r *WorkspaceRepository) Create(res *Workspace) {
+func (WorkspaceRepository) Create(res *Workspace) {
 	dbConn.Create(res)
 }
 

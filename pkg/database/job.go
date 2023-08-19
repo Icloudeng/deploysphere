@@ -32,7 +32,7 @@ type Job struct {
 
 type JobRepository struct{}
 
-func (r *JobRepository) GetByRef(ref string) *Job {
+func (JobRepository) GetByRef(ref string) *Job {
 	object := &Job{
 		Ref: ref,
 	}
@@ -46,7 +46,7 @@ func (r *JobRepository) GetByRef(ref string) *Job {
 	return object
 }
 
-func (r *JobRepository) Get(ID uint) *Job {
+func (JobRepository) Get(ID uint) *Job {
 	object := &Job{}
 
 	dbConn.Last(object, ID)
@@ -58,15 +58,15 @@ func (r *JobRepository) Get(ID uint) *Job {
 	return object
 }
 
-func (r *JobRepository) Create(object *Job) {
+func (JobRepository) Create(object *Job) {
 	dbConn.Create(object)
 }
 
-func (r *JobRepository) UpdateOrCreate(object *Job) {
+func (JobRepository) UpdateOrCreate(object *Job) {
 	dbConn.Save(object)
 }
 
-func (r *JobRepository) Delete(ID uint) {
+func (JobRepository) Delete(ID uint) {
 	dbConn.Delete(&Job{}, ID)
 }
 

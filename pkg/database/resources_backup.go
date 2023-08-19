@@ -13,7 +13,7 @@ type ResourcesBackup struct {
 
 type ResourcesBackupRepository struct{}
 
-func (r *ResourcesBackupRepository) Get() *ResourcesBackup {
+func (ResourcesBackupRepository) Get() *ResourcesBackup {
 	object := &ResourcesBackup{}
 
 	dbConn.Last(object)
@@ -21,7 +21,7 @@ func (r *ResourcesBackupRepository) Get() *ResourcesBackup {
 	return object
 }
 
-func (r *ResourcesBackupRepository) Create(res *ResourcesBackup) {
+func (ResourcesBackupRepository) Create(res *ResourcesBackup) {
 	dbConn.Create(res)
 }
 
