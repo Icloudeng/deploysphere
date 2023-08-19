@@ -27,16 +27,16 @@ type (
 		Ref string `uri:"ref" binding:"required,resourceref"`
 	}
 
-	resources struct{}
+	resourcesHandler struct{}
 )
 
-var Resources resources
+var Resources resourcesHandler
 
 const ResourceExistsError = `The resource reference already exists. If you plan to create a new resource, 
 please use a different resource reference name or use PUT method to update resource.
 `
 
-func (r resources) CreateResources(c *gin.Context) {
+func (r resourcesHandler) CreateResources(c *gin.Context) {
 	json := resourcesBody{
 		Vm:       structs.NewProxmoxVmQemu(""),
 		Platform: &structs.Platform{Metadata: &map[string]interface{}{}},
@@ -93,7 +93,7 @@ func (r resources) CreateResources(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
-func (r resources) DeleteResources(c *gin.Context) {
+func (r resourcesHandler) DeleteResources(c *gin.Context) {
 	var uri resourcesRefUri
 
 	if err := c.ShouldBindUri(&uri); err != nil {
@@ -133,7 +133,7 @@ func (r resources) DeleteResources(c *gin.Context) {
 }
 
 // Get resources state from terraform
-func (r resources) GetResourcesState(c *gin.Context) {
+func (r resourcesHandler) GetResourcesState(c *gin.Context) {
 	state := terraform.Exec.Show()
 
 	if state == nil {
@@ -144,14 +144,14 @@ func (r resources) GetResourcesState(c *gin.Context) {
 	c.JSON(http.StatusOK, state)
 }
 
-func (r resources) GetResources(c *gin.Context) {
+func (r resourcesHandler) GetResources(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"Proxmox": terraform.Resources.GetProxmoxResource(),
 		"Ovh":     terraform.Resources.GetOvhResource(),
 	})
 }
 
-func (r resources) GetResourcesByReference(c *gin.Context) {
+func (r resourcesHandler) GetResourcesByReference(c *gin.Context) {
 	var uri resourcesRefUri
 
 	if err := c.ShouldBindUri(&uri); err != nil {
@@ -166,6 +166,6 @@ func (r resources) GetResourcesByReference(c *gin.Context) {
 	})
 }
 
-func (r resources) GetPlatforms(c *gin.Context) {
+func (r resourcesHandler) GetPlatforms(c *gin.Context) {
 	c.JSON(http.StatusOK, filesystem.ReadProvisionerPlaforms())
 }

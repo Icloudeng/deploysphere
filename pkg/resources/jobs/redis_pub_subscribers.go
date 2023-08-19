@@ -11,7 +11,7 @@ func redis_pub_listeners(Ref string) func() {
 	close1 := redis_events.ResourceProviningLogsEvents(
 		Ref,
 		[]redis_events.SubscriberFunc{
-			db.Job_ListenResourceProviningLogs,
+			db.Jobs.Job_ListenResourceProviningLogs,
 			websocket.EmitEncodedEvent,
 		},
 	)
@@ -20,7 +20,7 @@ func redis_pub_listeners(Ref string) func() {
 	close2 := redis_events.ResourceProviningStatusEvents(
 		Ref,
 		[]redis_events.SubscriberFunc{
-			db.Job_ListenResourceProviningStatus,
+			db.Jobs.Job_ListenResourceProviningStatus,
 			websocket.EmitEncodedEvent,
 		},
 	)

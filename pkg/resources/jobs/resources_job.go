@@ -23,7 +23,7 @@ type ResourcesJob struct {
 
 func ResourcesJobTask(task ResourcesJob) *database.Job {
 	// Create new JOB
-	job := db.JobCreate(db.JobCreateParam{
+	job := db.Jobs.JobCreate(db.JobCreateParam{
 		Ref:         task.Ref,
 		PostBody:    task.PostBody,
 		Description: task.Description,
@@ -39,7 +39,7 @@ func ResourcesJobTask(task ResourcesJob) *database.Job {
 	queue.Queue.QueueTask(func(ctx context.Context) error {
 		res_state := &database.ResourcesState{}
 
-		job = db.JobUpdateStatus(job, database.JOB_STATUS_RUNNING)
+		job = db.Jobs.JobUpdateStatus(job, database.JOB_STATUS_RUNNING)
 		//Emit ws events
 		websocket.EmitJobEvent(job)
 
@@ -60,10 +60,10 @@ func ResourcesJobTask(task ResourcesJob) *database.Job {
 		}
 
 		if err == nil {
-			job = db.JobUpdateStatus(job, database.JOB_STATUS_COMPLETED)
+			job = db.Jobs.JobUpdateStatus(job, database.JOB_STATUS_COMPLETED)
 		} else {
-			job = db.JobUpdateLogs(job, err.Error())
-			job = db.JobUpdateStatus(job, database.JOB_STATUS_FAILED)
+			job = db.Jobs.JobUpdateLogs(job, err.Error())
+			job = db.Jobs.JobUpdateStatus(job, database.JOB_STATUS_FAILED)
 		}
 
 		//Emit ws events

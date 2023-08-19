@@ -19,12 +19,12 @@ type (
 		Platform *structs.Platform      `json:"platform"`
 	}
 
-	vm struct{}
+	vmHandler struct{}
 )
 
-var Vm vm
+var Vm vmHandler
 
-func (v vm) CreateVm(c *gin.Context) {
+func (v vmHandler) CreateVm(c *gin.Context) {
 	json := vmBody{
 		Vm:       structs.NewProxmoxVmQemu(""),
 		Platform: &structs.Platform{Metadata: &map[string]interface{}{}},
@@ -77,7 +77,7 @@ func (v vm) CreateVm(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
-func (v vm) DeleteVm(c *gin.Context) {
+func (v vmHandler) DeleteVm(c *gin.Context) {
 	var data resourcesRefUri
 
 	if err := c.ShouldBindUri(&data); err != nil {

@@ -17,12 +17,12 @@ type (
 		Domain *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
 	}
 
-	domain struct{}
+	domainHandler struct{}
 )
 
-var Domain domain
+var Domain domainHandler
 
-func (d domain) CreateDomain(c *gin.Context) {
+func (d domainHandler) CreateDomain(c *gin.Context) {
 	var json domainBody
 
 	if err := c.ShouldBindJSON(&json); err != nil {
@@ -75,7 +75,7 @@ func (d domain) CreateDomain(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
-func (d domain) DeleteDomain(c *gin.Context) {
+func (d domainHandler) DeleteDomain(c *gin.Context) {
 	var data resourcesRefUri
 
 	if err := c.ShouldBindUri(&data); err != nil {

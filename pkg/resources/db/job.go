@@ -11,17 +11,23 @@ import (
 	"gorm.io/datatypes"
 )
 
-type JobCreateParam struct {
-	Ref         string
-	PostBody    interface{}
-	Description string
-	Group       string
-	Status      string
-	Handler     string
-	Method      string
-}
+type (
+	JobCreateParam struct {
+		Ref         string
+		PostBody    interface{}
+		Description string
+		Group       string
+		Status      string
+		Handler     string
+		Method      string
+	}
 
-func JobCreate(data JobCreateParam) *database.Job {
+	jobs struct{}
+)
+
+var Jobs jobs
+
+func (jobs) JobCreate(data JobCreateParam) *database.Job {
 	rep := database.JobRepository{}
 	postBodyJson, _ := json.Marshal(data.PostBody)
 
@@ -40,7 +46,7 @@ func JobCreate(data JobCreateParam) *database.Job {
 	return job
 }
 
-func JobUpdateLogs(job *database.Job, Logs string) *database.Job {
+func (jobs) JobUpdateLogs(job *database.Job, Logs string) *database.Job {
 	rep := database.JobRepository{}
 	// refresh the job
 	job = rep.Get(job.ID)
@@ -52,7 +58,7 @@ func JobUpdateLogs(job *database.Job, Logs string) *database.Job {
 	return job
 }
 
-func JobUpdateStatus(job *database.Job, Status string) *database.Job {
+func (jobs) JobUpdateStatus(job *database.Job, Status string) *database.Job {
 	rep := database.JobRepository{}
 	// refresh the job
 	job = rep.Get(job.ID)
@@ -70,9 +76,14 @@ func JobUpdateStatus(job *database.Job, Status string) *database.Job {
 	return job
 }
 
+func (jobs) JobGetByID(ID uint) *database.Job {
+	rep := database.JobRepository{}
+	return rep.Get(ID)
+}
+
 // =============== Redis Events Listener ============= //
 
-func Job_ListenResourceProviningLogs(playload pubsub.NetworkEventPayload) {
+func (jobs) Job_ListenResourceProviningLogs(playload pubsub.NetworkEventPayload) {
 	rep := database.JobRepository{}
 	job := rep.GetByRef(playload.Reference)
 
@@ -87,7 +98,7 @@ func Job_ListenResourceProviningLogs(playload pubsub.NetworkEventPayload) {
 	rep.UpdateOrCreate(job)
 }
 
-func Job_ListenResourceProviningStatus(playload pubsub.NetworkEventPayload) {
+func (jobs) Job_ListenResourceProviningStatus(playload pubsub.NetworkEventPayload) {
 	rep := database.JobRepository{}
 	job := rep.GetByRef(playload.Reference)
 
