@@ -63,7 +63,7 @@ func (domainHandler) CreateDomain(c *gin.Context) {
 			if err == nil {
 				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "succeeded",
-					Details: fmt.Sprintf("Job Id: %d \n Ref: %s", job.ID, json.Ref),
+					Details: fmt.Sprintf("Job ID: %d\nRef: %s", job.ID, json.Ref),
 					Logs:    "Domain Resource created",
 				})
 			}
@@ -102,7 +102,7 @@ func (domainHandler) DeleteDomain(c *gin.Context) {
 			if err == nil {
 				pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 					Status:  "info",
-					Details: fmt.Sprintf("Job Id: %d \n Ref: %s", job.ID, data.Ref),
+					Details: fmt.Sprintf("Job ID: %d\nRef: %s", job.ID, data.Ref),
 					Logs:    "Domain Resource deleted",
 				})
 			}

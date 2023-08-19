@@ -70,7 +70,7 @@ func (proxyHostHandler) DeleteProxyHost(c *gin.Context) {
 
 			pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 				Status:  "info",
-				Details: fmt.Sprintf("Job Id: %d \n Domain: %s", job.ID, json.Domain),
+				Details: fmt.Sprintf("Job ID: %d\nDomain: %s", job.ID, json.Domain),
 				Logs:    "Proxy Host deleted",
 			})
 			return nil
