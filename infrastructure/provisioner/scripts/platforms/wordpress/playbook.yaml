@@ -19,12 +19,19 @@
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
 
+    - name: Variable Wordpress
+      set_fact:
+        docker_install: "{{ decoded_metadata | json_query('docker_install') }}"
+      ignore_errors: true
+
     # Validate domain variable
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
         domain_var: "{{ domain }}"
 
     # docker install
-    # - include_tasks: docker-install.yaml
+    - include_tasks: docker-install.yaml
+      when: docker_install is defined and docker_install == "true"
 
     - include_tasks: manual-install.yaml
+      when: docker_install is not defined or docker_install != "true"
