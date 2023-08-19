@@ -22,7 +22,7 @@ type (
 
 var Domain domainHandler
 
-func (d domainHandler) CreateDomain(c *gin.Context) {
+func (domainHandler) CreateDomain(c *gin.Context) {
 	var json domainBody
 
 	if err := c.ShouldBindJSON(&json); err != nil {
@@ -75,7 +75,7 @@ func (d domainHandler) CreateDomain(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
-func (d domainHandler) DeleteDomain(c *gin.Context) {
+func (domainHandler) DeleteDomain(c *gin.Context) {
 	var data resourcesRefUri
 
 	if err := c.ShouldBindUri(&data); err != nil {

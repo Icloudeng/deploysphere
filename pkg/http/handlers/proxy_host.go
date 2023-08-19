@@ -16,7 +16,7 @@ type proxyHostHandler struct{}
 
 var ProxyHost proxyHostHandler
 
-func (p proxyHostHandler) CreateProxyHost(c *gin.Context) {
+func (proxyHostHandler) CreateProxyHost(c *gin.Context) {
 	var json structs.ProxyHost
 
 	if err := c.ShouldBindJSON(&json); err != nil {
@@ -48,7 +48,7 @@ func (p proxyHostHandler) CreateProxyHost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
-func (p proxyHostHandler) DeleteProxyHost(c *gin.Context) {
+func (proxyHostHandler) DeleteProxyHost(c *gin.Context) {
 	var json structs.ProxyHostDomain
 
 	if err := c.ShouldBindJSON(&json); err != nil {

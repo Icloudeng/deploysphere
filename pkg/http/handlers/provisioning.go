@@ -17,7 +17,7 @@ type (
 
 var Provisioning provisioningHandler
 
-func (p provisioningHandler) CreatePlatformProvisioning(c *gin.Context) {
+func (provisioningHandler) CreatePlatformProvisioning(c *gin.Context) {
 	body := &structs.Provisioning{
 		Platform: &structs.Platform{
 			Metadata: &map[string]interface{}{},
@@ -60,7 +60,7 @@ func (p provisioningHandler) CreatePlatformProvisioning(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": body, "job": job})
 }
 
-func (p provisioningHandler) CreateConfigurationProvisioning(c *gin.Context) {
+func (provisioningHandler) CreateConfigurationProvisioning(c *gin.Context) {
 	body := &structs.Provisioning{
 		Platform: &structs.Platform{
 			Metadata: &map[string]interface{}{},

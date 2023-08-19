@@ -17,7 +17,7 @@ type (
 
 var Jobs jobsHandler
 
-func (j jobsHandler) GetJobsByID(c *gin.Context) {
+func (jobsHandler) GetJobsByID(c *gin.Context) {
 	var data jobIdUri
 
 	if err := c.ShouldBindUri(&data); err != nil {
