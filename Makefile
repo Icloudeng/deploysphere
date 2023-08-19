@@ -67,3 +67,9 @@ lint:
 
 .PHONY: prod-build
 prod-build: build service-restart
+
+
+
+.PHONY: ansible-logs
+ansible-logs:
+	tail -n -0 -f infrastructure/provisioner/logs/ansible_log.txt

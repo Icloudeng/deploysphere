@@ -11,13 +11,15 @@
 
 - name: Install PHP
   include_role:
-    name: "{{ item }}"
+    name: "{{ role_item }}"
   vars:
     php_version: "8.2"
     php_packages_extra: ["php-mysql", "libapache2-mod-php"]
   loop:
     - geerlingguy.php-versions
     - geerlingguy.php
+  loop_control:
+    loop_var: role_item
 
 - include_tasks: ../../tasks/mysql.yaml
   vars:

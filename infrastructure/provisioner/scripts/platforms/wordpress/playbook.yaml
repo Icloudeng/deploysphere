@@ -19,7 +19,7 @@
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
 
-    - name: Variable Wordpress
+    - name: Extract Variable Docker install variable
       set_fact:
         docker_install: "{{ decoded_metadata | json_query('docker_install') }}"
       ignore_errors: true
@@ -31,7 +31,7 @@
 
     # docker install
     - include_tasks: docker-install.yaml
-      when: docker_install is defined and docker_install == "true"
+      when: docker_install is defined and docker_install == true
 
     - include_tasks: manual-install.yaml
-      when: docker_install is not defined or docker_install != "true"
+      when: docker_install is not defined or docker_install != true
