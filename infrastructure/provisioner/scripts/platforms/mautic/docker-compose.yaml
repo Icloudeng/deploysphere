@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 
 services:
   mariadb:
@@ -11,6 +11,8 @@ services:
 
   mautic:
     container_name: mautic
+    depends_on:
+      - mariadb
     image: mautic/mautic:v4-apache
     volumes:
       - mautic_data:/var/www/html
@@ -22,4 +24,6 @@ services:
 
 volumes:
   mariadb_data:
+    driver: local
+  mautic_data:
     driver: local
