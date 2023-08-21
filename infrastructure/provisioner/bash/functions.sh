@@ -126,7 +126,7 @@ fill_installer_details_installer() {
     installer_details+="Machine IP: $vm_ip\n\n"
 
     installer_details+="Static Secret: $static_secret\n"
-    installer_details+="Random Secret=$random_secret\n\n"
+    installer_details+="Random Secret: $random_secret\n\n"
 }
 
 fill_installer_details_configuration() {
