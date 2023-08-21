@@ -6,42 +6,73 @@ const ADMIN_PASSWORD = "{{ app_secret }}";
 
 (async () => {
   const browser = await puppeteer.launch({
-    headless: "new",
+    headless: false,
     args: ["--no-sandbox"],
   });
 
   const page = await browser.newPage();
 
-  // Navigate the page to a URL
-  await page.goto(baseUrl + "/if/flow/initial-setup/");
-
   // Set screen size
   await page.setViewport({ width: 1200, height: 1024 });
+
+  // Navigate the page to a URL
+  await Promise.all([
+    page.goto(baseUrl + "/if/flow/initial-setup/"),
+    page.waitForNavigation(),
+  ]);
+
+  await page.waitForNetworkIdle();
 
   /**
    * ===========================
    * Authentik Initial Setup
    */
+
+  const inputSelectorValue = async (
+    input_selector: string,
+    input_value: string
+  ) => {
+    const inputHandle = await page.evaluate(
+      (input_selector, input_value) => {
+        const inputs: NodeListOf<Element> | Element[] = document
+          .querySelector("ak-flow-executor")
+          .shadowRoot.querySelector("ak-stage-prompt")
+          .shadowRoot.querySelectorAll("ak-form-element");
+
+        Array.from(inputs).forEach((element) => {
+          const input: HTMLInputElement = element.querySelector(input_selector);
+
+          if (input) {
+            input.value = input_value;
+          }
+        });
+      },
+      input_selector,
+      input_value
+    );
+
+    return inputHandle;
+  };
+
   // EMAIL
-  const lemail = await page.waitForSelector(".pf-c-form input[name=email]");
-  await lemail.type(ADMIN_EMAIL);
+  await inputSelectorValue("input[name=email]", ADMIN_EMAIL);
 
   //   PASSWORD
-  const password = await page.waitForSelector(
-    ".pf-c-form input[name=password]"
-  );
-  await password.type(ADMIN_PASSWORD);
+  await inputSelectorValue("input[name=password]", ADMIN_PASSWORD);
 
   //   PASSWORD REPEAT
-  const password_repeat = await page.waitForSelector(
-    ".pf-c-form input[name=password_repeat]"
-  );
-  await password_repeat.type(ADMIN_PASSWORD);
+  await inputSelectorValue("input[name=password_repeat]", ADMIN_PASSWORD);
 
-  const submitBtn = await page.waitForSelector(
-    ".pf-c-form button[type=submit]"
-  );
-  await Promise.all([page.waitForNavigation(), submitBtn.click()]);
+  const submitBtn = () =>
+    page.evaluate(() => {
+      document
+        .querySelector("ak-flow-executor")
+        .shadowRoot.querySelector("ak-stage-prompt")
+        .shadowRoot.querySelector<HTMLButtonElement>("button[type=submit]")
+        .click();
+    });
+
+  await Promise.all([page.waitForNavigation(), submitBtn()]);
 
   await browser.close();
 })();
