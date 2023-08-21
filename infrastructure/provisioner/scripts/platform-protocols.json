@@ -50,5 +50,9 @@
     "authentik": {
         "port": 9000,
         "protocol": "http"
+    },
+    "mautic": {
+        "port": 8880,
+        "protocol": "http"
     }
 }

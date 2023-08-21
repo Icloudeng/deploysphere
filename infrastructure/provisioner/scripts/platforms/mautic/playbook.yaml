@@ -18,34 +18,21 @@
     - name: Extract Required Variables
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
-        moodle_username: "{{ decoded_metadata | json_query('moodle_username') }}"
-        moodle_email: "{{ decoded_metadata | json_query('moodle_email') }}"
-        moodle_site_name: "{{ decoded_metadata | json_query('moodle_site_name') }}"
 
     # Validate domain variable
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
         domain_var: "{{ domain }}"
 
-    # Validate moodle_username variable
-    - include_tasks: ../../tasks/validator/username-regex.yaml
-      vars:
-        username_var: "{{ moodle_username }}"
-
-    # Validate moodle_email variable
-    - include_tasks: ../../tasks/validator/email-regex.yaml
-      vars:
-        email_var: "{{ moodle_email }}"
-
     # docker install
     - include_tasks: docker-install.yaml
 
-    - include_tasks: ../../tasks/expose-variable.yaml
-      vars:
-        text: |
-          Login
-          Username: {{ moodle_username }}
-          Password: {{ app_secret }}
-        credentials:
-          username: "{{ moodle_username }}"
-          password: "{{ app_secret }}"
+    # - include_tasks: ../../tasks/expose-variable.yaml
+    #   vars:
+    #     text: |
+    #       Login
+    #       Username: {{ moodle_username }}
+    #       Password: {{ app_secret }}
+    #     credentials:
+    #       username: "{{ moodle_username }}"
+    #       password: "{{ app_secret }}"

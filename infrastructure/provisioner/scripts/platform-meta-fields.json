@@ -69,5 +69,8 @@
     "authentik": [
         "domain",
         "admin_email"
+    ],
+    "mautic": [
+        "domain"
     ]
 }
