@@ -8,9 +8,11 @@ import (
 )
 
 type config struct {
+	// LDAP Auth
 	LDAP_AUTH          bool   `env:"LDAP_AUTH" envDefault:"false"`
 	LDAP_SERVER_URL    string `env:"LDAP_SERVER_URL"`
 	LDAP_BIND_TEMPLATE string `env:"LDAP_BIND_TEMPLATE"`
+
 	// DB
 	DB_TYPE        string `env:"DB_TYPE"`
 	DB_PG_HOST     string `env:"DB_PG_HOST"`
@@ -27,6 +29,11 @@ type config struct {
 
 	// Redis
 	REDIS_URL string `env:"REDIS_URL,required"`
+
+	// Proxmox
+	PROXMOX_API_URL  string `env:"PROXMOX_API_URL,required"`
+	PROXMOX_USERNAME string `env:"PROXMOX_USERNAME,required"`
+	PROXMOX_PASSWORD string `env:"PROXMOX_PASSWORD,required"`
 }
 
 var Config config

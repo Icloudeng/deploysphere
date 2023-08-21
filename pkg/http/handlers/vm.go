@@ -8,6 +8,7 @@ import (
 	"smatflow/platform-installer/pkg/http/validators"
 	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/resources/jobs"
+	"smatflow/platform-installer/pkg/resources/proxmox"
 	"smatflow/platform-installer/pkg/resources/terraform"
 	"smatflow/platform-installer/pkg/structs"
 
@@ -55,6 +56,31 @@ func (vmHandler) CreateVm(c *gin.Context) {
 			})
 			return
 		}
+	}
+
+	// Check if VM Id doesn't exist
+	if json.Vm.Vmid != 0 {
+		if exists := proxmox.VmQemuIDExists(json.Vm.Vmid); exists {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": "VM ID already exists !",
+			})
+
+			return
+		}
+	}
+
+	// If Target Node is set to auto,
+	// then selected automatic node based on resourse Availability
+	if json.Vm.TargetNode == "auto" {
+		nodeStatus, err := proxmox.SelectNodeWithMostResources()
+		if err != nil || nodeStatus == nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": "No enough proxmox resources",
+			})
+			return
+		}
+
+		json.Vm.TargetNode = nodeStatus.Node
 	}
 
 	task := jobs.ResourcesJob{
