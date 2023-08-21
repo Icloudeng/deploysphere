@@ -48,7 +48,7 @@
         "protocol": "http"
     },
     "authentik": {
-        "port": 3090,
+        "port": 9000,
         "protocol": "http"
     }
 }
