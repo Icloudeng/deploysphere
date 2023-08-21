@@ -44,8 +44,8 @@
       vars:
         text: |
           Login
-          Username={{ joomla_username }}
-          Password={{ app_secret }}
+          Username: {{ joomla_username }}
+          Password: {{ app_secret }}
         credentials:
           username: "{{ joomla_username }}"
           password: "{{ app_secret }}"

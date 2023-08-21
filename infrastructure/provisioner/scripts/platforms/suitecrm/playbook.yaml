@@ -43,8 +43,8 @@
       vars:
         text: |
           Login
-          Username={{ suitecrm_username }}
-          Password={{ app_secret }}
+          Username: {{ suitecrm_username }}
+          Password: {{ app_secret }}
 
         credentials:
           username: "{{ suitecrm_username }}"

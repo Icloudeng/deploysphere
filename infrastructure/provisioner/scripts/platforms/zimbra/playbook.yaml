@@ -46,8 +46,8 @@
       vars:
         text: |
           Login
-          Username=admin
-          Password={{ app_secret }}
+          Username: admin
+          Password: {{ app_secret }}
 
         credentials:
           username: "admin"
