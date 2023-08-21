@@ -1,0 +1,47 @@
+import puppeteer from "puppeteer";
+
+const baseUrl = "http://{{ vm_ip }}:9000";
+const ADMIN_EMAIL = "{{ admin_email }}";
+const ADMIN_PASSWORD = "{{ app_secret }}";
+
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+  });
+
+  const page = await browser.newPage();
+
+  // Navigate the page to a URL
+  await page.goto(baseUrl + "/if/flow/initial-setup/");
+
+  // Set screen size
+  await page.setViewport({ width: 1200, height: 1024 });
+
+  /**
+   * ===========================
+   * Authentik Initial Setup
+   */
+  // EMAIL
+  const lemail = await page.waitForSelector(".pf-c-form input[name=email]");
+  await lemail.type(ADMIN_EMAIL);
+
+  //   PASSWORD
+  const password = await page.waitForSelector(
+    ".pf-c-form input[name=password]"
+  );
+  await password.type(ADMIN_PASSWORD);
+
+  //   PASSWORD REPEAT
+  const password_repeat = await page.waitForSelector(
+    ".pf-c-form input[name=password_repeat]"
+  );
+  await password_repeat.type(ADMIN_PASSWORD);
+
+  const submitBtn = await page.waitForSelector(
+    ".pf-c-form button[type=submit]"
+  );
+  await Promise.all([page.waitForNavigation(), submitBtn.click()]);
+
+  await browser.close();
+})();

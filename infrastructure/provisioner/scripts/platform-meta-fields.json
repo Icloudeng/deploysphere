@@ -67,6 +67,7 @@
         "domain"
     ],
     "authentik": [
-        "domain"
+        "domain",
+        "admin_email"
     ]
 }

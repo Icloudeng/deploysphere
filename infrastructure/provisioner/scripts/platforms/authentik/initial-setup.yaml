@@ -1,0 +1,25 @@
+# Variable output (puppeteer_folder)
+- include_tasks: ../../tasks/puppeteer-localhost.yaml
+
+- name: Puppeteer Files
+  set_fact:
+    authentik_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-authentik-initial-setup.ts"
+
+- name: "Copy authentik-initial-setup.ts template"
+  become: false
+  template:
+    src: puppeteer/authentik-initial-setup.ts.j2
+    dest: "{{ authentik_file }}"
+    force: yes
+
+- name: "Run authentik-initial-setup.ts"
+  become: false
+  command: "pnpm ts-node {{ authentik_file }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+
+- name: "Remove {{ authentik_file }}"
+  become: false
+  command: "rm -rf {{ authentik_file }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
