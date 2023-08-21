@@ -48,7 +48,7 @@
       args:
         chdir: "{{ project_path }}"
 
-    - name: Restart SuiteCRM using Docker Compose
+    - name: Restart SuiteCRM using Dkr Compose
       become: true
       command: "docker compose up -d --force-recreate"
       args:

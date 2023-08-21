@@ -17,7 +17,7 @@
   set_fact:
     ldap_component_parsed_json: "{{ ldap_component_data.content | b64decode | from_json }}"
 
-- name: Test Docker service UP
+- name: Test Dkr service UP
   command: docker compose exec keycloak ls
   args:
     chdir: "{{ project_path }}"

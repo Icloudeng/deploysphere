@@ -19,7 +19,7 @@
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
 
-    - name: Extract Variable Docker install variable
+    - name: Extract Variable Dkr install variable
       set_fact:
         docker_install: "{{ decoded_metadata | json_query('docker_install') }}"
       ignore_errors: true

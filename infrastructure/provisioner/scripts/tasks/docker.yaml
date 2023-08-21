@@ -1,5 +1,5 @@
 ---
-- name: Install Docker dependencies
+- name: Install Dkr dependencies
   become: true
   package:
     name: "{{ item }}"
@@ -16,19 +16,19 @@
     - python3-setuptools
     - lsb-release
 
-- name: Add Docker GPG key
+- name: Add Dkr GPG key
   become: true
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
-- name: Add Docker repository
+- name: Add Dkr repository
   become: true
   apt_repository:
     repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
     state: present
 
-- name: Docker | Install
+- name: Dkr | Install
   apt:
     name:
       - docker-ce
@@ -38,11 +38,11 @@
     state: present
     update_cache: true
 
-- name: Docker | Install Docker Module for Python
+- name: Dkr | Install Dkr Module for Python
   pip:
     name: docker
 
-- name: Docker | Add group user
+- name: Dkr | Add group user
   user:
     name: "{{ ansible_user }}"
     groups: docker

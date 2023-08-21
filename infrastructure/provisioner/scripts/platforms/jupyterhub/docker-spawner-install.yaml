@@ -4,7 +4,7 @@
 # Install Docker
 - include_tasks: ../../tasks/docker.yaml
 
-- name: Copy docker-spawner items to remote
+- name: Copy Dkr-spawner items to remote
   copy:
     src: "docker-spawner/{{ item }}"
     dest: "{{ project_path }}/{{ item }}"
@@ -13,7 +13,7 @@
     - ".dockerignore"
     - "Dockerfile.jupyterhub"
 
-- name: "Copy docker-spawner items template"
+- name: "Copy Dkr Spawner items template"
   template:
     src: "docker-spawner/{{ item }}.j2"
     dest: "{{ project_path }}/{{ item }}"
@@ -22,7 +22,7 @@
     - "docker-compose.yml"
     - "jupyterhub_config.py"
 
-- name: Build the JupyterHub Docker image
+- name: Build the JupyterHub Dkr image
   command: "docker-compose build"
   args:
     chdir: "{{ project_path }}"
