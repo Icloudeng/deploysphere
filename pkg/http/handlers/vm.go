@@ -29,7 +29,7 @@ var Vm vmHandler
 func (vmHandler) CreateVm(c *gin.Context) {
 	json := vmBody{
 		Vm:       structs.NewProxmoxVmQemu(""),
-		Platform: &structs.Platform{Metadata: &map[string]interface{}{}},
+		Platform: &structs.Platform{Metadata: map[string]interface{}{}},
 	}
 
 	if err := c.ShouldBindJSON(&json); err != nil {

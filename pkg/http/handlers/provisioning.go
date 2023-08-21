@@ -21,7 +21,7 @@ var Provisioning provisioningHandler
 func (provisioningHandler) CreatePlatformProvisioning(c *gin.Context) {
 	body := &structs.Provisioning{
 		Platform: &structs.Platform{
-			Metadata: &map[string]interface{}{},
+			Metadata: map[string]interface{}{},
 		},
 	}
 
@@ -65,7 +65,7 @@ func (provisioningHandler) CreatePlatformProvisioning(c *gin.Context) {
 func (provisioningHandler) CreateConfigurationProvisioning(c *gin.Context) {
 	body := &structs.Provisioning{
 		Platform: &structs.Platform{
-			Metadata: &map[string]interface{}{},
+			Metadata: map[string]interface{}{},
 		},
 	}
 

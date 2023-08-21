@@ -41,12 +41,21 @@ please use a different resource reference name or use PUT method to update resou
 func (resourcesHandler) CreateResources(c *gin.Context) {
 	json := resourcesBody{
 		Vm:       structs.NewProxmoxVmQemu(""),
-		Platform: &structs.Platform{Metadata: &map[string]interface{}{}},
+		Platform: &structs.Platform{Metadata: map[string]interface{}{}},
 	}
 
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	// If domain key doesn't exist in metadata platform
+	// then auto fill with the passed domain resource
+	metadata := json.Platform.Metadata
+	_, domain_exists := metadata["domain"]
+	if !domain_exists {
+		domain := fmt.Sprintf("%s.%s", json.Domain.Subdomain, json.Domain.Zone)
+		json.Platform.Metadata["domain"] = domain
 	}
 
 	// Chech if platform the password corresponse to an existing platform folder

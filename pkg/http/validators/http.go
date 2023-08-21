@@ -24,7 +24,7 @@ func ValidatePlatformMetadata(c *gin.Context, platform structs.Platform) bool {
 		meta := structs.PlatformMetadataFields{}
 		json.Unmarshal(requiredFields, &meta)
 
-		metadata := *platform.Metadata
+		metadata := platform.Metadata
 
 		if values, found := meta[platform.Name]; found {
 			for _, val := range values {
@@ -55,7 +55,7 @@ func ValidateConfigurationMetadata(c *gin.Context, platform structs.Platform) bo
 		meta := structs.ConfigurationMetadataFields{}
 		json.Unmarshal(requiredFields, &meta)
 
-		metadata := *platform.Metadata
+		metadata := platform.Metadata
 
 		if values, found := meta[platform.Name]; found {
 			// Validate fields
