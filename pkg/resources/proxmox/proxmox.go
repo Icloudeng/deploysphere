@@ -58,7 +58,6 @@ func SelectNodeWithMostResources() (*proxmox.NodeStatus, error) {
 
 	for _, node := range nodes {
 		if ram := node.MaxMem - node.Mem; ram > minRam {
-			fmt.Println("RAMMMMMMMMM", node.Node, ram)
 			selectedNode = node
 			minRam = ram
 		}
