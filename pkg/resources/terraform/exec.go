@@ -32,33 +32,28 @@ func init() {
 
 	execPath, err := installer.Install(context.Background())
 	if err != nil {
-		log.Fatalf("error installing Terraform: %s", err)
+		log.Fatalf("Error installing Terraform: %s", err)
 	}
 
 	tf, err := tfexec.NewTerraform(filesystem.TerraformDir, execPath)
 	if err != nil {
-		log.Fatalf("error running NewTerraform: %s", err)
+		log.Fatalf("Error running NewTerraform: %s", err)
 	}
 
 	err = tf.Init(context.Background(), tfexec.Upgrade(true))
 	if err != nil {
-		log.Fatalf("error running Init: %s", err)
+		log.Fatalf("Error running Init: %s", err)
 	}
 
 	Exec.tk = tf
 }
 
 func (t *exec) Plan(notifier bool) error {
-	tf := t.tk
-	ctx := context.Background()
-
 	options := []tfexec.PlanOption{
 		tfexec.VarFile("variables.tfvars"),
 	}
 
-	state, err := tf.Plan(ctx, options...)
-	if err != nil {
-
+	if state, err := t.tk.Plan(context.Background(), options...); err != nil {
 		if notifier {
 			go pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 				Status:  "failed",
@@ -69,18 +64,15 @@ func (t *exec) Plan(notifier bool) error {
 
 		log.Printf("error running Show: %s", err.Error())
 		return err
+	} else {
+		log.Printf("Terraform plan state: %v", state)
 	}
-
-	log.Printf("Terraform plan state: %v", state)
 
 	return nil
 }
 
 func (t *exec) Show() *tfjson.StateModule {
-	tf := t.tk
-	ctx := context.Background()
-
-	state, err := tf.Show(ctx)
+	state, err := t.tk.Show(context.Background())
 
 	if err != nil || state == nil || state.Values == nil {
 		return nil
@@ -98,8 +90,7 @@ func (t *exec) Apply(notifier bool) error {
 		tfexec.VarFile("variables.tfvars"),
 	}
 
-	err := t.tk.Apply(context.Background(), options...)
-	if err != nil {
+	if err := t.tk.Apply(context.Background(), options...); err != nil {
 		if notifier {
 			go pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{
 				Status:  "failed",
