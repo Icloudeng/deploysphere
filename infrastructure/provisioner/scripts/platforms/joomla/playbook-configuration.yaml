@@ -7,31 +7,11 @@
     oidc_plugin_url: "https://prod-marketing-site.s3.amazonaws.com/plugins/joomla/miniorange-joomla-oauth-client-free-plugin.zip"
 
   tasks:
-    - name: Decode base64 platform_metadata variable
-      set_fact:
-        decoded_metadata: "{{ platform_metadata | b64decode }}"
+    - include_tasks: ../../tasks/variables.yaml
 
     - name: Extract Required Variables
       set_fact:
-        domain: "{{ decoded_metadata | json_query('domain') }}"
-        admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
-        admin_password: "{{ decoded_metadata | json_query('admin_password') }}"
-        configuration: "{{ decoded_metadata | json_query('configuration') }}"
+        configuration_type: "{{ decoded_metadata | json_query('configuration_type') }}"
 
-    # Validate domain variable
-    - include_tasks: ../../tasks/validator/url-ws-regex.yaml
-      vars:
-        url_var: "{{ item }}"
-      loop:
-        - "{{ domain }}"
-        - "{{ configuration['keycloak_url'] }}"
-
-    - import_tasks: sso-configuration.yaml
-
-    - include_tasks: ../../tasks/expose-variable.yaml
-      vars:
-        text: |
-          Configuration Type: Keycloak SSO
-
-          SSO Url
-          Url={{ sso_url }}
+    - include_tasks: configuration/keycloak-sso.yaml
+      when: configuration_type == "keycloak_sso"
