@@ -61,3 +61,8 @@
   shell: "rm -rf exports/*"
   args:
     chdir: "{{ project_path }}"
+
+- include_tasks: "{{ scripts_dir }}/tasks/expose-variable.yaml"
+  vars:
+    text: |
+      Configuration Type: LDAP

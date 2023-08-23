@@ -7,7 +7,7 @@
     configuration: "{{ decoded_metadata | json_query('configuration') }}"
 
 # Validate domain variables
-- include_tasks: "{{ scripts_dir  }}/tasks/validator/domain-regex.yaml"
+- include_tasks: "{{ scripts_dir }}/tasks/validator/domain-regex.yaml"
   vars:
     domain_var: "{{ item }}"
   loop:
@@ -15,7 +15,7 @@
     - "{{ zimbra_domain }}"
 
 # Validate admin_username variables
-- include_tasks: "{{ scripts_dir  }}/tasks/validator/username-regex.yaml"
+- include_tasks: "{{ scripts_dir }}/tasks/validator/username-regex.yaml"
   vars:
     username_var: "{{ admin_username }}"
 
@@ -37,7 +37,7 @@
   become_user: zimbra
   command: "zmctl restart"
 
-- include_tasks: "{{ scripts_dir  }}/tasks/expose-variable.yaml"
+- include_tasks: "{{ scripts_dir }}/tasks/expose-variable.yaml"
   vars:
     text: |
       Configuration Type: LDAP
