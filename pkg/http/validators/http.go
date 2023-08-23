@@ -60,9 +60,9 @@ func ValidateConfigurationMetadata(c *gin.Context, platform structs.Platform) bo
 
 			// Check Configuration type provided
 			configuration_type, exists := request_metadata["configuration_type"]
-			config_type, err := configuration_type.(string)
+			config_type, valid := configuration_type.(string)
 
-			if !exists || err {
+			if !exists || !valid {
 				c.AbortWithStatusJSON(
 					http.StatusBadRequest,
 					gin.H{"error": "Configuration Type must be provided"},
