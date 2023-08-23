@@ -1,79 +1,93 @@
 {
     "zimbra": {
-        "fields": [
-            "admin_username",
-            "admin_password",
-            "zimbra_fqdn",
-            "zimbra_domain"
-        ],
-        "configuration": [
-            "ldap_server_url",
-            "ldap_filter_username",
-            "ldap_search_base",
-            "ldap_bind_dn",
-            "ldap_bind_password"
-        ]
+        "ldap": {
+            "fields": [
+                "admin_username",
+                "admin_password",
+                "zimbra_fqdn",
+                "zimbra_domain"
+            ],
+            "configuration": [
+                "ldap_server_url",
+                "ldap_filter_username",
+                "ldap_search_base",
+                "ldap_bind_dn",
+                "ldap_bind_password"
+            ]
+        }
     },
     "keycloak": {
-        "fields": [],
-        "configuration": [
-            "ldap_server_url",
-            "ldap_search_base",
-            "ldap_bind_dn",
-            "ldap_bind_password"
-        ]
+        "ldap": {
+            "fields": [],
+            "configuration": [
+                "ldap_server_url",
+                "ldap_search_base",
+                "ldap_bind_dn",
+                "ldap_bind_password"
+            ]
+        }
     },
     "suitecrm": {
-        "fields": [],
-        "configuration": [
-            "ldap_server_host",
-            "ldap_server_port",
-            "ldap_search_base",
-            "ldap_bind_dn",
-            "ldap_bind_password"
-        ]
+        "ldap": {
+            "fields": [],
+            "configuration": [
+                "ldap_server_host",
+                "ldap_server_port",
+                "ldap_search_base",
+                "ldap_bind_dn",
+                "ldap_bind_password"
+            ]
+        }
     },
     "moodle": {
-        "fields": [
-            "admin_username",
-            "admin_password"
-        ],
-        "configuration": [
-            "keycloak_url",
-            "keycloak_admin",
-            "keycloak_password"
-        ]
+        "keycloak_sso": {
+            "fields": [
+                "admin_username",
+                "admin_password"
+            ],
+            "configuration": [
+                "keycloak_url",
+                "keycloak_admin",
+                "keycloak_password"
+            ]
+        }
     },
     "joomla": {
-        "fields": [
-            "admin_username",
-            "admin_password"
-        ],
-        "configuration": [
-            "keycloak_url",
-            "keycloak_admin",
-            "keycloak_password"
-        ]
+        "keycloak_sso": {
+            "fields": [
+                "admin_username",
+                "admin_password"
+            ],
+            "configuration": [
+                "keycloak_url",
+                "keycloak_admin",
+                "keycloak_password"
+            ]
+        }
     },
     "jupyterhub": {
-        "fields": [
-            "domain"
-        ],
-        "configuration": [
-            "keycloak_url",
-            "keycloak_admin",
-            "keycloak_password"
-        ]
+        "keycloak_sso": {
+            "fields": [
+                "domain"
+            ],
+            "configuration": [
+                "keycloak_url",
+                "keycloak_admin",
+                "keycloak_password"
+            ]
+        }
     },
     "nextcloud": {
-        "fields": [
-            "admin_username",
-            "admin_password"
-        ],
-        "configuration": [
-            "keycloak_url",
-            "keycloak_admin",
-            "keycloak_password"
-        ]
+        "keycloak_sso": {
+            "fields": [
+                "admin_username",
+                "admin_password"
+            ],
+            "configuration": [
+                "keycloak_url",
+                "keycloak_admin",
+                "keycloak_password"
+            ]
+        }
     }
 }

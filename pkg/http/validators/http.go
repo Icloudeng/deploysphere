@@ -20,9 +20,9 @@ func ValidatePlatformMetadata(c *gin.Context, platform structs.Platform) bool {
 		}
 
 		// Check if platform meta fields exist
-		requiredFields := filesystem.ReadPlatformMetadataFields()
+		required_fields := filesystem.ReadPlatformMetadataFields()
 		meta := structs.PlatformMetadataFields{}
-		json.Unmarshal(requiredFields, &meta)
+		json.Unmarshal(required_fields, &meta)
 
 		metadata := platform.Metadata
 
@@ -51,16 +51,37 @@ func ValidateConfigurationMetadata(c *gin.Context, platform structs.Platform) bo
 		}
 
 		// Check if platform meta fields exist
-		requiredFields := filesystem.ReadConfigurationMetadataFields()
-		meta := structs.ConfigurationMetadataFields{}
-		json.Unmarshal(requiredFields, &meta)
+		required_fields := filesystem.ReadConfigurationMetadataFields()
+		metadata_struct := structs.ConfigurationMetadataFields{}
+		json.Unmarshal(required_fields, &metadata_struct)
 
-		metadata := platform.Metadata
+		if platform_config, found := metadata_struct[platform.Name]; found {
+			request_metadata := platform.Metadata
 
-		if values, found := meta[platform.Name]; found {
-			// Validate fields
-			for _, val := range values.Fields {
-				if _, exists := metadata[val]; !exists {
+			// Check Configuration type provided
+			configuration_type, exists := request_metadata["configuration_type"]
+			config_type, err := configuration_type.(string)
+
+			if !exists || err {
+				c.AbortWithStatusJSON(
+					http.StatusBadRequest,
+					gin.H{"error": "Configuration Type must be provided"},
+				)
+				return false
+			}
+
+			object, exists := platform_config[config_type]
+			if !exists {
+				c.AbortWithStatusJSON(
+					http.StatusBadRequest,
+					gin.H{"error": "Unable to find the corresponding configuration type"},
+				)
+				return false
+			}
+
+			// Validate platform fields
+			for _, val := range object.Fields {
+				if _, exists := request_metadata[val]; !exists {
 					c.AbortWithStatusJSON(
 						http.StatusBadRequest,
 						gin.H{"error": fmt.Sprintf("Platform (%s), Metadata field (%s) required", platform.Name, val)},
@@ -70,11 +91,9 @@ func ValidateConfigurationMetadata(c *gin.Context, platform structs.Platform) bo
 			}
 
 			// Validate Configuration Fields
-			config_type, exists := metadata["configuration"]
-
+			configuration, exists := request_metadata["configuration"]
 			if exists {
-				config_values, ok := config_type.(map[string]interface{})
-
+				config_values, ok := configuration.(map[string]interface{})
 				if !ok {
 					c.AbortWithStatusJSON(
 						http.StatusBadRequest,
@@ -83,7 +102,7 @@ func ValidateConfigurationMetadata(c *gin.Context, platform structs.Platform) bo
 					return false
 				}
 
-				for _, val := range values.Configuration {
+				for _, val := range object.Configuration {
 					if _, exists := config_values[val]; !exists {
 						c.AbortWithStatusJSON(
 							http.StatusBadRequest,

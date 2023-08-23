@@ -7,7 +7,7 @@ type Platform struct {
 
 type PlatformMetadataFields map[string][]string
 
-type ConfigurationMetadataFields map[string]struct {
+type ConfigurationMetadataFields map[string]map[string]struct {
 	Fields        []string `json:"fields"`
 	Configuration []string `json:"configuration"`
 }
