@@ -4,9 +4,7 @@
     upgrade: true
     update_cache: yes
 
-- name: Root path
-  set_fact:
-    project_path: "/home/{{ ansible_user }}/projects/{{ platform_name }}"
+- include_tasks: variables.yaml
 
 - name: Create root path
   become: false
@@ -14,14 +12,6 @@
     state: directory
     path: "{{ project_path }}"
     recurse: yes
-
-- name: Decode base64 platform_metadata variable
-  set_fact:
-    scripts_dir: "{{ playbook_dir | dirname | dirname }}"
-
-- name: Decode base64 platform_metadata variable
-  set_fact:
-    decoded_metadata: "{{ platform_metadata | b64decode }}"
 
 - name: "Var | Debug decoded_metadata"
   debug:
@@ -48,10 +38,6 @@
     var: vm_ip
 
 # DB or File secret
-- name: Fact | App Secret
-  set_fact:
-    app_secret: "{{ random_secret }}"
-
 - name: App Secret | Check if file exists
   stat:
     path: "{{ project_path }}/.app_secret"

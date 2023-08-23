@@ -1,0 +1,15 @@
+- name: Root path
+  set_fact:
+    project_path: "/home/{{ ansible_user }}/projects/{{ platform_name }}"
+
+- name: Decode base64 platform_metadata variable
+  set_fact:
+    scripts_dir: "{{ playbook_dir | dirname | dirname }}"
+
+- name: Decode base64 platform_metadata variable
+  set_fact:
+    decoded_metadata: "{{ platform_metadata | b64decode }}"
+
+- name: Fact | App Secret
+  set_fact:
+    app_secret: "{{ random_secret }}"

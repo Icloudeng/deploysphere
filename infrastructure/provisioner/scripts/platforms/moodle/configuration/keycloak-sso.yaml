@@ -1,0 +1,17 @@
+- name: Extract Required Variables
+  set_fact:
+    admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
+    admin_password: "{{ decoded_metadata | json_query('admin_password') }}"
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+# Validate domain variable
+- import_tasks: "{{ scripts_dir }}/tasks/validator/url-ws-regex.yaml"
+  vars:
+    url_var: "{{ configuration['keycloak_url'] }}"
+
+- import_tasks: keycloak-sso-configuration.yaml
+
+- include_tasks: "{{ scripts_dir }}/tasks/expose-variable.yaml"
+  vars:
+    text: |
+      Configuration Type: Keycloak SSO

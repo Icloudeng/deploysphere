@@ -8,24 +8,11 @@
     oidc_plugin_url: "https://moodle.org/plugins/download.php/29296/{{ oidc_plugin_name }}"
 
   tasks:
-    - name: Decode base64 platform_metadata variable
-      set_fact:
-        decoded_metadata: "{{ platform_metadata | b64decode }}"
+    - include_tasks: ../../tasks/variables.yaml
 
     - name: Extract Required Variables
       set_fact:
-        admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
-        admin_password: "{{ decoded_metadata | json_query('admin_password') }}"
-        configuration: "{{ decoded_metadata | json_query('configuration') }}"
+        configuration_type: "{{ decoded_metadata | json_query('configuration_type') }}"
 
-    # Validate domain variable
-    - import_tasks: ../../tasks/validator/url-ws-regex.yaml
-      vars:
-        url_var: "{{ configuration['keycloak_url'] }}"
-
-    - import_tasks: sso-configuration.yaml
-
-    - include_tasks: ../../tasks/expose-variable.yaml
-      vars:
-        text: |
-          Configuration Type: Keycloak SSO
+    - include_tasks: configuration/keycloak-sso.yaml
+      when: configuration_type == "keycloak_sso"
