@@ -1,0 +1,109 @@
+import puppeteer from "puppeteer";
+import { log, wait } from "./utils";
+
+const baseUrl = "{{ authentik_url }}";
+const ADMIN_UID = "{{ authentik_admin }}";
+const ADMIN_PASSWORD = "{{ authentik_password }}";
+
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+  });
+
+  const page = await browser.newPage();
+
+  // Set screen size
+  await page.setViewport({ width: 1200, height: 1024 });
+
+  // Navigate the page to a URL
+  await Promise.all([page.goto(baseUrl), page.waitForNavigation()]);
+
+  await page.waitForNetworkIdle();
+
+  /**
+   * ===========================
+   * Authentik Login
+   */
+  const inputSelectorValue = async ({
+    input_selector,
+    input_value,
+    form_element,
+  }: {
+    input_selector: string;
+    input_value: string;
+    form_element: string;
+  }) => {
+    const inputHandle = await page.evaluate(
+      (input_selector, input_value, form_element) => {
+        const inputs: NodeListOf<Element> | Element[] = document
+          .querySelector("ak-flow-executor")
+          .shadowRoot.querySelector(form_element)
+          .shadowRoot.querySelectorAll("ak-form-element");
+
+        Array.from(inputs).forEach((element) => {
+          const input: HTMLInputElement = element.querySelector(input_selector);
+
+          if (input) {
+            input.value = input_value;
+          }
+        });
+      },
+      input_selector,
+      input_value,
+      form_element
+    );
+
+    return inputHandle;
+  };
+
+  // EMAIL
+  await inputSelectorValue({
+    input_selector: "input[name=uidField]",
+    input_value: ADMIN_UID,
+    form_element: "ak-stage-identification",
+  });
+
+  await Promise.all([
+    page.waitForNetworkIdle(),
+    page.evaluate(() => {
+      document
+        .querySelector("ak-flow-executor")
+        .shadowRoot.querySelector("ak-stage-identification")
+        .shadowRoot.querySelector<HTMLButtonElement>("button[type=submit]")
+        .click();
+    }),
+  ]);
+
+  await wait(1);
+
+  //   PASSWORD
+  await inputSelectorValue({
+    input_selector: "input[name=password]",
+    input_value: ADMIN_PASSWORD,
+    form_element: "ak-stage-password",
+  });
+
+  await Promise.all([
+    page.waitForNavigation(),
+    page.evaluate(() => {
+      document
+        .querySelector("ak-flow-executor")
+        .shadowRoot.querySelector("ak-stage-password")
+        .shadowRoot.querySelector<HTMLButtonElement>("button[type=submit]")
+        .click();
+    }),
+  ]);
+
+  const cookies = await page.cookies();
+  const cookies_object = cookies.reduce((acc, value) => {
+    if (["authentik_session", "authentik_csrf"].includes(value.name)) {
+      acc[value.name] = value.value;
+    }
+    return acc;
+  }, {});
+
+  log(Buffer.from(JSON.stringify(cookies_object)).toString("base64"));
+
+  await browser.close();
+})();
