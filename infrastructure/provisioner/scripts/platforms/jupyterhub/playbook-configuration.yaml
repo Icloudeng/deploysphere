@@ -5,45 +5,15 @@
   gather_facts: true
 
   tasks:
-    - name: Decode base64 platform_metadata variable
-      set_fact:
-        decoded_metadata: "{{ platform_metadata | b64decode }}"
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path)
+    - include_tasks: ../../tasks/playbook-init.yaml
 
     - name: Extract Required Variables
       set_fact:
-        domain: "{{ decoded_metadata | json_query('domain') }}"
-        configuration: "{{ decoded_metadata | json_query('configuration') }}"
+        configuration_type: "{{ decoded_metadata | json_query('configuration_type') }}"
 
-    # Validate domain variable
-    - include_tasks: ../../tasks/validator/url-ws-regex.yaml
-      vars:
-        url_var: "{{ item }}"
-      loop:
-        - "{{ domain }}"
-        - "{{ configuration['keycloak_url'] }}"
-
-    # client_secret
-    - import_tasks: keycloak-configuration.yaml
-      delegate_to: 127.0.0.1
-
-    - name: "Authenticate Config"
-      become: true
-      command: "sudo tljh-config set {{ item }}"
-      loop:
-        - "auth.GenericOAuthenticator.client_id '{{ keycloak_client_id }}'"
-        - "auth.GenericOAuthenticator.client_secret '{{ client_secret }}'"
-        - "auth.GenericOAuthenticator.oauth_callback_url '{{ domain }}/hub/oauth_callback'"
-        - "auth.GenericOAuthenticator.authorize_url '{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/auth'"
-        - "auth.GenericOAuthenticator.token_url '{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/token'"
-        - "auth.GenericOAuthenticator.userdata_url '{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/userinfo'"
-        - "auth.GenericOAuthenticator.login_service 'keycloak'"
-        - "auth.GenericOAuthenticator.username_key 'preferred_username'"
-        - "auth.GenericOAuthenticator.userdata_params.state 'state'"
-        - "auth.GenericOAuthenticator.scope 'openid'"
-        - "auth.type 'generic-oauth'"
-
-    - name: Apply the changes by restarting JupyterHub.
-      become: true
-      shell: "sudo tljh-config reload"
-      args:
-        executable: /bin/bash
+    - include_tasks: configuration/keycloak-sso.yaml
+      when: configuration_type == "keycloak_sso"

@@ -1,5 +1,5 @@
 # Variable output (puppeteer_folder)
-- include_tasks: ../../tasks/puppeteer-localhost.yaml
+- include_tasks: "{{ scripts_dir }}/tasks/puppeteer-localhost.yaml"
 
 - name: keycloak-client file
   set_fact:
@@ -8,7 +8,7 @@
 - name: "Copy keycloak-client.ts template"
   become: false
   template:
-    src: ../../templates/puppeteer/keycloak-client.ts.j2
+    src: "{{ scripts_dir }}/templates/puppeteer/keycloak-client.ts.j2"
     dest: "{{ keycloak_client_file }}"
     force: yes
   vars:
