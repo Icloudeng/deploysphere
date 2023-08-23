@@ -1,0 +1,43 @@
+- name: Extract Required Variables
+  set_fact:
+    admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
+    admin_password: "{{ decoded_metadata | json_query('admin_password') }}"
+    zimbra_fqdn: "{{ decoded_metadata | json_query('zimbra_fqdn') }}"
+    zimbra_domain: "{{ decoded_metadata | json_query('zimbra_domain') }}"
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+# Validate domain variables
+- include_tasks: "{{ scripts_dir  }}/tasks/validator/domain-regex.yaml"
+  vars:
+    domain_var: "{{ item }}"
+  loop:
+    - "{{ zimbra_fqdn }}"
+    - "{{ zimbra_domain }}"
+
+# Validate admin_username variables
+- include_tasks: "{{ scripts_dir  }}/tasks/validator/username-regex.yaml"
+  vars:
+    username_var: "{{ admin_username }}"
+
+- name: Copy Template ldap-auto-provision.txt
+  become: false
+  ansible.builtin.template:
+    src: ldap-auto-provision.txt.j2
+    dest: /tmp/ldap-auto-provision.txt
+
+- name: Run Zimbra ldap auto provision
+  become: false
+  become_user: zimbra
+  command: "zmprov </tmp/autoprovisioning.txt"
+  args:
+    removes: /tmp/ldap-auto-provision.txt
+
+- name: Restart Zimbra
+  become: false
+  become_user: zimbra
+  command: "zmctl restart"
+
+- include_tasks: "{{ scripts_dir  }}/tasks/expose-variable.yaml"
+  vars:
+    text: |
+      Configuration Type: LDAP
