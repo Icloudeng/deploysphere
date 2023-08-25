@@ -30,8 +30,8 @@ if __name__ == '__main__':
     )
 
     if args.credentials:
-        content = extracted_content.replace("\\", "")
         content = '[%s]' % (','.join(extracted_content))
+        content = content.replace("\\", "")
     else:
         content = "\n".join(extracted_content)
 
