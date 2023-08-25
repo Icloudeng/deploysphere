@@ -4,8 +4,7 @@ const baseUrl = "http://{{ vm_ip }}";
 const ADMIN_NAME = "{{ admin_name }}";
 const ADMIN_EMAIL = "{{ admin_email }}";
 const ADMIN_PASSWORD = "{{ app_secret }}";
-const ORGANIZATION_NAME = "default";
-// const ORGANIZATION_NAME = "{{ organization_name }}";
+const ORGANIZATION_NAME = "{{ organization_name }}";
 
 (async () => {
   const browser = await puppeteer.launch({
