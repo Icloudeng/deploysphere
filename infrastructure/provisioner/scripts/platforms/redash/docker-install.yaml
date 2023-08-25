@@ -24,8 +24,8 @@
   args:
     chdir: "{{ project_path }}"
 
-- name: Run redash
-  command: "docker compose up -d"
+- name: Install redash
+  command: docker compose up -d --force-recreate
   args:
     chdir: "{{ project_path }}"
 

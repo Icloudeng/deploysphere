@@ -1,0 +1,34 @@
+- name: Extract Required Variables
+  set_fact:
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+- name: Check if .env the file exists
+  stat:
+    path: "{{ project_path }}/.env"
+  register: file_info
+
+- name: Assert that the .env file exists
+  assert:
+    that:
+      - file_info.stat.exists
+    fail_msg: "The file does not exist."
+
+- name: Insert/Update HTML surrounded by custom markers after REDASH_DATABASE_URL line
+  ansible.builtin.blockinfile:
+    path: "{{ project_path }}/.env"
+    insertafter: "(?m)REDASH_DATABASE_URL.*"
+    block: |
+      REDASH_LDAP_LOGIN_ENABLED=true
+      REDASH_LDAP_URL="{{ configuration['ldap_server_url'] }}"
+      REDASH_LDAP_BIND_DN="{{ configuration['ldap_bind_dn'] }}"
+      REDASH_LDAP_BIND_DN_PASSWORD="{{ configuration['ldap_bind_password'] }}"
+      REDASH_LDAP_DISPLAY_NAME_KEY=displayName
+      REDASH_LDAP_EMAIL_KEY=mail
+      REDASH_LDAP_CUSTOM_USERNAME_PROMPT="LDAP/AD/SSO username:"
+      REDASH_LDAP_SEARCH_TEMPLATE="(uid=%(username)s)"
+      REDASH_LDAP_SEARCH_DN="{{ configuration['ldap_search_base'] }}"
+
+- name: Reload Redash
+  command: docker compose up -d --force-recreate
+  args:
+    chdir: "{{ project_path }}"
