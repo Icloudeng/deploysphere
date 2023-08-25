@@ -1,3 +1,3 @@
 FROM redash/redash:latest
 
-RUN pip install ldap3
+RUN pip install --user ldap3
