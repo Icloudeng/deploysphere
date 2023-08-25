@@ -75,6 +75,9 @@ logs_publisher="$python_command lib/logs_publisher.py"
 # Publish message to a partical channel
 redis_publisher="$python_command lib/redis_publisher.py"
 
+# Log in file
+logger="$python_command lib/logger.py"
+
 # ############### PYTHON FUNTIONS ###############
 
 # Get admin system email
