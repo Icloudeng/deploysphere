@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     content = "\n".join(extracted_content)
 
-    if args.credentials:
-        content = content.replace("\\", "")
+    # if args.credentials:
+    #     content = content.replace("\\", "")
 
     print(content, end="")
