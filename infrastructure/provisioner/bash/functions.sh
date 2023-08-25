@@ -101,8 +101,7 @@ publish_redis_playbook_details() {
 
         # Publish credentials if not empty
         if [ -n "$exposed_credentials" ]; then
-            $logger --text "$exposed_credentials"
-            $redis_publisher --channel "$channel_publisher-credentials" --message "$(echo $exposed_credentials | base64)" --noencode
+            $redis_publisher --channel "$channel_publisher-credentials" --message "$(echo $exposed_credentials | base64)" --noencode "true"
         fi
 
     fi
