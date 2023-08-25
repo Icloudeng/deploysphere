@@ -11,6 +11,10 @@
     # Playbook init (with decoded_metadata, project_path)
     - include_tasks: ../../tasks/playbook-init.yaml
 
+    - name: Fact | Database Password
+      set_fact:
+        database_password: "{{ app_secret }}"
+
     - name: Extract Required Variables
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
@@ -27,35 +31,7 @@
       vars:
         email_var: "{{ admin_email }}"
 
-    - name: Copy setup.sh
-      ansible.builtin.copy:
-        src: setup.sh
-        dest: "{{ project_path }}/setup.sh"
-        force: yes
-
-    - name: Give the installer executable permissions
-      shell: "chmod u+x setup.sh"
-      args:
-        chdir: "{{ project_path }}"
-
-    - name: Install Redash
-      shell: ./setup.sh
-      args:
-        chdir: "{{ project_path }}"
-        executable: /bin/bash
-        creates: /opt/redash
-
-    - name: Pause play until a URL is reachable from this host
-      ignore_errors: true
-      ansible.builtin.uri:
-        url: "http://127.0.0.1"
-        follow_redirects: none
-        validate_certs: no
-        method: GET
-      register: _result
-      until: _result.status >= 200
-      retries: 30
-      delay: 5
+    - include_tasks: docker-install.yaml
 
     # Account setup
     - import_tasks: account-setup.yaml
