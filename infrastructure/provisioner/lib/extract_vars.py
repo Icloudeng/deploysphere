@@ -29,4 +29,9 @@ if __name__ == '__main__':
         pattern=pattern
     )
 
-    print("\n".join(extracted_content), end="")
+    content = "\n".join(extracted_content)
+
+    if args.credentials:
+        content = content.replace("\\", "")
+
+    print(content, end="")
