@@ -29,7 +29,7 @@ if __name__ == '__main__':
         pattern=pattern
     )
 
-    if args.credentials:
+    if args.credentials and len(extracted_content) > 0:
         content = '[%s]' % (','.join(extracted_content))
         content = content.replace("\\", "")
     else:
