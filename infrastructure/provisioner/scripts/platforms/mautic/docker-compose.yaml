@@ -15,7 +15,7 @@ services:
       - mariadb
     image: mautic/mautic:v4-apache
     volumes:
-      - mautic_data:/var/www/html
+      - "./mautic_data:/var/www/html"
     restart: unless-stopped
     ports:
       - "8880:80"
