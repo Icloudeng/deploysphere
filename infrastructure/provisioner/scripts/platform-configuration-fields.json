@@ -94,8 +94,8 @@
     "nextcloud": {
         "keycloak_sso": {
             "fields": [
-                "admin_username",
-                "admin_password"
+                "nextcloud_admin_username",
+                "nextcloud_admin_password"
             ],
             "configuration": [
                 "keycloak_url",

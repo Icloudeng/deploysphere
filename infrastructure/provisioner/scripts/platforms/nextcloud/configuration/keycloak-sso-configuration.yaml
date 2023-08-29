@@ -1,5 +1,5 @@
 # Variable output (puppeteer_folder)
-- import_tasks: "../../tasks/puppeteer-localhost.yaml"
+- include_tasks: "../../tasks/puppeteer-localhost.yaml"
 
 - name: keycloak-client file
   set_fact:
