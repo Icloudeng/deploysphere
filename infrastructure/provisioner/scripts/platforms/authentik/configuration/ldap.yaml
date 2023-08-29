@@ -1,0 +1,17 @@
+# Variable output (puppeteer_folder)
+- include_tasks: "../../tasks/puppeteer-localhost.yaml"
+
+- name: authentik-client file
+  set_fact:
+    authentik_client_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-authentik.ts"
+
+- name: "Copy authentik-session.ts template"
+  become: false
+  template:
+    src: "{{ scripts_dir }}/templates/puppeteer/authentik-session.ts.j2"
+    dest: "{{ authentik_client_file }}"
+    force: yes
+  vars:
+    authentik_url: "{{ configuration['authentik_url']  }}"
+    authentik_admin: "{{ configuration['authentik_admin']  }}"
+    authentik_password: "{{ configuration['authentik_password']  }}"

@@ -1,8 +1,8 @@
 - name: Extract Required Variables
   set_fact:
-    instance_url: "{{ decoded_metadata | json_query('url') }}"
-    admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
-    admin_password: "{{ decoded_metadata | json_query('admin_password') }}"
+    instance_url: "{{ decoded_metadata | json_query('moodle_url') }}"
+    admin_username: "{{ decoded_metadata | json_query('moodle_admin_username') }}"
+    admin_password: "{{ decoded_metadata | json_query('moodle_admin_password') }}"
     configuration: "{{ decoded_metadata | json_query('configuration') }}"
 
 # Validate domain variable
