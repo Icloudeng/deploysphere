@@ -1,6 +1,6 @@
 - name: Extract Required Variables
   set_fact:
-    domain: "{{ decoded_metadata | json_query('domain') }}"
+    jupyterhub_url: "{{ decoded_metadata | json_query('jupyterhub_url') }}"
     configuration: "{{ decoded_metadata | json_query('configuration') }}"
 
 # Validate domain variable
@@ -8,7 +8,7 @@
   vars:
     url_var: "{{ item }}"
   loop:
-    - "{{ domain }}"
+    - "{{ jupyterhub_url }}"
     - "{{ configuration['keycloak_url'] }}"
 
 # client_secret
@@ -21,7 +21,7 @@
   loop:
     - "auth.GenericOAuthenticator.client_id '{{ keycloak_client_id }}'"
     - "auth.GenericOAuthenticator.client_secret '{{ client_secret }}'"
-    - "auth.GenericOAuthenticator.oauth_callback_url '{{ domain }}/hub/oauth_callback'"
+    - "auth.GenericOAuthenticator.oauth_callback_url '{{ jupyterhub_url }}/hub/oauth_callback'"
     - "auth.GenericOAuthenticator.authorize_url '{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/auth'"
     - "auth.GenericOAuthenticator.token_url '{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/token'"
     - "auth.GenericOAuthenticator.userdata_url '{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/userinfo'"

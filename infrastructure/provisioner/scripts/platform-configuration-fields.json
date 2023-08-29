@@ -82,7 +82,7 @@
     "jupyterhub": {
         "keycloak_sso": {
             "fields": [
-                "domain"
+                "jupyterhub_url"
             ],
             "configuration": [
                 "keycloak_url",
