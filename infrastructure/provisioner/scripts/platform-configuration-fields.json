@@ -68,8 +68,9 @@
     "joomla": {
         "keycloak_sso": {
             "fields": [
-                "admin_username",
-                "admin_password"
+                "joomla_domain",
+                "joomla_admin_username",
+                "joomla_admin_password"
             ],
             "configuration": [
                 "keycloak_url",

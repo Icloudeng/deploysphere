@@ -1,8 +1,8 @@
 - name: Extract Required Variables
   set_fact:
-    domain: "{{ decoded_metadata | json_query('domain') }}"
-    admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
-    admin_password: "{{ decoded_metadata | json_query('admin_password') }}"
+    domain: "{{ decoded_metadata | json_query('joomla_domain') }}"
+    admin_username: "{{ decoded_metadata | json_query('joomla_admin_username') }}"
+    admin_password: "{{ decoded_metadata | json_query('joomla_admin_password') }}"
     configuration: "{{ decoded_metadata | json_query('configuration') }}"
 
 # Validate domain variable
