@@ -1,3 +1,10 @@
+- name: Extract Required Variables
+  set_fact:
+    authentik_url: "{{ decoded_metadata | json_query('authentik_url') }}"
+    authentik_admin: "{{ decoded_metadata | json_query('authentik_admin') }}"
+    authentik_password: "{{ decoded_metadata | json_query('authentik_password') }}"
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
 # Variable output (puppeteer_folder)
 - include_tasks: "../../tasks/puppeteer-localhost.yaml"
 
@@ -12,6 +19,44 @@
     dest: "{{ authentik_client_file }}"
     force: yes
   vars:
-    authentik_url: "{{ configuration['authentik_url']  }}"
-    authentik_admin: "{{ configuration['authentik_admin']  }}"
-    authentik_password: "{{ configuration['authentik_password']  }}"
+    authentik_url: "{{ authentik_url  }}"
+    authentik_admin: "{{ authentik_admin  }}"
+    authentik_password: "{{ authentik_password  }}"
+
+- name: "Run authentik-session.ts"
+  become: false
+  command: "pnpm ts-node {{ authentik_client_file }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+  register: session_key
+
+- name: Authentik Session Tokens
+  set_fact:
+    session_headers: "{{ session_key.stdout | regex_search('%%%(.*?)%%%') | replace('%%%', '') }}"
+
+- name: Display script output
+  ansible.builtin.debug:
+    msg: "{{ session_headers | b64decode }}"
+
+- name: Execute the Python script (authentik-ldap-federation.py)
+  become: false
+  script: "scripts/authentik-ldap-federation.py"
+  args:
+    executable: python3
+  environment:
+    SESSION_HEADERS: "{{ session_headers }}"
+    AUTHENTIK_URL: "{{ authentik_url }}"
+    PROVIDER_NAME: "freeipa-ldap-source"
+
+    LDAP_SERVER_URL: "{{ configuration['ldap_server_url'] }}"
+    LDAP_BASE_CN: "{{ configuration['ldap_search_base'] }}"
+    LDAP_BIND_DN: "{{ configuration['ldap_bind_dn'] }}"
+    LDAP_BIND_PASSWORD: "{{ configuration['ldap_bind_password'] }}"
+
+- name: "Remove {{ item }}"
+  become: false
+  command: "rm -rf {{ item }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+  loop:
+    - "{{ authentik_client_file }}"

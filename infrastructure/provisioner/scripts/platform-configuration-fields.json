@@ -114,5 +114,20 @@
                 "ldap_bind_password"
             ]
         }
+    },
+    "authentik": {
+        "ldap": {
+            "fields": [
+                "authentik_url",
+                "authentik_admin",
+                "authentik_password"
+            ],
+            "configuration": [
+                "ldap_server_url",
+                "ldap_search_base",
+                "ldap_bind_dn",
+                "ldap_bind_password"
+            ]
+        }
     }
 }

@@ -106,9 +106,9 @@ const headers = { value: {} };
   ]);
 
   // Event handler to listen for requests
-  await page.goto(baseUrl, { waitUntil: "networkidle2" });
+  await page.goto(baseUrl);
 
-  await wait(2);
+  // await wait(2);
 
   log(Buffer.from(JSON.stringify(headers.value)).toString("base64"));
 
