@@ -4,6 +4,7 @@ import { log, wait } from "./utils";
 const baseUrl = "{{ authentik_url }}";
 const ADMIN_UID = "{{ authentik_admin }}";
 const ADMIN_PASSWORD = "{{ authentik_password }}";
+const headers = { value: {} };
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -12,6 +13,15 @@ const ADMIN_PASSWORD = "{{ authentik_password }}";
   });
 
   const page = await browser.newPage();
+
+  await page.setRequestInterception(true);
+
+  page.on("request", (request) => {
+    headers.value = request.headers();
+    // Allow the request to continue
+    request.continue();
+  });
+
 
   // Set screen size
   await page.setViewport({ width: 1200, height: 1024 });
@@ -95,15 +105,12 @@ const ADMIN_PASSWORD = "{{ authentik_password }}";
     }),
   ]);
 
-  const cookies = await page.cookies();
-  const cookies_object = cookies.reduce((acc, value) => {
-    if (["authentik_session", "authentik_csrf"].includes(value.name)) {
-      acc[value.name] = value.value;
-    }
-    return acc;
-  }, {});
+  // Event handler to listen for requests
+  await page.goto(baseUrl, { waitUntil: "networkidle2" });
 
-  log(Buffer.from(JSON.stringify(cookies_object)).toString("base64"));
+  await wait(2);
+
+  log(Buffer.from(JSON.stringify(headers.value)).toString("base64"));
 
   await browser.close();
 })();

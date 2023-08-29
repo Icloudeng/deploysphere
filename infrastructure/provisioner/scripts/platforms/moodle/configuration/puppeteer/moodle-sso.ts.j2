@@ -4,16 +4,16 @@ import { wait, downloadFile } from "./utils";
 const oidcPluginName = "{{ oidc_plugin_name }}";
 const oidcPluginUrl = "{{ oidc_plugin_url }}";
 
-const baseUrl = "http://{{ vm_ip }}:5080";
+const baseUrl = "{{ base_url }}";
 const USERNAME = "{{ admin_username }}";
 const PASSWORD = "{{ admin_password }}";
 
 const PLUGIN_ID = "oidc";
 
 // OPENID Settings
-const OIDC_ENDPOINT = "{{ configuration['keycloak_url'] }}";
-const OIDC_CLIENT_ID = "{{ keycloak_client_id }}";
-const OIDC_CLIENT_SECRET = "{{ client_secret }}";
+const OIDC_ENDPOINT = "{{ oidc_endpoint }}";
+const OIDC_CLIENT_ID = "{{ oidc_client_id }}";
+const OIDC_CLIENT_SECRET = "{{ oidc_client_secret }}";
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -99,30 +99,30 @@ async function openIdConfiguration(page: Page) {
   const authendpoint = await page.waitForSelector(
     "form input[name=authendpoint]"
   );
-  await authendpoint.evaluate((el, OIDC_ENDPOINT) => {
-    el.value = `${OIDC_ENDPOINT}/realms/master/protocol/openid-connect/auth`;
-  }, OIDC_ENDPOINT);
+  await authendpoint.evaluate((el) => {
+    el.value = `{{ auth_endpoint }}`;
+  });
 
   // tokenendpoint field
   const tokenendpoint = await page.waitForSelector(
     "form input[name=tokenendpoint]"
   );
-  await tokenendpoint.evaluate((el, OIDC_ENDPOINT) => {
-    el.value = `${OIDC_ENDPOINT}/realms/master/protocol/openid-connect/token`;
-  }, OIDC_ENDPOINT);
+  await tokenendpoint.evaluate((el) => {
+    el.value = `{{ token_endpoint }}`;
+  });
 
   // oidcresource field
   const oidcresource = await page.waitForSelector(
     "form input[name=oidcresource]"
   );
-  await oidcresource.evaluate((el, OIDC_ENDPOINT) => {
-    el.value = `${OIDC_ENDPOINT}/realms/master`;
-  }, OIDC_ENDPOINT);
+  await oidcresource.evaluate((el) => {
+    el.value = `{{ oidc_resource }}`;
+  });
 
   // oidcscope field
   const oidcscope = await page.waitForSelector("form input[name=oidcscope]");
   await oidcscope.evaluate((el) => {
-    el.value = "openid";
+    el.value = "{{ oidc_scope }}";
   });
 
   // Save Cconfiguration

@@ -15,4 +15,11 @@
         configuration_type: "{{ decoded_metadata | json_query('configuration_type') }}"
 
     - include_tasks: configuration/keycloak-sso.yaml
+      # delegate_to: 127.0.0.1
+      # become: false
       when: configuration_type == "keycloak_sso"
+
+    - include_tasks: configuration/authentik-sso.yaml
+      # delegate_to: 127.0.0.1
+      # become: false
+      when: configuration_type == "authentik_sso"

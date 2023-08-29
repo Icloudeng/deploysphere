@@ -34,6 +34,16 @@
     src: puppeteer/moodle-sso.ts.j2
     dest: "{{ moodle_sso_file }}"
     force: yes
+  vars:
+    base_url: "{{ instance_url }}"
+    oidc_endpoint: "{{ configuration['keycloak_url'] }}"
+    oidc_client_id: "{{ keycloak_client_id }}"
+    oidc_client_secret: "{{ client_secret }}"
+    oidc_scope: "openid"
+
+    auth_endpoint: "{{ oidc_endpoint }}/realms/master/protocol/openid-connect/auth"
+    token_endpoint: "{{ oidc_endpoint }}/realms/master/protocol/openid-connect/token"
+    oidc_resource: "{{ oidc_endpoint }}/realms/master"
 
 - name: "Run moodle-sso.ts"
   become: false

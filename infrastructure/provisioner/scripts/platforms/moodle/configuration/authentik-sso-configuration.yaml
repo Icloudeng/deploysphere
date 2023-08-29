@@ -1,0 +1,82 @@
+# Variable output (puppeteer_folder)
+- include_tasks: "../../tasks/puppeteer-localhost.yaml"
+
+- name: authentik-client file
+  set_fact:
+    authentik_client_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-authentik.ts"
+    moodle_sso_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-moodle.ts"
+
+- name: "Copy authentik-session.ts template"
+  become: false
+  template:
+    src: "{{ scripts_dir }}/templates/puppeteer/authentik-session.ts.j2"
+    dest: "{{ authentik_client_file }}"
+    force: yes
+  vars:
+    authentik_url: "{{ configuration['authentik_url']  }}"
+    authentik_admin: "{{ configuration['authentik_admin']  }}"
+    authentik_password: "{{ configuration['authentik_password']  }}"
+
+- name: "Run authentik-session.ts"
+  become: false
+  command: "pnpm ts-node {{ authentik_client_file }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+  register: session_key
+
+- name: Authentik Session Tokens
+  set_fact:
+    session_headers: "{{ session_key.stdout | regex_search('%%%(.*?)%%%') | replace('%%%', '') }}"
+
+- name: Execute the Python script  (authentik-oidc-provider.py)
+  become: false
+  script: "{{ scripts_dir }}/scripts/authentik-oidc-provider.py"
+  args:
+    executable: python3
+  environment:
+    SESSION_HEADERS: "{{ session_headers }}"
+    AUTHENTIK_URL: "{{ configuration['authentik_url'] }}"
+    PROVIDER_NAME: "{{ platform_name }}"
+    REDIRECT_URL: "{{ instance_url }}/auth/oidc/"
+  register: script_output
+
+- name: Decode base64 authentik-oidc-provider output variable
+  set_fact:
+    decoded_script: "{{ script_output | regex_search('%%%(.*?)%%%') | replace('%%%', '') | b64decode }}"
+
+- name: Display script output
+  ansible.builtin.debug:
+    var: decoded_script
+
+- name: "Copy moodle-sso.ts template"
+  become: false
+  template:
+    src: puppeteer/moodle-sso.ts.j2
+    dest: "{{ moodle_sso_file }}"
+    force: yes
+  vars:
+    base_url: "{{ instance_url }}"
+    oidc_endpoint: "{{ configuration['authentik_url'] }}"
+    oidc_client_id: "{{ decoded_script['client_id'] }}"
+    oidc_client_secret: "{{ decoded_script['client_secret'] }}"
+    oidc_scope: "openid profile email"
+
+    auth_endpoint: "{{ decoded_script['authorize'] }}"
+    token_endpoint: "{{ decoded_script['token'] }}"
+    oidc_resource: "{{ decoded_script['issuer'] }}"
+
+# Create Authentik Provider
+- name: "Run moodle-sso.ts"
+  become: false
+  command: "pnpm ts-node {{ moodle_sso_file }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+
+- name: "Remove {{ item }}"
+  become: false
+  command: "rm -rf {{ item }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+  loop:
+    - "{{ authentik_client_file }}"
+    - "{{ moodle_sso_file }}"

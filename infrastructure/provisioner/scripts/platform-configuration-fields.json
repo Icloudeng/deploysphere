@@ -42,6 +42,7 @@
     "moodle": {
         "keycloak_sso": {
             "fields": [
+                "url",
                 "admin_username",
                 "admin_password"
             ],
@@ -49,6 +50,18 @@
                 "keycloak_url",
                 "keycloak_admin",
                 "keycloak_password"
+            ]
+        },
+        "authentik_sso": {
+            "fields": [
+                "url",
+                "admin_username",
+                "admin_password"
+            ],
+            "configuration": [
+                "authentik_url",
+                "authentik_admin",
+                "authentik_password"
             ]
         }
     },

@@ -10,12 +10,12 @@
   vars:
     url_var: "{{ item }}"
   loop:
-    - "{{ configuration['keycloak_url'] }}"
+    - "{{ configuration['authentik_url'] }}"
     - "{{ instance_url }}"
 
-- include_tasks: keycloak-sso-configuration.yaml
+- include_tasks: authentik-sso-configuration.yaml
 
 - include_tasks: "{{ scripts_dir }}/tasks/expose-variable.yaml"
   vars:
     text: |
-      Configuration Type: Keycloak SSO
+      Configuration Type: Authentik SSO
