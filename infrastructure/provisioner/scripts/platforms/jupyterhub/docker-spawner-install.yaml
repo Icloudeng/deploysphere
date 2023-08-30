@@ -8,7 +8,6 @@
   copy:
     src: "docker-spawner/{{ item }}"
     dest: "{{ project_path }}/{{ item }}"
-    force: yes
   loop:
     - ".dockerignore"
     - "Dockerfile.jupyterhub"
@@ -17,7 +16,6 @@
   template:
     src: "docker-spawner/{{ item }}.j2"
     dest: "{{ project_path }}/{{ item }}"
-    force: yes
   loop:
     - "docker-compose.yml"
     - "jupyterhub_config.py"

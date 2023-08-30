@@ -15,24 +15,60 @@
 - import_tasks: keycloak-sso-configuration.yaml
   delegate_to: 127.0.0.1
 
-- name: "Authenticate Config"
-  become: true
-  command: "sudo tljh-config set {{ item }}"
-  loop:
-    - "auth.GenericOAuthenticator.client_id '{{ keycloak_client_id }}'"
-    - "auth.GenericOAuthenticator.client_secret '{{ client_secret }}'"
-    - "auth.GenericOAuthenticator.oauth_callback_url '{{ jupyterhub_url }}/hub/oauth_callback'"
-    - "auth.GenericOAuthenticator.authorize_url '{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/auth'"
-    - "auth.GenericOAuthenticator.token_url '{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/token'"
-    - "auth.GenericOAuthenticator.userdata_url '{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/userinfo'"
-    - "auth.GenericOAuthenticator.login_service 'keycloak'"
-    - "auth.GenericOAuthenticator.username_key 'preferred_username'"
-    - "auth.GenericOAuthenticator.userdata_params.state 'state'"
-    - "auth.GenericOAuthenticator.scope 'openid'"
-    - "auth.type 'generic-oauth'"
+- name: Test tljh installation
+  command: "sudo tljh-config show"
+  register: tljh_install
+  ignore_errors: true
 
-- name: Apply the changes by restarting JupyterHub.
-  become: true
-  shell: "sudo tljh-config reload"
-  args:
-    executable: /bin/bash
+# tljh Configuration
+- name: "Tljh Authenticate Config"
+  block:
+    - name: "Authenticate Config"
+      become: true
+      command: "sudo tljh-config set {{ item }}"
+      loop:
+        - "auth.GenericOAuthenticator.client_id '{{ keycloak_client_id }}'"
+        - "auth.GenericOAuthenticator.client_secret '{{ client_secret }}'"
+        - "auth.GenericOAuthenticator.oauth_callback_url '{{ jupyterhub_url }}/hub/oauth_callback'"
+        - "auth.GenericOAuthenticator.authorize_url '{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/auth'"
+        - "auth.GenericOAuthenticator.token_url '{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/token'"
+        - "auth.GenericOAuthenticator.userdata_url '{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/userinfo'"
+        - "auth.GenericOAuthenticator.login_service 'keycloak'"
+        - "auth.GenericOAuthenticator.username_key 'preferred_username'"
+        - "auth.GenericOAuthenticator.userdata_params.state 'state'"
+        - "auth.GenericOAuthenticator.scope 'openid'"
+        - "auth.type 'generic-oauth'"
+
+    - name: Apply the changes by restarting JupyterHub.
+      become: true
+      shell: "sudo tljh-config reload"
+      args:
+        executable: /bin/bash
+  when: tljh_install.rc == 0
+
+# DockerSwarmer Install
+- name: Tljh Authenticate Config
+  block:
+    - name: "Copy Dkr Spawner jupyterhub_config template"
+      template:
+        src: "docker-spawner/jupyterhub_config.py.j2"
+        dest: "{{ project_path }}/jupyterhub_config.py"
+        force: yes
+      vars:
+        client_id: "{{ keycloak_client_id }}"
+        client_secret: "{{ client_secret }}"
+        oauth_callback_url: "{{ jupyterhub_url }}/hub/oauth_callback"
+        authorize_url: "{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/auth"
+        token_url: "{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/token"
+        userdata_url: "{{ configuration['keycloak_url'] }}/realms/{{ keycloak_realm }}/protocol/openid-connect/userinfo"
+        login_service: "keycloak"
+        username_key: "preferred_username"
+        userdata_params: "state"
+        scopes: ["openid"]
+        authenticator_class: "generic-oauth"
+
+    - name: Run JupyterHub
+      command: "docker compose up -d --force-recreate"
+      args:
+        chdir: "{{ project_path }}"
+  when: tljh_install.rc != 0

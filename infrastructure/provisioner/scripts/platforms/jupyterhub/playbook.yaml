@@ -16,6 +16,11 @@
         domain: "{{ decoded_metadata | json_query('domain') }}"
         admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
 
+    - name: Extract Variable Dkr install variable
+      set_fact:
+        docker_install: "{{ decoded_metadata | json_query('docker_install') }}"
+      ignore_errors: true
+
     # Validate domain variable
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
@@ -27,7 +32,11 @@
         username_var: "{{ admin_username }}"
 
     - include_tasks: tljh-install.yaml
-    # - include_tasks: docker-spawner-install.yaml
+      when: docker_install is not defined or docker_install != true
+
+    # docker install
+    - include_tasks: docker-spawner-install.yaml
+      when: docker_install is defined and docker_install == true
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:

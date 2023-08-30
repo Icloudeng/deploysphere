@@ -54,10 +54,25 @@ c.JupyterHub.hub_port = 8080
 c.JupyterHub.cookie_secret_file = "/data/jupyterhub_cookie_secret"
 c.JupyterHub.db_url = "sqlite:////data/jupyterhub.sqlite"
 
+{% if configuration is defined %}
+c.JupyterHub.authenticator_class = "{{ authenticator_class }}"
+c.GenericOAuthenticator.client_id = "{{ client_id }}"
+c.GenericOAuthenticator.client_secret = "{{ client_secret }}"
+c.GenericOAuthenticator.oauth_callback_url = "{{ oauth_callback_url }}"
+c.GenericOAuthenticator.authorize_url = "{{ authorize_url }}"
+c.GenericOAuthenticator.token_url = "{{ token_url }}"
+c.GenericOAuthenticator.userdata_url = "{{ userdata_url }}"
+c.GenericOAuthenticator.login_service = "{{ login_service }}"
+c.GenericOAuthenticator.username_key = "{{ username_key }}"
+c.GenericOAuthenticator.userdata_params.state = "{{ userdata_params }}"
+c.GenericOAuthenticator.scope = {{ scopes }}
+{% else %}
 # Authenticate users with Native Authenticator
 c.JupyterHub.authenticator_class = "firstuseauthenticator.FirstUseAuthenticator"
 
 c.FirstUseAuthenticator.create_users = True
+{% endif %}
+
 
 # Allow anyone to sign-up without approval
 # c.NativeAuthenticator.open_signup = False
