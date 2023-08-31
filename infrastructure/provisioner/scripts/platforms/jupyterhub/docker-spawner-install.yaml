@@ -21,12 +21,12 @@
     - "jupyterhub_config.py"
 
 - name: Build the JupyterHub Dkr image
-  command: "docker-compose build"
+  command: "docker compose build"
   args:
     chdir: "{{ project_path }}"
 
 - name: Run JupyterHub
-  command: "docker-compose up -d"
+  command: "docker compose up -d"
   args:
     chdir: "{{ project_path }}"
 
