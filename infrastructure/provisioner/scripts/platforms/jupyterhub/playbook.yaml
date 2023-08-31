@@ -40,7 +40,7 @@
 
     # docker install
     - include_tasks: docker-spawner-install.yaml
-      when: docker_install is not defined or docker_install == true
+      when: docker_install is not defined or docker_install == true or docker_install == ""
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
