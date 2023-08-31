@@ -56,6 +56,7 @@ c.JupyterHub.db_url = "sqlite:////data/jupyterhub.sqlite"
 
 {% if configuration is defined %}
 c.JupyterHub.authenticator_class = "{{ authenticator_class }}"
+c.GenericOAuthenticator.allow_all = True
 c.GenericOAuthenticator.client_id = "{{ client_id }}"
 c.GenericOAuthenticator.client_secret = "{{ client_secret }}"
 c.GenericOAuthenticator.oauth_callback_url = "{{ oauth_callback_url }}"

@@ -32,11 +32,11 @@
         username_var: "{{ admin_username }}"
 
     - include_tasks: tljh-install.yaml
-      when: docker_install is not defined or docker_install != true
+      when: docker_install is defined or docker_install == false
 
     # docker install
     - include_tasks: docker-spawner-install.yaml
-      when: docker_install is defined and docker_install == true
+      when: docker_install is not defined or docker_install == true
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
