@@ -70,7 +70,7 @@ c.GenericOAuthenticator.scope = {{ scopes }}
 # Authenticate users with Native Authenticator
 c.JupyterHub.authenticator_class = "firstuseauthenticator.FirstUseAuthenticator"
 
-c.FirstUseAuthenticator.create_users = True
+c.FirstUseAuthenticator.create_users = False
 {% endif %}
 
 
@@ -81,4 +81,8 @@ c.FirstUseAuthenticator.create_users = True
 # Allowed admins
 admin = os.environ.get("JUPYTERHUB_ADMIN")
 if admin:
+    # c.Authenticator.allowed_users = [admin]
     c.Authenticator.admin_users = [admin]
+# else:
+#     c.Authenticator.allowed_users = ["root"]
+#     c.Authenticator.admin_users = ["root"]  
