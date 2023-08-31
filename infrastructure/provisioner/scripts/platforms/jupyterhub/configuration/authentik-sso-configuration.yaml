@@ -1,0 +1,54 @@
+# Variable output (puppeteer_folder)
+- include_tasks: "../../tasks/puppeteer-localhost.yaml"
+
+- name: authentik-client file
+  set_fact:
+    authentik_client_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-authentik.ts"
+
+- name: "Copy authentik-session.ts template"
+  become: false
+  template:
+    src: "{{ scripts_dir }}/templates/puppeteer/authentik-session.ts.j2"
+    dest: "{{ authentik_client_file }}"
+    force: yes
+  vars:
+    authentik_url: "{{ configuration['authentik_url']  }}"
+    authentik_admin: "{{ configuration['authentik_admin']  }}"
+    authentik_password: "{{ configuration['authentik_password']  }}"
+
+- name: "Run authentik-session.ts"
+  become: false
+  command: "pnpm ts-node {{ authentik_client_file }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+  register: session_key
+
+- name: Authentik Session Tokens
+  set_fact:
+    session_headers: "{{ session_key.stdout | regex_search('%%%(.*?)%%%') | replace('%%%', '') }}"
+
+- name: Execute the Python script  (authentik-oidc-provider.py)
+  become: false
+  script: "{{ scripts_dir }}/scripts/authentik-oidc-provider.py"
+  args:
+    executable: python3
+  environment:
+    SESSION_HEADERS: "{{ session_headers }}"
+    AUTHENTIK_URL: "{{ configuration['authentik_url'] }}"
+    PROVIDER_NAME: "{{ platform_name }}"
+    REDIRECT_URL: "{{ jupyterhub_url }}/hub/oauth_callback"
+  register: script_output
+
+- name: Decode base64 authentik-oidc-provider output variable
+  set_fact:
+    authentik_data: "{{ script_output | regex_search('%%%(.*?)%%%') | replace('%%%', '') | b64decode }}"
+
+- name: Display script output
+  ansible.builtin.debug:
+    var: authentik_data
+
+- name: "Remove puppeteer file"
+  become: false
+  command: "rm -rf {{ authentik_client_file }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"

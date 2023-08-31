@@ -89,6 +89,16 @@
                 "keycloak_admin",
                 "keycloak_password"
             ]
+        },
+        "authentik_sso": {
+            "fields": [
+                "jupyterhub_url"
+            ],
+            "configuration": [
+                "authentik_url",
+                "authentik_admin",
+                "authentik_password"
+            ]
         }
     },
     "nextcloud": {

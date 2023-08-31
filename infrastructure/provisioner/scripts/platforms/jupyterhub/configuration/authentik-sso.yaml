@@ -1,0 +1,74 @@
+- name: Extract Required Variables
+  set_fact:
+    jupyterhub_url: "{{ decoded_metadata | json_query('jupyterhub_url') }}"
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+# Validate domain variable
+- include_tasks: "{{ scripts_dir }}/tasks/validator/url-ws-regex.yaml"
+  vars:
+    url_var: "{{ item }}"
+  loop:
+    - "{{ jupyterhub_url }}"
+    - "{{ configuration['authentik_url'] }}"
+
+# client_secret
+- import_tasks: authentik-sso-configuration.yaml
+  delegate_to: 127.0.0.1
+
+- name: Test tljh installation
+  command: "sudo tljh-config show"
+  register: tljh_install
+  ignore_errors: true
+
+# tljh Configuration
+- name: "Tljh Authenticate Config"
+  block:
+    - name: "Authenticate Config"
+      become: true
+      command: "sudo tljh-config set {{ item }}"
+      loop:
+        - "auth.GenericOAuthenticator.client_id '{{ authentik_data['client_id'] }}'"
+        - "auth.GenericOAuthenticator.client_secret '{{ authentik_data['client_secret'] }}'"
+        - "auth.GenericOAuthenticator.oauth_callback_url '{{ jupyterhub_url }}/hub/oauth_callback'"
+        - "auth.GenericOAuthenticator.authorize_url '{{ authentik_data['authorize'] }}'"
+        - "auth.GenericOAuthenticator.token_url '{{ authentik_data['token'] }}'"
+        - "auth.GenericOAuthenticator.userdata_url '{{ authentik_data['user_info'] }}'"
+        - "auth.GenericOAuthenticator.login_service 'authentik'"
+        - "auth.GenericOAuthenticator.username_key 'preferred_username'"
+        - "auth.GenericOAuthenticator.userdata_params.state 'state'"
+        - "auth.GenericOAuthenticator.scope 'openid profile email'"
+        - "auth.type 'generic-oauth'"
+
+    - name: Apply the changes by restarting JupyterHub.
+      become: true
+      shell: "sudo tljh-config reload"
+      args:
+        executable: /bin/bash
+  when: tljh_install.rc == 0
+
+# DockerSwarmer Install
+- name: Tljh Authenticate Config
+  block:
+    - name: "Copy Dkr Spawner jupyterhub_config template"
+      template:
+        src: "docker-spawner/jupyterhub_config.py.j2"
+        dest: "{{ project_path }}/jupyterhub_config.py"
+        force: yes
+      vars:
+        client_id: "{{ authentik_data['client_id'] }}"
+        client_secret: "{{ authentik_data['client_secret'] }}"
+        oauth_callback_url: "{{ jupyterhub_url }}/hub/oauth_callback"
+        authorize_url: "{{ authentik_data['authorize'] }}"
+        token_url: "{{ authentik_data['token'] }}"
+        userdata_url: "{{ authentik_data['user_info'] }}"
+        login_service: "authentik"
+        username_key: "preferred_username"
+        userdata_params: "state"
+        scopes: ["openid", "profile", "email"]
+        authenticator_class: "generic-oauth"
+
+    - name: Run JupyterHub
+      command: "docker compose up -d --force-recreate"
+      args:
+        chdir: "{{ project_path }}"
+  when: tljh_install.rc != 0
