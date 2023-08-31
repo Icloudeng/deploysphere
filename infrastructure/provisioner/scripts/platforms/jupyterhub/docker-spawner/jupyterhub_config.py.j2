@@ -81,8 +81,8 @@ c.FirstUseAuthenticator.create_users = False
 # Allowed admins
 admin = os.environ.get("JUPYTERHUB_ADMIN")
 if admin:
-    # c.Authenticator.allowed_users = [admin]
     c.Authenticator.admin_users = [admin]
-# else:
-#     c.Authenticator.allowed_users = ["root"]
-#     c.Authenticator.admin_users = ["root"]  
+    # c.Authenticator.allowed_users = [admin]
+else:
+    c.Authenticator.admin_users = ["root"]  
+    # c.Authenticator.allowed_users = ["root"]
