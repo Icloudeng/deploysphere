@@ -31,6 +31,10 @@
       vars:
         username_var: "{{ admin_username }}"
 
+    - name: Display script output
+      ansible.builtin.debug:
+        msg: "{{ docker_install }}"
+
     - include_tasks: tljh-install.yaml
       when: docker_install is defined and docker_install == false
 
