@@ -13,3 +13,6 @@
 
     - include_tasks: configuration/keycloak-sso.yaml
       when: configuration_type == "keycloak_sso"
+
+    - include_tasks: configuration/authentik-sso.yaml
+      when: configuration_type == "authentik_sso"

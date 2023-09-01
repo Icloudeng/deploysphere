@@ -1,14 +1,13 @@
 import puppeteer from "puppeteer";
 import { wait } from "./utils";
 
-const baseUrl = "https://{{ vm_ip }}/index.php";
+const baseUrl = "{{ instance_url }}/index.php";
 const USERNAME = "{{ admin_username }}";
 const PASSWORD = "{{ admin_password }}";
 
 // OPENID Settings
-const OIDC_ENDPOINT = "{{ configuration['keycloak_url'] }}";
-const OIDC_CLIENT_ID = "{{ keycloak_client_id }}";
-const OIDC_CLIENT_SECRET = "{{ client_secret }}";
+const OIDC_CLIENT_ID = "{{ oidc_client_id }}";
+const OIDC_CLIENT_SECRET = "{{ oidc_client_secret }}";
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -96,38 +95,38 @@ const OIDC_CLIENT_SECRET = "{{ client_secret }}";
   );
   const iname_v = await iname.evaluate((e) => e.value);
   if (iname_v.trim().length === 0) {
-    await iname.type("keycloak");
+    await iname.type("{{ oidc_provider_name }}");
   }
 
   // Fill SSO Form (Title)
   const ititle = await page.waitForSelector(
     'input[name="custom_providers[custom_oidc][0][title]"]'
   );
-  await ititle.evaluate((e) => (e.value = "keycloak"));
+  await ititle.evaluate((e) => (e.value = "{{ oidc_provider_name }}"));
 
   // Fill SSO Form (authorizeUrl)
   const iauthorizeUrl = await page.waitForSelector(
     'input[name="custom_providers[custom_oidc][0][authorizeUrl]"]'
   );
-  await iauthorizeUrl.evaluate((e, OIDC_ENDPOINT) => {
-    e.value = `${OIDC_ENDPOINT}/realms/master/protocol/openid-connect/auth`;
-  }, OIDC_ENDPOINT);
+  await iauthorizeUrl.evaluate((e) => {
+    e.value = `{{ authorize_url }}`;
+  });
 
   // Fill SSO Form (tokenUrl)
   const itokenUrl = await page.waitForSelector(
     'input[name="custom_providers[custom_oidc][0][tokenUrl]"]'
   );
-  await itokenUrl.evaluate((e, OIDC_ENDPOINT) => {
-    e.value = `${OIDC_ENDPOINT}/realms/master/protocol/openid-connect/token`;
-  }, OIDC_ENDPOINT);
+  await itokenUrl.evaluate((e) => {
+    e.value = `{{ token_url }}`;
+  });
 
   // Fill SSO Form (userInfoUrl)
   const iuserInfoUrl = await page.waitForSelector(
     'input[name="custom_providers[custom_oidc][0][userInfoUrl]"]'
   );
-  await iuserInfoUrl.evaluate((e, OIDC_ENDPOINT) => {
-    e.value = `${OIDC_ENDPOINT}/realms/master/protocol/openid-connect/userinfo`;
-  }, OIDC_ENDPOINT);
+  await iuserInfoUrl.evaluate((e) => {
+    e.value = `{{ user_info_url }}`;
+  });
 
   // Fill SSO Form (clientId)
   const iclientId = await page.waitForSelector(
@@ -149,7 +148,7 @@ const OIDC_CLIENT_SECRET = "{{ client_secret }}";
   const iscope = await page.waitForSelector(
     'input[name="custom_providers[custom_oidc][0][scope]"]'
   );
-  await iscope.evaluate((e) => (e.value = "openid"));
+  await iscope.evaluate((e) => (e.value = "{{ scopes }}"));
 
   // Fill SSO Form (groupsClaim)
   const igroupsClaim = await page.waitForSelector(
@@ -157,11 +156,13 @@ const OIDC_CLIENT_SECRET = "{{ client_secret }}";
   );
   await igroupsClaim.evaluate((e) => (e.value = "roles"));
 
+{% if button_style %}
   // Fill SSO Form (style)
   const istyle = await page.waitForSelector(
     'select[name="custom_providers[custom_oidc][0][style]"]'
   );
-  await istyle.select("keycloak");
+  await istyle.select("{{ button_style }}");
+{% endif %}
 
   // Save Settings
   await Promise.all([

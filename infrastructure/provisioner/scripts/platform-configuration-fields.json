@@ -104,6 +104,7 @@
     "nextcloud": {
         "keycloak_sso": {
             "fields": [
+                "nextcloud_url",
                 "nextcloud_admin_username",
                 "nextcloud_admin_password"
             ],
@@ -111,6 +112,18 @@
                 "keycloak_url",
                 "keycloak_admin",
                 "keycloak_password"
+            ]
+        },
+        "authentik_sso": {
+            "fields": [
+                "nextcloud_url",
+                "nextcloud_admin_username",
+                "nextcloud_admin_password"
+            ],
+            "configuration": [
+                "authentik_url",
+                "authentik_admin",
+                "authentik_password"
             ]
         }
     },
