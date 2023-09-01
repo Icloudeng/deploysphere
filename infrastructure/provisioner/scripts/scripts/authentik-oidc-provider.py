@@ -11,6 +11,7 @@ SESSION_HEADERS = os.getenv("SESSION_HEADERS")
 AUTHENTIK_URL = os.getenv("AUTHENTIK_URL")
 PROVIDER_NAME = os.getenv("PROVIDER_NAME")
 REDIRECT_URL = os.getenv("REDIRECT_URL")
+LAUNCH_URL = os.getenv("LAUNCH_URL", "")
 
 for value in (SESSION_HEADERS, AUTHENTIK_URL, PROVIDER_NAME, REDIRECT_URL):
     if not value or len(value) == 0:
@@ -196,7 +197,7 @@ def main():
             "provider": provider['pk'],
             "backchannel_providers": [],
             "open_in_new_tab": False,
-            "meta_launch_url": "",
+            "meta_launch_url": LAUNCH_URL,
             "meta_description": "",
             "meta_publisher": "",
             "policy_engine_mode": "any",
