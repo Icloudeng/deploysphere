@@ -34,6 +34,9 @@ type config struct {
 	PROXMOX_API_URL  string `env:"PROXMOX_API_URL,required"`
 	PROXMOX_USERNAME string `env:"PROXMOX_USERNAME,required"`
 	PROXMOX_PASSWORD string `env:"PROXMOX_PASSWORD,required"`
+
+	// Sentry
+	SENTRY_DSN string `env:"SENTRY_DSN"`
 }
 
 var Config config
