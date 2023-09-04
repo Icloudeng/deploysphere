@@ -2,8 +2,6 @@
     "zimbra": {
         "ldap": {
             "fields": [
-                "admin_username",
-                "admin_password",
                 "zimbra_fqdn",
                 "zimbra_domain"
             ],

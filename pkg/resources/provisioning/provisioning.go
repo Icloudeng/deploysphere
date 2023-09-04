@@ -23,7 +23,7 @@ func provisioning(prov structs.Provisioning, file string, jobId uint) {
 		"--platform", platform.Name,
 		"--metadata", metadatab64,
 		"--job-id", fmt.Sprintf("%d", jobId),
-		// "--reference", prov.Ref, Don't uncomment this line, can cause mis functioning from redis pubsub
+		"--reference", prov.Ref,
 	)
 
 	cmd.Dir = filesystem.ProvisionerDir
@@ -38,5 +38,6 @@ func CreatePlatformProvisioning(prov structs.Provisioning, jobId uint) {
 }
 
 func CreateConfigurationProvisioning(prov structs.Provisioning, jobId uint) {
+	prov.Ref = "" //reset reference for configuration
 	provisioning(prov, "configuration.sh", jobId)
 }

@@ -43,11 +43,16 @@ func (provisioningHandler) CreatePlatformProvisioning(c *gin.Context) {
 		return
 	}
 
+	ref := body.MachineIp
+	if len(body.Ref) > 0 {
+		ref = body.Ref
+	}
+
 	task := jobs.ResourcesJob{
-		Ref:           body.MachineIp,
+		Ref:           ref,
 		PostBody:      body,
 		Description:   "Platform Provisioning",
-		ResourceState: false,
+		ResourceState: len(body.Ref) > 0,
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
 		Task: func(ctx context.Context, job database.Job) error {
