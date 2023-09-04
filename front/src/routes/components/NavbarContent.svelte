@@ -18,6 +18,7 @@
     Stack,
     Plus,
     Commit,
+    // Group,
   } from "radix-icons-svelte";
 
   function toggleTheme() {
@@ -40,6 +41,7 @@
         <span>New Pipline</span>
       </Button>
 
+      <!-- <Menu.Item icon={Group}>Workspace</Menu.Item> -->
       <Menu.Item icon={Stack}>Resources</Menu.Item>
       <Menu.Item icon={ComponentPlaceholder}>Provisioning</Menu.Item>
       <Menu.Item icon={Gear}>Configuration</Menu.Item>
