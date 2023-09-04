@@ -64,11 +64,8 @@
   become: yes
   become_user: root
 
-- name: restart zimbra services
-  shell: ./zmcontrol restart
-  args:
-    chdir: /opt/zimbra/bin
-  become: true
-  become_user: zimbra
-  become_flags: -i
+- name: Restart Zimbra Services
+  ansible.builtin.shell: "su zimbra -c '/opt/zimbra/bin/zmcontrol restart'"
+  become: yes
+  become_user: root
   ignore_errors: true
