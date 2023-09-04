@@ -27,7 +27,6 @@
     "zimbra": [
         "zimbra_fqdn",
         "zimbra_timezone",
-        // "zimbra_domain",
         "_mapping"
     ],
     "jenkins": [

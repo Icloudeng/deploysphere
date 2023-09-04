@@ -112,8 +112,8 @@
     - template:
         src: 01-netcfg.yaml.j2
         dest: /etc/netplan/00-installer-config.yaml
-
     - command: netplan apply
+  when: false
 
 - name: disable systemd-resolved
   block:

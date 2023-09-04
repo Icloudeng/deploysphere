@@ -1,4 +1,11 @@
 ---
+- name: Test debug
+  debug:
+    msg: "{{ansible_distribution_version}}  {{ansible_distribution}}"
+  tags:
+    - never
+    - install
+
 # tasks file for ansible-zimbra-single
 - name: import centos.yml
   import_tasks: centos.yml
@@ -23,18 +30,18 @@
   when:
     - ansible_distribution == "Ubuntu"
     - ansible_distribution_version == "18.04"
-  tags:
-    - never
-    - install
+  # tags:
+  #   - never
+  #   - install
 
 - name: import ubuntu-2004.yml
   import_tasks: ubuntu-2004.yml
   when:
     - ansible_distribution == "Ubuntu"
     - ansible_distribution_version == "20.04"
-  tags:
-    - never
-    - install
+  # tags:
+  #   - never
+  #   - install
 
 - name: import zimbra9-centos.yml
   import_tasks: zimbra9-centos.yml

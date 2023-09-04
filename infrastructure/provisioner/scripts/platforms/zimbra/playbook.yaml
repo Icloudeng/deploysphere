@@ -13,34 +13,33 @@
 
     - name: Extract Required Variables
       set_fact:
-        zimbra_fqdn: "{{ decoded_metadata | json_query('zimbra_fqdn') }}"
-        zimbra_timezone: "{{ decoded_metadata | json_query('zimbra_timezone') }}"
-        # zimbra_domain: "{{ decoded_metadata | json_query('zimbra_domain') }}"
+        _zimbra_fqdn: "{{ decoded_metadata | json_query('zimbra_fqdn') }}"
+        _zimbra_timezone: "{{ decoded_metadata | json_query('zimbra_timezone') }}"
 
     # Validate domain variables
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
-        domain_var: "{{ item }}"
-      loop:
-        - "{{ zimbra_fqdn }}"
-        # - "{{ zimbra_domain }}"
+        domain_var: "{{ _zimbra_fqdn }}"
 
     # Validate timezone variables
     - include_tasks: ../../tasks/validator/timezone-regex.yaml
       vars:
-        timezone_var: "{{ zimbra_timezone }}"
+        timezone_var: "{{ _zimbra_timezone }}"
 
     - name: "Include zimbra"
       include_role:
         name: zimbra-single
         apply:
-          tags:
-            - install
+          tags: install
+      tags:
+        - always
       vars:
-        zimbra_fqdn: "{{ zimbra_fqdn }}"
-        zimbra_timezone: "{{ zimbra_timezone }}"
+        zimbra_fqdn: "{{ _zimbra_fqdn }}"
+        zimbra_timezone: "{{ _zimbra_timezone }}"
         zimbra_admin_password: "{{ app_secret }}"
-        # ansible_domain: "{{ zimbra_domain }}"
+
+      # Generate SSL Certificat
+    - include_tasks: ssl-certificate.yaml
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:

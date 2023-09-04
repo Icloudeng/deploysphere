@@ -1,0 +1,70 @@
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - python3
+      - python3-venv
+      - libaugeas0
+    state: present
+  become: yes
+
+- name: Create a Python virtual environment
+  ansible.builtin.command: python3 -m venv /opt/certbot/
+  args:
+    creates: "/opt/certbot/"
+  become: yes
+
+- name: Upgrade pip inside the virtual environment
+  ansible.builtin.command: /opt/certbot/bin/pip install --upgrade pip
+  become: yes
+  become_user: root
+
+- name: Install Certbot inside the virtual environment
+  ansible.builtin.command: /opt/certbot/bin/pip install certbot
+  become: yes
+  become_user: root
+
+- name: Create certbot symbolic link
+  ansible.builtin.file:
+    src: /opt/certbot/bin/certbot
+    dest: /usr/local/sbin/certbot
+    state: link
+  become: yes
+  become_user: root
+
+- name: Obtain SSL certificate using Certbot
+  ansible.builtin.command: /usr/local/sbin/certbot certonly -d {{ _zimbra_fqdn }} --standalone --preferred-chain "ISRG Root X1" --agree-tos --register-unsafely-without-email --key-type rsa
+  args:
+    creates: "/etc/letsencrypt/live/{{ _zimbra_fqdn }}/privkey.pem"
+  become: yes
+  become_user: root
+
+- name: "Copy letsencrypt-zimbra.sh.j2 template"
+  template:
+    src: configuration/letsencrypt-zimbra.sh.j2
+    dest: "/usr/local/sbin/letsencrypt-zimbra"
+    force: yes
+  become: yes
+  become_user: root
+
+- name: Set the correct permission, set up a cron job and run the deployment
+  ansible.builtin.command: chmod +rx /usr/local/sbin/letsencrypt-zimbra
+  become: yes
+  become_user: root
+
+- name: Create letsencrypt-zimbra symbolic link
+  ansible.builtin.file:
+    src: /usr/local/sbin/letsencrypt-zimbra
+    dest: /etc/cron.daily/letsencrypt-zimbra
+    state: link
+  become: yes
+  become_user: root
+
+- name: Run SSL Script
+  ansible.builtin.shell: "/etc/cron.daily/letsencrypt-zimbra"
+  become: yes
+  become_user: root
+
+- name: Run SSL Script
+  ansible.builtin.shell: "su zimbra -c '/opt/zimbra/bin/zmcontrol restart'"
+  become: yes
+  become_user: root

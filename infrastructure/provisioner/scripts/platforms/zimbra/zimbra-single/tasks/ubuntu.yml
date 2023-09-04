@@ -114,6 +114,7 @@
         dest: /etc/netplan/00-installer-config.yaml
 
     - command: netplan apply
+  when: false
 
 - name: disable systemd-resolved
   block:

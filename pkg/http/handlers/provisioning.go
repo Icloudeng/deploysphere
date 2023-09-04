@@ -30,7 +30,7 @@ func (provisioningHandler) CreatePlatformProvisioning(c *gin.Context) {
 		return
 	}
 
-	// Chech if platform the password corresponse to an existing platform folder
+	// Check if platform name corresponse to an existing platform folder
 	if !validators.ValidatePlatformMetadata(c, *body.Platform) {
 		return
 	}
