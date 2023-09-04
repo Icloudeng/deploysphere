@@ -26,11 +26,11 @@
     dest: /tmp/ldap-auto-provision.txt
 
 - name: Run Zimbra ldap auto provision
-  become: false
-  become_user: zimbra
-  command: "zmprov </tmp/autoprovisioning.txt"
+  ansible.builtin.shell: "su zimbra -c '/opt/zimbra/bin/zmprov </tmp/ldap-auto-provision.txt'"
   args:
     removes: /tmp/ldap-auto-provision.txt
+  become: yes
+  become_user: root
 
 - name: Restart Zimbra Services
   ansible.builtin.shell: "su zimbra -c '/opt/zimbra/bin/zmcontrol restart'"
