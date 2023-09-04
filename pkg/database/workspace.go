@@ -1,10 +1,15 @@
 package database
 
-import "gorm.io/gorm"
+import (
+	"database/sql"
+
+	"gorm.io/gorm"
+)
 
 type Workspace struct {
 	gorm.Model
-	Name string `gorm:"uniqueIndex,unique"`
+	Name   string       `gorm:"uniqueIndex,unique"`
+	Active sql.NullBool `gorm:"default:true"`
 }
 
 type WorkspaceRepository struct{}
