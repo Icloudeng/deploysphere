@@ -32,10 +32,11 @@
   args:
     removes: /tmp/ldap-auto-provision.txt
 
-- name: Restart Zimbra
-  become: false
-  become_user: zimbra
-  command: "zmctl restart"
+- name: Restart Zimbra Services
+  ansible.builtin.shell: "su zimbra -c '/opt/zimbra/bin/zmcontrol restart'"
+  become: yes
+  become_user: root
+  ignore_errors: true
 
 - include_tasks: "{{ scripts_dir }}/tasks/expose-variable.yaml"
   vars:

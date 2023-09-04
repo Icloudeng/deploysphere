@@ -24,7 +24,12 @@ ms {{ zimbra_fqdn }} +zimbraAutoProvScheduledDomains "{{ zimbra_domain }}"
 md {{ zimbra_domain }} zimbraAutoProvLastPolledTimestamp ""
 
 
-mcf zimbraAuthMech external
-mcf zimbraAuthLdapURL "{{ configuration['ldap_server_url'] }}"
-mcf zimbraAuthLdapBindDN "{{ configuration['ldap_bind_dn'] }}"
-mcf zimbraAuthLdapBindPassword "{{ configuration['ldap_bind_dn'] }}"
+md {{ zimbra_domain }} zimbraAuthMech ldap
+md {{ zimbra_domain }} zimbraAuthLdapURL "{{ configuration['ldap_server_url'] }}"
+md {{ zimbra_domain }} zimbraAuthLdapBindDN "{{ configuration['ldap_bind_dn'] }}"
+md {{ zimbra_domain }} zimbraAuthLdapBindPassword "{{ configuration['ldap_bind_password'] }}"
+md {{ zimbra_domain }} zimbraAuthLdapSearchFilter "{{ configuration['ldap_filter_username'] }}"
+md {{ zimbra_domain }} zimbraAuthLdapSearchBase "{{ configuration['ldap_search_base'] }}"
+
+md {{ zimbra_domain }} zimbraAuthLdapSearchBindDn "{{ configuration['ldap_bind_dn'] }}"
+md {{ zimbra_domain }} zimbraAuthLdapSearchBindPassword "{{ configuration['ldap_bind_password'] }}"
