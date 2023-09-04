@@ -205,22 +205,31 @@
     src: zimbra_config.txt.j2
     dest: /tmp/zimbra_config.txt
 
-- name: run zimbra installer phase 1
-  shell: ./install.sh -s < /tmp/zimbra_answers.txt
-  args:
-    chdir: /root/zcs-8.8.15_GA_3869.UBUNTU18_64.20190918004220/
+- name: Check if the folder exists
+  ansible.builtin.stat:
+    path: /opt/zimbra
+  register: zimbra_stat
 
-- name: run zimbra installer phase 2
-  command: /opt/zimbra/libexec/zmsetup.pl -c /tmp/zimbra_config.txt
+- name: Run installer
+  block:
+    - name: run zimbra installer phase 1
+      shell: ./install.sh -s < /tmp/zimbra_answers.txt
+      args:
+        chdir: /root/zcs-8.8.15_GA_3869.UBUNTU18_64.20190918004220/
 
-- name: set trusted ip
-  shell: ./zmprov mcf +zimbraMailTrustedIP 127.0.0.1 +zimbraMailTrustedIP "{{ ansible_default_ipv4.address }}"
-  args:
-    chdir: /opt/zimbra/bin
-  become: true
-  become_user: zimbra
-  become_flags: -i
-  ignore_errors: true
+    - name: run zimbra installer phase 2
+      command: /opt/zimbra/libexec/zmsetup.pl -c /tmp/zimbra_config.txt
+
+    - name: set trusted ip
+      shell: ./zmprov mcf +zimbraMailTrustedIP 127.0.0.1 +zimbraMailTrustedIP "{{ ansible_default_ipv4.address }}"
+      args:
+        chdir: /opt/zimbra/bin
+      become: true
+      become_user: zimbra
+      become_flags: -i
+      ignore_errors: true
+
+  when: not zimbra_stat.stat.exists
 
 - name: restart zimbra services
   shell: ./zmcontrol restart
