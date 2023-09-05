@@ -13,7 +13,7 @@
   include_role:
     name: "{{ role_item }}"
   vars:
-    php_version: "8.2"
+    php_version: "7.4"
     php_packages_extra: ["php-mysql", "libapache2-mod-php"]
   loop:
     - geerlingguy.php-versions
