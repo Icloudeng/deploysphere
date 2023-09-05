@@ -69,6 +69,10 @@ lint:
 prod-build: build service-restart
 
 
+.PHONY: queue-status
+queue-status:
+	go run ./cmd/queue-status
+
 
 .PHONY: ansible-logs
 ansible-logs:

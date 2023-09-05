@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"smatflow/platform-installer/pkg/pubsub"
-	"smatflow/platform-installer/pkg/redis"
+	"smatflow/platform-installer/pkg/pubsub/redis"
 )
 
 type SubscriberFunc func(playload pubsub.NetworkEventPayload)
@@ -25,7 +25,6 @@ func subscribe(reference string, eventType string, subscribers []SubscriberFunc)
 				break
 			}
 
-			// queue.JobsQueue.QueueTask(func(ctx context.Context) error {
 			for _, subscriber := range subscribers {
 				subscriber(pubsub.NetworkEventPayload{
 					Type:      eventType,
@@ -34,8 +33,6 @@ func subscribe(reference string, eventType string, subscribers []SubscriberFunc)
 					Payload:   msg.Payload,
 				})
 			}
-			// 	return nil
-			// })
 		}
 	}()
 
