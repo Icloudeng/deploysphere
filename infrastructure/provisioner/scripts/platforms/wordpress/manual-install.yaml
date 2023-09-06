@@ -9,17 +9,19 @@
     name: apache2
     state: present
 
-- name: Install PHP
-  include_role:
-    name: "{{ role_item }}"
-  vars:
+- name: "PHP Roles variables"
+  set_fact:
     php_version: "7.4"
     php_packages_extra: ["php-mysql", "libapache2-mod-php"]
-  loop:
-    - geerlingguy.php-versions
-    # - geerlingguy.php
-  loop_control:
-    loop_var: role_item
+    php_versions_install_recommends: no
+
+- name: Install PHP
+  include_role:
+    name: "geerlingguy.php-versions"
+
+- name: Install PHP
+  include_role:
+    name: "geerlingguy.php"
 
 - include_tasks: ../../tasks/mysql.yaml
   vars:
