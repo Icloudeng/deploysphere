@@ -23,6 +23,9 @@
   include_role:
     name: "geerlingguy.php"
 
+- name: "update-alternatives to php version"
+  shell: "update-alternatives --set php /usr/bin/php{{ php_version }}"
+
 - include_tasks: ../../tasks/mysql.yaml
   vars:
     mysql_db_name: "{{ platform_name }}"
