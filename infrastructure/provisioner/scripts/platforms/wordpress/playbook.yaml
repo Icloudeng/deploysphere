@@ -4,7 +4,7 @@
   become: true
   gather_facts: true
   vars:
-    php_version: "8.0"
+    php_version: "8.1"
     php_versions_install_recommends: false
     php_upload_max_filesize: "120M"
     php_post_max_size: "120M"
