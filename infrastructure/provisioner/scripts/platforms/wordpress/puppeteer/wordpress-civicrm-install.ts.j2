@@ -17,7 +17,7 @@ const PLUGIN_NAME = "{{ civicrm_plugin_name }}";
   const page = await browser.newPage();
 
   // Navigate the page to a URL
-  await page.goto(baseUrl + "/wp-admin/plugin-install.php");
+  await page.goto(baseUrl + "/wp-admin/plugin-install.php?tab=upload");
 
   // Set screen size
   await page.setViewport({ width: 1200, height: 1024 });
@@ -48,7 +48,7 @@ const PLUGIN_NAME = "{{ civicrm_plugin_name }}";
 
   const [fileChooser] = await Promise.all([
     page.waitForFileChooser(),
-    pluginzip.click(),
+    pluginzip.evaluate((el) => el.click());
   ]);
 
   await fileChooser.accept([pluginFile]);
