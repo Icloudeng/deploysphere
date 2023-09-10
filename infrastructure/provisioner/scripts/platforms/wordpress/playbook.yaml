@@ -62,7 +62,7 @@
       delegate_to: 127.0.0.1
 
     # Site URL Setup
-    - include_tasks: configuration/site-url-configuration.yaml
+    - include_tasks: configuration/configuration.yaml
       loop:
         - "/var/www/wordpress"
         - "{{ project_path }}/data"
