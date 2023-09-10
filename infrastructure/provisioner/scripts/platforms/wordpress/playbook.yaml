@@ -27,6 +27,9 @@
       - php-soap
       - libapache2-mod-php
 
+    civicrm_plugin_name: "civicrm-5.65.1-wordpress.zip"
+    civicrm_plugin_url: "https://download.civicrm.org/{{ civicrm_plugin_name }}"
+
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
@@ -44,6 +47,7 @@
         site_title: "{{ decoded_metadata | json_query('site_title') }}"
         admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
         admin_email: "{{ decoded_metadata | json_query('admin_email') }}"
+        civicrm_plugin: "{{ decoded_metadata | json_query('civicrm_plugin') }}"
 
     - name: Extract Variable Dkr install variable
       set_fact:
@@ -75,6 +79,11 @@
     # Account setup
     - import_tasks: initial-setup.yaml
       delegate_to: 127.0.0.1
+
+    # Install CIVIRM
+    - import_tasks: civicrm-install.yaml
+      delegate_to: 127.0.0.1
+      when: civicrm_plugin == true
 
     # Site URL Setup
     - include_tasks: configuration/configuration.yaml

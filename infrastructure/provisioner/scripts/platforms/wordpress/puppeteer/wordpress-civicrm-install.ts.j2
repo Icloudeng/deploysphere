@@ -1,0 +1,60 @@
+import puppeteer from "puppeteer";
+import { wait, downloadFile } from "./utils";
+
+const baseUrl = "http://{{ vm_ip }}";
+const ADMIN_USERNAME = "{{ admin_username }}";
+const ADMIN_PASSWORD = "{{ app_secret }}";
+
+const PLUGIN_URL = "{{ civicrm_plugin_url }}";
+const PLUGIN_NAME = "{{ civicrm_plugin_name }}";
+
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+  });
+
+  const page = await browser.newPage();
+
+  // Navigate the page to a URL
+  await page.goto(baseUrl + "/wp-admin/plugin-install.php");
+
+  // Set screen size
+  await page.setViewport({ width: 1200, height: 1024 });
+
+  /**
+   * ===========================
+   * Login Form
+   */
+  //  Username
+  const username = await page.waitForSelector("#loginform #user_login");
+  await username.type(ADMIN_USERNAME);
+
+  // Password
+  const password = await page.waitForSelector("#loginform #user_pass");
+  await password.type(ADMIN_PASSWORD);
+
+  //   Login Submit
+  const loginBtn = await page.waitForSelector("#loginform #wp-submit");
+  await Promise.all([page.waitForNavigation(), loginBtn.click()]);
+
+  await wait(1);
+
+  // Download plugin file
+  const pluginFile = await downloadFile(PLUGIN_URL, "cache/" + PLUGIN_NAME);
+
+  // Pick file
+  const pluginzip = await page.waitForSelector("#pluginzip");
+
+  const [fileChooser] = await Promise.all([
+    page.waitForFileChooser(),
+    pluginzip.click(),
+  ]);
+
+  await fileChooser.accept([pluginFile]);
+
+  const installBtn = await page.waitForSelector("#install-plugin-submit");
+  await Promise.all([page.waitForNavigation(), installBtn.click()]);
+
+  await browser.close();
+})();
