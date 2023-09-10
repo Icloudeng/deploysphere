@@ -28,7 +28,7 @@
       - libapache2-mod-php
 
     civicrm_plugin_name: "civicrm-5.65.1-wordpress.zip"
-    civicrm_plugin_url: "https://download.civicrm.org/{{ civicrm_plugin_name }}"
+    civicrm_plugin_url: "https://storage.googleapis.com/civicrm/civicrm-stable/5.65.1/{{ civicrm_plugin_name }}"
 
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
