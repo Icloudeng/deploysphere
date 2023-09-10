@@ -1,0 +1,32 @@
+- name: Config file stat
+  stat:
+    path: "{{ config_folder }}/wp-config.php"
+  register: config_file_stat
+
+- name: Write Site URL Config
+  ansible.builtin.blockinfile:
+    path: "{{ config_file_stat.stat.path }}"
+    insertbefore: "(?m)define\\( 'DB_NAME'.*"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - SITE URL CONGIRURATION"
+    block: |
+      define( 'WP_HOME', 'https://{{ domain }}' );
+      define( 'WP_SITEURL', 'https://{{ domain }}' );
+  when: config_file_stat.stat.exists
+
+#
+# Increase htaccess
+- name: htaccess file htaccess
+  stat:
+    path: "{{ config_folder }}/.htaccess"
+  register: htaccess_file_stat
+
+- name: Write Site URL Config
+  ansible.builtin.blockinfile:
+    path: "{{ htaccess_file_stat.stat.path }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - HTACCES CONGIRURATION"
+    block: |
+      php_value upload_max_filesize {{ php_upload_max_filesize }}
+      php_value post_max_size {{ php_post_max_size }}
+      php_value max_execution_time {{ php_max_execution_time }}
+      php_value max_input_time {{ php_max_input_time }}
+  when: htaccess_file_stat.stat.exists

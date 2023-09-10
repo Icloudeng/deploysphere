@@ -3,6 +3,14 @@
   hosts: all
   become: true
   gather_facts: true
+  vars:
+    php_version: "7.4"
+    php_versions_install_recommends: no
+    php_upload_max_filesize: "120M"
+    php_post_max_size: "120M"
+    php_max_execution_time: "300"
+    php_max_input_time: "300"
+    php_packages_extra: ["php-mysql", "libapache2-mod-php"]
 
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
@@ -56,10 +64,10 @@
     # Site URL Setup
     - include_tasks: configuration/site-url-configuration.yaml
       loop:
-        - "/var/www/wordpress/wp-config.php"
-        - "{{ project_path }}/data/wp-config.php"
+        - "/var/www/wordpress"
+        - "{{ project_path }}/data"
       loop_control:
-        loop_var: config_file
+        loop_var: config_folder
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
