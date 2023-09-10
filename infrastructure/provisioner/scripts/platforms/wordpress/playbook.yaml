@@ -53,6 +53,14 @@
     - import_tasks: initial-setup.yaml
       delegate_to: 127.0.0.1
 
+    # Site URL Setup
+    - include_tasks: configuration/site-url-configuration.yaml
+      loop:
+        - "/var/www/wordpress/wp-config.php"
+        - "{{ project_path }}/data/wp-config.php"
+      loop_control:
+        loop_var: config_file
+
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
         text: |

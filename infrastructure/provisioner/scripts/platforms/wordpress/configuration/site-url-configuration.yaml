@@ -1,0 +1,13 @@
+- name: Config file stat
+  stat:
+    path: "{{ config_file }}"
+  register: config_file_stat
+
+- name: Write Site URL Config
+  ansible.builtin.blockinfile:
+    path: "{{ config_file }}"
+    insertbefore: "(?m)define\\( 'DB_NAME'.*"
+    block: |
+      define( 'WP_HOME', 'https://{{ domain }}' );
+      define( 'WP_SITEURL', 'https://{{ domain }}' );
+  when: config_file_stat.stat.exists
