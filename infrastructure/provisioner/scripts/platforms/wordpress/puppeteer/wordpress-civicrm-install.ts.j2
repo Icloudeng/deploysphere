@@ -48,13 +48,13 @@ const PLUGIN_NAME = "{{ civicrm_plugin_name }}";
 
   const [fileChooser] = await Promise.all([
     page.waitForFileChooser(),
-    pluginzip.evaluate((el) => el.click());
+    pluginzip.evaluate((el) => el.click()),
   ]);
 
   await fileChooser.accept([pluginFile]);
 
   const installBtn = await page.waitForSelector("#install-plugin-submit");
-  await Promise.all([page.waitForNavigation(), installBtn.click()]);
+  await Promise.all([page.waitForNavigation(), installBtn.evaluate((el) => el.click())]);
 
   await browser.close();
 })();
