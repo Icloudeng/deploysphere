@@ -4,7 +4,7 @@
   become: true
   gather_facts: true
   vars:
-    php_version: "8.1"
+    php_version: "8.2"
     php_versions_install_recommends: true
     php_upload_max_filesize: "120M"
     php_post_max_size: "120M"
@@ -21,7 +21,6 @@
       - "php-soap"
       - "php-xmlrpc"
       - "libapache2-mod-php"
-
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
@@ -62,10 +61,10 @@
 
     # docker install
     - include_tasks: docker-install.yaml
-      when: docker_install is defined and docker_install == true
+      when: docker_install is not defined or docker_install == true or docker_install == ""
 
     - include_tasks: manual-install.yaml
-      when: docker_install is not defined or docker_install != true
+      when: docker_install is defined and docker_install == false
 
     # Account setup
     - import_tasks: initial-setup.yaml
