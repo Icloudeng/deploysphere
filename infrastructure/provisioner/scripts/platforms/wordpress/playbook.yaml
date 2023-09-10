@@ -15,12 +15,11 @@
       - "php-bcmath"
       - "php-gd"
       - "php-intl"
-      # - "php-mysqli"
       - "php-zip"
       - "php-mbstring"
-      # - "php-xml"
-      # - "php-soap"
-      # - "php-xmlrpc"
+      - "php-xml"
+      - "php-soap"
+      - "php-xmlrpc"
       - "libapache2-mod-php"
 
   tasks:
