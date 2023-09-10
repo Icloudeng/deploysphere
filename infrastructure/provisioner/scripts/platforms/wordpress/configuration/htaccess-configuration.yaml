@@ -1,20 +1,3 @@
-- name: Config file stat
-  stat:
-    path: "{{ config_folder }}/wp-config.php"
-  register: config_file_stat
-
-- name: Write Site URL Config
-  ansible.builtin.blockinfile:
-    path: "{{ config_file_stat.stat.path }}"
-    insertbefore: "(?m)define\\( 'DB_NAME'.*"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK - SITE URL CONGIRURATION"
-    block: |
-      define( 'WP_HOME', 'https://{{ domain }}' );
-      define( 'WP_SITEURL', 'https://{{ domain }}' );
-  when: config_file_stat.stat.exists
-
-#
-# Increase htaccess
 - name: htaccess file htaccess
   stat:
     path: "{{ config_folder }}/.htaccess"

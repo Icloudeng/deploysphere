@@ -80,13 +80,21 @@
     - import_tasks: initial-setup.yaml
       delegate_to: 127.0.0.1
 
+    # htaccess configuration
+    - include_tasks: configuration/htaccess-configuration.yaml
+      loop:
+        - "/var/www/wordpress"
+        - "{{ project_path }}/data"
+      loop_control:
+        loop_var: config_folder
+
     # Install CIVIRM
     - import_tasks: civicrm-install.yaml
       delegate_to: 127.0.0.1
       when: civicrm_plugin == true
 
-    # Site URL Setup
-    - include_tasks: configuration/configuration.yaml
+    # Site Url configuration
+    - include_tasks: configuration/site-url-configuration.yaml
       loop:
         - "/var/www/wordpress"
         - "{{ project_path }}/data"
