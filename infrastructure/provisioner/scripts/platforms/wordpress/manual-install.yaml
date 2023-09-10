@@ -1,6 +1,9 @@
 - name: install utilities and dependencies
   apt:
-    name: aptitude
+    name:
+      - aptitude
+      - imagemagick
+      - ghostscript
     state: present
     update_cache: yes
 
@@ -9,9 +12,9 @@
     name: apache2
     state: present
 
-- name: Install PHP
-  include_role:
-    name: "geerlingguy.php-versions"
+# - name: Install PHP
+#   include_role:
+#     name: "geerlingguy.php-versions"
 
 - name: Install PHP
   include_role:
