@@ -4,8 +4,8 @@
   become: true
   gather_facts: true
   vars:
-    php_version: "7.4"
-    php_versions_install_recommends: no
+    php_version: "8.0"
+    php_versions_install_recommends: false
     php_upload_max_filesize: "120M"
     php_post_max_size: "120M"
     php_max_execution_time: "300"
@@ -19,6 +19,8 @@
       - "php-zip"
       - "php-mbstring"
       - "php-xml"
+      - "php-soap"
+      - "php-xmlrpc"
     php_packages_extra: ["libapache2-mod-php"]
 
   tasks:
