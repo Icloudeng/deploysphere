@@ -11,11 +11,11 @@
     php_max_execution_time: "300"
     php_max_input_time: "300"
     php_packages_extra:
-      # - "php-mysql"
+      - "php-mysql"
       - "php-bcmath"
       - "php-gd"
       - "php-intl"
-      - "php-mysqli"
+      # - "php-mysqli"
       - "php-zip"
       - "php-mbstring"
       # - "php-xml"
