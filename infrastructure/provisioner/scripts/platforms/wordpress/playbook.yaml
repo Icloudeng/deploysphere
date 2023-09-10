@@ -10,17 +10,23 @@
     php_post_max_size: "120M"
     php_max_execution_time: "300"
     php_max_input_time: "300"
-    php_packages_extra:
-      - "php-mysql"
-      - "php-bcmath"
-      - "php-gd"
-      - "php-intl"
-      - "php-zip"
-      - "php-mbstring"
-      - "php-xml"
-      - "php-soap"
-      - "php-xmlrpc"
-      - "libapache2-mod-php"
+    php_packages:
+      - php
+      - php-cli
+      - php-common
+      - php-devel
+      - php-gd
+      - php-mbstring
+      - php-pdo
+      - php-pecl-apcu
+      - php-xml
+      - php-mysql
+      - php-bcmath
+      - php-intl
+      - php-zip
+      - php-soap
+      - libapache2-mod-php
+
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
