@@ -1,0 +1,72 @@
+import puppeteer from "puppeteer";
+import { wait } from "./utils";
+
+const baseUrl = "http://{{ vm_ip }}";
+const SITE_TITLE = "{{ site_title }}";
+const ADMIN_USERNAME = "{{ admin_username }}";
+const ADMIN_EMAIL = "{{ admin_email }}";
+const ADMIN_PASSWORD = "{{ app_secret }}";
+
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+  });
+
+  const page = await browser.newPage();
+
+  // Navigate the page to a URL
+  await page.goto(baseUrl + "/wp-admin/install.php");
+
+  // Set screen size
+  await page.setViewport({ width: 1200, height: 1024 });
+
+  /**
+   * ===========================
+   * Wordpress Initial Setup
+   */
+  //   Select Default Language
+  const language_continue = await page.waitForSelector(
+    "#setup #language-continue"
+  );
+
+  await Promise.all([page.waitForNavigation(), language_continue.click()]);
+
+  await wait(1);
+
+  /**
+   * ===========================
+   * Wordpress Account Setup
+   */
+
+  //   WEB TITLE
+  const weblog_title = await page.waitForSelector(
+    "#setup input[name=weblog_title]"
+  );
+  await weblog_title.type(SITE_TITLE);
+
+  //   ADMIN USERNAME
+  const user_name = await page.waitForSelector("#setup input[name=user_name]");
+  await user_name.type(ADMIN_USERNAME);
+
+  // ADMIN  PASSWORD
+  const admin_password = await page.waitForSelector(
+    "#setup input[name=admin_password]"
+  );
+  await admin_password.evaluate((el, ADMIN_PASSWORD) => {
+    el.value = ADMIN_PASSWORD;
+  }, ADMIN_PASSWORD);
+
+  //   ADMIN EMAIL
+  const admin_email = await page.waitForSelector(
+    "#setup input[name=admin_email]"
+  );
+  await admin_email.type(ADMIN_EMAIL);
+
+  await wait(1);
+
+  const submitBtn = await page.waitForSelector("#setup input[type=submit]");
+  await Promise.all([page.waitForNavigation(), submitBtn.click()]);
+
+  await browser.close();
+})();

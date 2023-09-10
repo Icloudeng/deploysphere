@@ -63,7 +63,10 @@
         "smtp_email_from"
     ],
     "wordpress": [
-        "domain"
+        "domain",
+        "site_title",
+        "admin_username",
+        "admin_email"
     ],
     "authentik": [
         "domain",

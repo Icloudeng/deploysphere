@@ -18,6 +18,9 @@
     - name: Extract Required Variables
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
+        site_title: "{{ decoded_metadata | json_query('site_title') }}"
+        admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
+        admin_email: "{{ decoded_metadata | json_query('admin_email') }}"
 
     - name: Extract Variable Dkr install variable
       set_fact:
@@ -29,9 +32,34 @@
       vars:
         domain_var: "{{ domain }}"
 
+    # Validate email variable
+    - include_tasks: ../../tasks/validator/email-regex.yaml
+      vars:
+        email_var: "{{ admin_email }}"
+
+    # Validate username variable
+    - include_tasks: ../../tasks/validator/username-regex.yaml
+      vars:
+        username_var: "{{ admin_username }}"
+
     # docker install
     - include_tasks: docker-install.yaml
       when: docker_install is defined and docker_install == true
 
     - include_tasks: manual-install.yaml
       when: docker_install is not defined or docker_install != true
+
+    # Account setup
+    - import_tasks: initial-setup.yaml
+      delegate_to: 127.0.0.1
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        text: |
+          Login
+          Email: {{ admin_email }}
+          Password: {{ app_secret }}
+
+        credentials:
+          email: "{{ admin_email }}"
+          password: "{{ app_secret }}"

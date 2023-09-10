@@ -8,7 +8,8 @@
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastructure/provisioner/scripts/platforms/keycloak/ldap.yaml",
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastructure/provisioner/scripts/platforms/moodle/sso-configuration.yaml",
             "file:///home/ubuntu/projects/smatflow/platform-installer/infrastructure/provisioner/scripts/platforms/moodle/sso-configuration.yaml",
-            "file:///home/ubuntu/projects/smatflow/platform-installer/infrastructure/provisioner/scripts/platforms/jupyterhub/configuration/keycloak-sso.yaml"
+            "file:///home/ubuntu/projects/smatflow/platform-installer/infrastructure/provisioner/scripts/platforms/jupyterhub/configuration/keycloak-sso.yaml",
+            "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastructure/provisioner/scripts/platforms/wordpress/initial-setup.yaml"
         ],
         "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/playbook": [
             "file:///Users/icloudeng/Documents/projects/icloudeng/platform-installer/infrastructure/provisioner/scripts/platforms/keycloak/playbook-configuration.yaml",
