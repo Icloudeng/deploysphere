@@ -3,10 +3,6 @@
   import "./styles.css";
 </script>
 
-<div class="app">
-  <div>Header</div>
+<div class="container mx-auto px-4 mt-3">
+  <slot />
 </div>
-
-<style>
-</style>
-<slot></slot>

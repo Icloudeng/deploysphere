@@ -14,6 +14,7 @@
     "@types/cookie": "^0.5.1",
     "autoprefixer": "^10.4.14",
     "flowbite-svelte": "^0.44.15",
+    "flowbite-svelte-icons": "^0.4.3",
     "postcss": "^8.4.24",
     "postcss-load-config": "^4.0.1",
     "svelte": "^4.0.5",
