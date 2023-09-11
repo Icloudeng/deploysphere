@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -10,14 +9,11 @@ import (
 	"smatflow/platform-installer/pkg/env"
 	frontproxy "smatflow/platform-installer/pkg/http/front_proxy"
 
-	sentrygin "github.com/getsentry/sentry-go/gin"
-
 	"smatflow/platform-installer/pkg/http/validators"
 	"smatflow/platform-installer/pkg/http/ws"
 	"smatflow/platform-installer/pkg/ldap"
 	"smatflow/platform-installer/pkg/pubsub/subscribers"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -28,22 +24,7 @@ func init() {
 }
 
 func main() {
-	// Sentry
-	if err := sentry.Init(sentry.ClientOptions{
-		Dsn:              env.Config.SENTRY_DSN,
-		EnableTracing:    true,
-		TracesSampleRate: 1.0,
-		Debug:            true,
-		AttachStacktrace: true,
-	}); err != nil {
-		fmt.Printf("Sentry initialization failed: %v\n", err)
-	}
-
 	app := gin.Default()
-
-	app.Use(sentrygin.New(sentrygin.Options{
-		Repanic: true,
-	}))
 
 	// Get port if passed arg
 	port := strconv.Itoa(*flag.Int("port", 8088, "Server port"))
