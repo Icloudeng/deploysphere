@@ -1,25 +1,15 @@
 <script>
-  // @ts-nocheck
-  import { Seo, Tabs } from "@svelteuidev/core";
-
-  import { Stack, ColorWheel, PieChart } from "radix-icons-svelte";
-  import Resources from "./components/home/Resources.svelte";
-  import Jobs from "./components/home/Jobs.svelte";
-  import History from "./components/home/History.svelte";
+  import { Alert } from "flowbite-svelte";
 </script>
 
-<Seo title="Resources" titleTemplate="%t% | Platform Installer" />
+<svelte:head>
+  <title>Platfomr Installer</title>
+  <meta name="description" content="Svelte demo app" />
+</svelte:head>
 
-<Tabs>
-  <Tabs.Tab label="Resources" icon={Stack}>
-    <Resources />
-  </Tabs.Tab>
-
-  <Tabs.Tab label="Jobs" icon={PieChart}>
-    <Jobs />
-  </Tabs.Tab>
-
-  <Tabs.Tab label="History" icon={ColorWheel}>
-    <History />
-  </Tabs.Tab>
-</Tabs>
+<div class="p-8">
+  <Alert>
+    <span class="font-medium">Info alert!</span>
+    Change a few things up and try submitting again.
+  </Alert>
+</div>
