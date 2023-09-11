@@ -30,7 +30,3 @@
   until: _result.status >= 200
   retries: 30
   delay: 5
-
-- name: wait 30 seconds
-  pause:
-    seconds: 30

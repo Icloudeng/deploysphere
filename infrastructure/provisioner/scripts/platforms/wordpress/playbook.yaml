@@ -76,6 +76,10 @@
     - include_tasks: manual-install.yaml
       when: docker_install is defined and docker_install == false
 
+    - name: Sleep for 60 seconds and continue with play
+      ansible.builtin.wait_for:
+        timeout: 60
+
     # Account setup
     - import_tasks: initial-setup.yaml
       delegate_to: 127.0.0.1
