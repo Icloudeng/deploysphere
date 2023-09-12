@@ -1,0 +1,35 @@
+- name: Provisioner dir
+  set_fact:
+    provisioner_dir: "{{ playbook_dir | dirname | dirname | dirname }}"
+
+- debug:
+    var: db_name
+
+- debug:
+    var: db_type
+
+- name: DB Name variable is set
+  assert:
+    that:
+      - db_name is defined and db_name != ''
+    fail_msg: "DB Name variable is not set or is empty."
+    quiet: yes
+
+- name: DB Type variable is set
+  assert:
+    that:
+      - db_type is defined and db_type != ''
+    fail_msg: "DB Type variable is not set or is empty."
+    quiet: yes
+
+- name: Run script
+  become: false
+  command: bash external-db.sh --db-type "{{ db_type }}" --db-name "{{ db_name }}"
+  args:
+    chdir: "{{ provisioner_dir }}"
+  delegate_to: 127.0.0.1
+  register: encoded_details
+
+- name: Decode database details output variable
+  set_fact:
+    database_details: "{{ encoded_details.stdout | regex_search('%%%(.*?)%%%') | replace('%%%', '') | b64decode }}"

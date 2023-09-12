@@ -2,7 +2,7 @@
   set_fact:
     project_path: "/home/{{ ansible_user }}/projects/{{ platform_name }}"
 
-- name: Decode base64 platform_metadata variable
+- name: Script dir
   set_fact:
     scripts_dir: "{{ playbook_dir | dirname | dirname }}"
 

@@ -1,6 +1,7 @@
 import base64
 import json
 import argparse
+import re
 from utilities.dotenv import config
 from utilities.logging import logging, bingLoggingConfig
 from sqlalchemy import create_engine
@@ -15,6 +16,21 @@ databases_fields = {
 }
 
 protocols = {"postgres": "postgresql", "mysql": "mysql+pymysql"}
+
+
+def format_database_name(input_str: str):
+    # Remove any characters that are not letters, numbers, or underscores
+    sanitized_str = re.sub(r"[^a-zA-Z0-9_]", "", input_str)
+
+    # Ensure the name starts with a letter or an underscore
+    if not sanitized_str[0].isalpha() and sanitized_str[0] != "_":
+        sanitized_str = "_" + sanitized_str
+
+    # Ensure the name is no longer than 63 characters
+    if len(sanitized_str) > 63:
+        sanitized_str = sanitized_str[:63]
+
+    return sanitized_str
 
 
 def db_connection(db_type: str, db_name: str, fields):
@@ -63,7 +79,10 @@ if __name__ == "__main__":
 
     logging.info(args)
 
-    data = main(db_name=args.db_name, db_type=args.db_type)
+    # Format database name
+    db_name = format_database_name(args.db_name)
+
+    data = main(db_name=db_name, db_type=args.db_type)
 
     json_bytes = json.dumps(data).encode("utf-8")
 
