@@ -88,4 +88,4 @@ if __name__ == "__main__":
 
     base64_encoded = base64.b64encode(json_bytes).decode("utf-8")
 
-    print(f"%%%${base64_encoded}%%%")
+    print(f"%%%{base64_encoded}%%%")
