@@ -34,14 +34,11 @@ source .venv/bin/activate
 # Upgrade pip
 $python_command -m pip install --upgrade pip
 
-# Check if Ansible is already installed
-if $python_command -c "import ansible, jmespath, telegram, dotenv, requests, netaddr, redis" &>/dev/null; then
-    echo "Ansible is already installed."
-else
-    # Install Ansible in the virtual environment
-    echo "Ansible was not found, start installing..."
-    pip install ansible jmespath python-telegram-bot python-dotenv requests netaddr redis
-fi
+# PIP if Ansible is already installed
+echo "Pip, start installing..."
+pip install ansible jmespath requests netaddr
+pip install python-telegram-bot python-dotenv redis
+pip SQLAlchemy sqlalchemy-utils psycopg2-binary pymysql
 
 # Ansible dependecies
 ansible-galaxy install -r scripts/requirements.yaml
@@ -78,7 +75,10 @@ redis_publisher="$python_command lib/redis_publisher.py"
 # Log in file
 logger="$python_command lib/logger.py"
 
-# ############### PYTHON FUNTIONS ###############
+# External DB Params
+external_db="$python_command lib/external_db.py"
+
+# END ############### PYTHON FUNTIONS ############### END
 
 # Get admin system email
 admin_email=$([ -z "$($getenv ADMIN_SYSTEM_EMAIL)" ] && echo "admin@smatflow.com" || echo "$($getenv ADMIN_SYSTEM_EMAIL)")
