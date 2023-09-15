@@ -5,3 +5,9 @@ export const JOB_STATUS_IDLE = "idle",
   JOB_STATUS_COMPLETED = "completed",
   JOB_STATUS_FAILED = "failed",
   JOB_STATUS_RUNNING = "running";
+
+export const INSTALLER_URL = import.meta.env.INSTALLER_URL as string;
+
+if (!INSTALLER_URL) {
+  throw new Error("INSTALLER_URL Variable is required");
+}
