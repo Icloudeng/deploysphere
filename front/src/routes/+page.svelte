@@ -8,21 +8,3 @@
   <title>Platfomr Installer</title>
   <meta name="description" content="Svelte demo app" />
 </svelte:head>
-
-<Navbar />
-
-<Tabs style="underline" class="mt-5">
-  <TabItem>
-    <div slot="title" class="flex items-center gap-2">
-      <CompressOutline size="sm" />
-      Resources
-    </div>
-  </TabItem>
-
-  <TabItem>
-    <div slot="title" class="flex items-center gap-2">
-      <SortHorizontalSolid size="sm" />
-      Jobs
-    </div>
-  </TabItem>
-</Tabs>
