@@ -36,10 +36,15 @@
   ];
 </script>
 
+<svelte:head>
+  <title>Platfomr Installer</title>
+  <meta name="description" content="Svelte demo app" />
+</svelte:head>
+
 <div class="container mx-auto px-4 mt-3">
   <Navbar />
 
-  <div class="border-b border-gray-200 dark:border-gray-700">
+  <div class="border-b border-gray-200 dark:border-gray-700 mb-4">
     <ul
       class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400"
     >
@@ -49,7 +54,8 @@
             href={menu.href}
             class={cn(
               "inline-flex items-center justify-center p-4",
-              menu.active && "border-b-2 border-b-primary-500 rounded-t-lg"
+              menu.active &&
+                "border-b-2 border-b-primary-500 rounded-t-lg dark:text-white"
             )}
             aria-current="page"
           >
