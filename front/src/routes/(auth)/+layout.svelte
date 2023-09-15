@@ -1,11 +1,13 @@
 <script>
-  import { DarkMode } from "flowbite-svelte";
+  import { DarkMode, Navbar } from "flowbite-svelte";
+  import Brand from "../components/brand.svelte";
 </script>
 
-<div class="container mx-auto px-4 mt-3">
+<Navbar let:hidden let:toggle rounded color="form">
+  <Brand />
   <DarkMode class="text-2xl" />
+</Navbar>
 
-  <div class="mt-4 w-full">
-    <slot />
-  </div>
+<div class="container mx-auto px-4 mt-5">
+  <slot />
 </div>

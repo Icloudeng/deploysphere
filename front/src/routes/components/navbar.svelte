@@ -14,6 +14,7 @@
     AdjustmentsHorizontalOutline,
     CodePullRequestOutline,
   } from "flowbite-svelte-icons";
+  import Brand from "./brand.svelte";
 
   let open = false;
 
@@ -38,13 +39,7 @@
 </script>
 
 <Navbar let:hidden let:toggle rounded color="form">
-  <NavBrand href="/" class="flex justify-center items-center">
-    <img src="/favicon.png" class="mr-3 h-6 sm:h-9" alt="Platform Logo" />
-    <span
-      class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
-      >PI</span
-    >
-  </NavBrand>
+  <Brand />
 
   <div class="flex space-x-3">
     <div>
