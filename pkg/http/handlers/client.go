@@ -18,7 +18,7 @@ type (
 
 var Client clientHandler
 
-func (resourcesHandler) CreateClient(c *gin.Context) {
+func (clientHandler) CreateClient(c *gin.Context) {
 	var json clientBody
 
 	if err := c.ShouldBindJSON(&json); err != nil {
@@ -36,7 +36,7 @@ func (resourcesHandler) CreateClient(c *gin.Context) {
 	c.JSON(http.StatusOK, client)
 }
 
-func (resourcesHandler) GetClient(c *gin.Context) {
+func (clientHandler) GetClient(c *gin.Context) {
 	var json clientBody
 
 	if err := c.ShouldBindJSON(&json); err != nil {
