@@ -34,17 +34,17 @@ type Job struct {
 type JobRepository struct{}
 
 func (JobRepository) GetByRef(ref string) *Job {
-	object := &Job{
-		Ref: ref,
-	}
+	var object Job
 
-	database.Conn.Last(object)
+	database.Conn.Where(&Job{
+		Ref: ref,
+	}).Last(&object)
 
 	if object.ID == 0 {
 		return nil
 	}
 
-	return object
+	return &object
 }
 
 func (JobRepository) Get(ID uint) *Job {

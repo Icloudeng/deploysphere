@@ -23,17 +23,17 @@ type ResourcesState struct {
 type ResourcesStateRepository struct{}
 
 func (ResourcesStateRepository) GetByRef(ref string) *ResourcesState {
-	res := &ResourcesState{
+	var object ResourcesState
+
+	database.Conn.Where(&ResourcesState{
 		Ref: ref,
-	}
+	}).Last(&object)
 
-	database.Conn.Last(res)
-
-	if res.ID == 0 {
+	if object.ID == 0 {
 		return nil
 	}
 
-	return res
+	return &object
 }
 
 func (ResourcesStateRepository) Get(ID uint) *ResourcesState {
