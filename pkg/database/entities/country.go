@@ -8,9 +8,8 @@ import (
 
 type Country struct {
 	gorm.Model
-	Name    string
-	Code    string
-	Clients []Client
+	Name string
+	Code string
 }
 
 type CountryRepository struct{}
@@ -18,19 +17,21 @@ type CountryRepository struct{}
 func (CountryRepository) GetByID(ID uint) *Country {
 	object := &Country{}
 
-	return object
-}
-
-func (CountryRepository) Get(name string) *Country {
-	object := &Country{}
+	database.Conn.Last(object, ID)
 
 	return object
 }
 
-func (CountryRepository) Create(country *Country) *Country {
+func (CountryRepository) GetByName(name string) *Country {
 	object := &Country{}
 
+	database.Conn.Where(&Country{Name: name}).Last(object)
+
 	return object
+}
+
+func (CountryRepository) Create(data *Country) {
+	database.Conn.Create(data)
 }
 
 func init() {
