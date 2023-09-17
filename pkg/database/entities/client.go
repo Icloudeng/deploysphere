@@ -1,6 +1,10 @@
-package database
+package entities
 
-import "gorm.io/gorm"
+import (
+	"smatflow/platform-installer/pkg/database"
+
+	"gorm.io/gorm"
+)
 
 type Client struct {
 	gorm.Model
@@ -15,7 +19,7 @@ type ClientRepository struct{}
 func (ClientRepository) GetByID(ID uint) *Client {
 	object := &Client{}
 
-	dbConn.Last(object, ID)
+	database.Conn.Last(object, ID)
 
 	if object.ID == 0 {
 		return nil
@@ -30,7 +34,7 @@ func (ClientRepository) Get(country string, clientEmail string) *Client {
 		ClientEmail: clientEmail,
 	}
 
-	dbConn.Last(client)
+	database.Conn.Last(client)
 
 	return client
 }
@@ -40,41 +44,41 @@ func (ClientRepository) Create(client Client) *Client {
 		Country:     client.Country,
 		ClientEmail: client.ClientEmail,
 	}
-	dbConn.Last(&client_email)
+	database.Conn.Last(&client_email)
 
 	if client_email.ID != 0 {
 		return &client_email
 	}
 
 	client_country := Client{Country: client.Country}
-	dbConn.Last(&client_country)
+	database.Conn.Last(&client_country)
 
 	if client_country.ID != 0 {
 		// Count client by country
 		var clients int64
-		dbConn.Where(&Client{
+		database.Conn.Where(&Client{
 			Country: client.Country,
 		}).Count(&clients)
 
 		client_country.ClientCode = int(clients + 1)
 		client_country.ClientEmail = client.ClientEmail
 
-		dbConn.Save(&client_country)
+		database.Conn.Save(&client_country)
 		return &client_country
 	}
 
 	// Count countries
 	var countries int64
-	dbConn.Model(&Client{}).Select("country, count(ID) as total_country").Group("name").Count(&countries)
+	database.Conn.Model(&Client{}).Select("country, count(ID) as total_country").Group("name").Count(&countries)
 
 	client.CountryCode = int(countries + 1)
 	client.ClientCode = 1
 
-	dbConn.Save(&client)
+	database.Conn.Save(&client)
 
 	return &client
 }
 
 func init() {
-	dbConn.AutoMigrate(&Client{})
+	database.Conn.AutoMigrate(&Client{})
 }

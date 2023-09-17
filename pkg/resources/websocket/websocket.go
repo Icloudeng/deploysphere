@@ -3,7 +3,7 @@ package websocket
 import (
 	"encoding/base64"
 	"encoding/json"
-	"smatflow/platform-installer/pkg/database"
+	"smatflow/platform-installer/pkg/database/entities"
 	"smatflow/platform-installer/pkg/http/ws"
 	"smatflow/platform-installer/pkg/pubsub"
 )
@@ -28,7 +28,7 @@ func EmitEncodedEvent(playload pubsub.NetworkEventPayload) {
 	}
 }
 
-func EmitJobEvent(job *database.Job) {
+func EmitJobEvent(job *entities.Job) {
 	playload := map[string]interface{}{
 		"job_id": job.ID,
 		"status": job.Status,

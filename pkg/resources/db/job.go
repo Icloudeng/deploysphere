@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"smatflow/platform-installer/pkg/database"
+	"smatflow/platform-installer/pkg/database/entities"
 	"smatflow/platform-installer/pkg/pubsub"
 	"time"
 
@@ -27,11 +27,11 @@ type (
 
 var Jobs jobs
 
-func (jobs) JobCreate(data JobCreateParam) *database.Job {
-	rep := database.JobRepository{}
+func (jobs) JobCreate(data JobCreateParam) *entities.Job {
+	rep := entities.JobRepository{}
 	postBodyJson, _ := json.Marshal(data.PostBody)
 
-	job := &database.Job{
+	job := &entities.Job{
 		Ref:         data.Ref,
 		PostBody:    datatypes.JSON(postBodyJson),
 		Description: data.Description,
@@ -46,8 +46,8 @@ func (jobs) JobCreate(data JobCreateParam) *database.Job {
 	return job
 }
 
-func (jobs) JobUpdateLogs(job *database.Job, Logs string) *database.Job {
-	rep := database.JobRepository{}
+func (jobs) JobUpdateLogs(job *entities.Job, Logs string) *entities.Job {
+	rep := entities.JobRepository{}
 	// refresh the job
 	job = rep.Get(job.ID)
 
@@ -58,16 +58,16 @@ func (jobs) JobUpdateLogs(job *database.Job, Logs string) *database.Job {
 	return job
 }
 
-func (jobs) JobUpdateStatus(job *database.Job, Status string) *database.Job {
-	rep := database.JobRepository{}
+func (jobs) JobUpdateStatus(job *entities.Job, Status string) *entities.Job {
+	rep := entities.JobRepository{}
 	// refresh the job
 	job = rep.Get(job.ID)
 
-	if job.Status != database.JOB_STATUS_FAILED {
+	if job.Status != entities.JOB_STATUS_FAILED {
 		job.Status = Status
 	}
 
-	if Status == database.JOB_STATUS_COMPLETED || Status == database.JOB_STATUS_FAILED {
+	if Status == entities.JOB_STATUS_COMPLETED || Status == entities.JOB_STATUS_FAILED {
 		job.FinishedAt = time.Now()
 	}
 
@@ -76,15 +76,15 @@ func (jobs) JobUpdateStatus(job *database.Job, Status string) *database.Job {
 	return job
 }
 
-func (jobs) JobGetByID(ID uint) *database.Job {
-	rep := database.JobRepository{}
+func (jobs) JobGetByID(ID uint) *entities.Job {
+	rep := entities.JobRepository{}
 	return rep.Get(ID)
 }
 
 // =============== Redis Events Listener ============= //
 
 func (jobs) Job_ListenResourceProviningLogs(playload pubsub.NetworkEventPayload) {
-	rep := database.JobRepository{}
+	rep := entities.JobRepository{}
 	job := rep.GetByRef(playload.Reference)
 
 	decodedBytes, err := base64.StdEncoding.DecodeString(playload.Payload)
@@ -99,7 +99,7 @@ func (jobs) Job_ListenResourceProviningLogs(playload pubsub.NetworkEventPayload)
 }
 
 func (jobs) Job_ListenResourceProviningStatus(playload pubsub.NetworkEventPayload) {
-	rep := database.JobRepository{}
+	rep := entities.JobRepository{}
 	job := rep.GetByRef(playload.Reference)
 
 	decodedBytes, err := base64.StdEncoding.DecodeString(playload.Payload)
@@ -109,9 +109,9 @@ func (jobs) Job_ListenResourceProviningStatus(playload pubsub.NetworkEventPayloa
 	}
 
 	if string(decodedBytes) == "succeeded" {
-		job.Status = database.JOB_STATUS_COMPLETED
+		job.Status = entities.JOB_STATUS_COMPLETED
 	} else {
-		job.Status = database.JOB_STATUS_FAILED
+		job.Status = entities.JOB_STATUS_FAILED
 	}
 
 	rep.UpdateOrCreate(job)

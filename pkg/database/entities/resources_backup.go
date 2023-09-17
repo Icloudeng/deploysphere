@@ -1,6 +1,8 @@
-package database
+package entities
 
 import (
+	"smatflow/platform-installer/pkg/database"
+
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
@@ -16,15 +18,15 @@ type ResourcesBackupRepository struct{}
 func (ResourcesBackupRepository) Get() *ResourcesBackup {
 	object := &ResourcesBackup{}
 
-	dbConn.Last(object)
+	database.Conn.Last(object)
 
 	return object
 }
 
 func (ResourcesBackupRepository) Create(res *ResourcesBackup) {
-	dbConn.Create(res)
+	database.Conn.Create(res)
 }
 
 func init() {
-	dbConn.AutoMigrate(&ResourcesBackup{})
+	database.Conn.AutoMigrate(&ResourcesBackup{})
 }

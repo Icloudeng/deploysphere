@@ -3,7 +3,7 @@ package db
 import (
 	"encoding/base64"
 	"encoding/json"
-	"smatflow/platform-installer/pkg/database"
+	"smatflow/platform-installer/pkg/database/entities"
 	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/resources/terraform"
 
@@ -16,8 +16,8 @@ type (
 
 var ResourceState resourceState
 
-func (resourceState) ResourceStateCreate(ref string, job database.Job) *database.ResourcesState {
-	rep := database.ResourcesStateRepository{}
+func (resourceState) ResourceStateCreate(ref string, job entities.Job) *entities.ResourcesState {
+	rep := entities.ResourcesStateRepository{}
 
 	// Use credentials of the last ref object
 	var credentials datatypes.JSON
@@ -25,7 +25,7 @@ func (resourceState) ResourceStateCreate(ref string, job database.Job) *database
 		credentials = last_rs.Credentials
 	}
 
-	resource_state := &database.ResourcesState{
+	resource_state := &entities.ResourcesState{
 		Ref:         ref,
 		JobID:       job.ID,
 		Job:         job,
@@ -37,9 +37,9 @@ func (resourceState) ResourceStateCreate(ref string, job database.Job) *database
 	return resource_state
 }
 
-func (resourceState) ResourceStatePutTerraformState(resource_state *database.ResourcesState) {
+func (resourceState) ResourceStatePutTerraformState(resource_state *entities.ResourcesState) {
 	stateModule := terraform.Exec.Show()
-	repository := database.ResourcesStateRepository{}
+	repository := entities.ResourcesStateRepository{}
 
 	// Refresh Object
 	resource_state = repository.Get(resource_state.ID)
@@ -71,7 +71,7 @@ func (resourceState) ResourceStatePutTerraformState(resource_state *database.Res
 // =============== Redis Events Listener ============= //
 
 func (resourceState) ResourceState_ListenResourceProviningCredentials(playload pubsub.NetworkEventPayload) {
-	rep := database.ResourcesStateRepository{}
+	rep := entities.ResourcesStateRepository{}
 	resource_state := rep.GetByRef(playload.Reference)
 
 	decodedBytes, err := base64.StdEncoding.DecodeString(playload.Payload)

@@ -1,7 +1,8 @@
-package database
+package entities
 
 import (
 	"database/sql"
+	"smatflow/platform-installer/pkg/database"
 
 	"gorm.io/gorm"
 )
@@ -17,15 +18,15 @@ type WorkspaceRepository struct{}
 func (WorkspaceRepository) Get() []Workspace {
 	var objects []Workspace
 
-	dbConn.Find(&objects)
+	database.Conn.Find(&objects)
 
 	return objects
 }
 
 func (WorkspaceRepository) Create(res *Workspace) {
-	dbConn.Create(res)
+	database.Conn.Create(res)
 }
 
 func init() {
-	dbConn.AutoMigrate(&Workspace{})
+	database.Conn.AutoMigrate(&Workspace{})
 }

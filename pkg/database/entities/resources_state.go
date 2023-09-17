@@ -1,6 +1,8 @@
-package database
+package entities
 
 import (
+	"smatflow/platform-installer/pkg/database"
+
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
@@ -25,7 +27,7 @@ func (ResourcesStateRepository) GetByRef(ref string) *ResourcesState {
 		Ref: ref,
 	}
 
-	dbConn.Last(res)
+	database.Conn.Last(res)
 
 	if res.ID == 0 {
 		return nil
@@ -37,7 +39,7 @@ func (ResourcesStateRepository) GetByRef(ref string) *ResourcesState {
 func (ResourcesStateRepository) Get(ID uint) *ResourcesState {
 	object := &ResourcesState{}
 
-	dbConn.Last(object, ID)
+	database.Conn.Last(object, ID)
 
 	if object.ID == 0 {
 		return nil
@@ -47,17 +49,17 @@ func (ResourcesStateRepository) Get(ID uint) *ResourcesState {
 }
 
 func (ResourcesStateRepository) Create(res *ResourcesState) {
-	dbConn.Create(res)
+	database.Conn.Create(res)
 }
 
 func (ResourcesStateRepository) UpdateOrCreate(res *ResourcesState) {
-	dbConn.Save(res)
+	database.Conn.Save(res)
 }
 
 func (ResourcesStateRepository) Delete(ID uint) {
-	dbConn.Delete(&ResourcesState{}, ID)
+	database.Conn.Delete(&ResourcesState{}, ID)
 }
 
 func init() {
-	dbConn.AutoMigrate(&ResourcesState{})
+	database.Conn.AutoMigrate(&ResourcesState{})
 }

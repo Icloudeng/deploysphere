@@ -2,15 +2,15 @@ package handlers
 
 import (
 	"net/http"
-	"smatflow/platform-installer/pkg/database"
+	"smatflow/platform-installer/pkg/database/entities"
 
 	"github.com/gin-gonic/gin"
 )
 
 type (
 	clientBody struct {
-		Country     string `json:"country" binding:"required,string"`
-		ClientEmail string `json:"client_email" binding:"required,string,email"`
+		Country     string `json:"country" binding:"required,alpha"`
+		ClientEmail string `json:"client_email" binding:"required,email"`
 	}
 
 	clientHandler struct{}
@@ -26,9 +26,9 @@ func (clientHandler) CreateClient(c *gin.Context) {
 		return
 	}
 
-	repository := database.ClientRepository{}
+	repository := entities.ClientRepository{}
 
-	client := repository.Create(database.Client{
+	client := repository.Create(entities.Client{
 		Country:     json.Country,
 		ClientEmail: json.ClientEmail,
 	})
@@ -44,7 +44,7 @@ func (clientHandler) GetClient(c *gin.Context) {
 		return
 	}
 
-	repository := database.ClientRepository{}
+	repository := entities.ClientRepository{}
 
 	client := repository.Get(json.Country, json.ClientEmail)
 

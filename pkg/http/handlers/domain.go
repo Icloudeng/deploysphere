@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"smatflow/platform-installer/pkg/database"
+	"smatflow/platform-installer/pkg/database/entities"
 	"smatflow/platform-installer/pkg/pubsub"
 	"smatflow/platform-installer/pkg/resources/jobs"
 	"smatflow/platform-installer/pkg/resources/terraform"
@@ -54,7 +54,7 @@ func (domainHandler) CreateDomain(c *gin.Context) {
 		ResourceState: true,
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context, job database.Job) error {
+		Task: func(ctx context.Context, job entities.Job) error {
 			// Create or update resources
 			terraform.Resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
 
@@ -92,7 +92,7 @@ func (domainHandler) DeleteDomain(c *gin.Context) {
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
 		ResourceState: false, // Disable on resource deletion
-		Task: func(ctx context.Context, job database.Job) error {
+		Task: func(ctx context.Context, job entities.Job) error {
 			// Remove resources
 			terraform.Resources.DeleteOvhDomainZoneResource(data.Ref)
 

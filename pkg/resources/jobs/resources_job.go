@@ -2,13 +2,13 @@ package jobs
 
 import (
 	"context"
-	"smatflow/platform-installer/pkg/database"
+	"smatflow/platform-installer/pkg/database/entities"
 	"smatflow/platform-installer/pkg/queue"
 	"smatflow/platform-installer/pkg/resources/db"
 	"smatflow/platform-installer/pkg/resources/websocket"
 )
 
-type TaskFunc func(context.Context, database.Job) error
+type TaskFunc func(context.Context, entities.Job) error
 
 type ResourcesJob struct {
 	Ref           string
@@ -21,7 +21,7 @@ type ResourcesJob struct {
 	Handler       string
 }
 
-func ResourcesJobTask(task ResourcesJob) *database.Job {
+func ResourcesJobTask(task ResourcesJob) *entities.Job {
 	// Create new JOB
 	job := db.Jobs.JobCreate(db.JobCreateParam{
 		Ref:         task.Ref,
@@ -30,16 +30,16 @@ func ResourcesJobTask(task ResourcesJob) *database.Job {
 		Group:       task.Group,
 		Handler:     task.Handler,
 		Method:      task.Method,
-		Status:      database.JOB_STATUS_IDLE,
+		Status:      entities.JOB_STATUS_IDLE,
 	})
 
 	//Emit ws events
 	websocket.EmitJobEvent(job)
 
 	queue.Queue.QueueTask(func(ctx context.Context) error {
-		res_state := &database.ResourcesState{}
+		res_state := &entities.ResourcesState{}
 
-		job = db.Jobs.JobUpdateStatus(job, database.JOB_STATUS_RUNNING)
+		job = db.Jobs.JobUpdateStatus(job, entities.JOB_STATUS_RUNNING)
 		//Emit ws events
 		websocket.EmitJobEvent(job)
 
@@ -60,10 +60,10 @@ func ResourcesJobTask(task ResourcesJob) *database.Job {
 		}
 
 		if err == nil {
-			job = db.Jobs.JobUpdateStatus(job, database.JOB_STATUS_COMPLETED)
+			job = db.Jobs.JobUpdateStatus(job, entities.JOB_STATUS_COMPLETED)
 		} else {
 			job = db.Jobs.JobUpdateLogs(job, err.Error())
-			job = db.Jobs.JobUpdateStatus(job, database.JOB_STATUS_FAILED)
+			job = db.Jobs.JobUpdateStatus(job, entities.JOB_STATUS_FAILED)
 		}
 
 		//Emit ws events

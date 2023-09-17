@@ -2,7 +2,7 @@ package db
 
 import (
 	"encoding/json"
-	"smatflow/platform-installer/pkg/database"
+	"smatflow/platform-installer/pkg/database/entities"
 	"smatflow/platform-installer/pkg/resources/terraform"
 
 	"gorm.io/datatypes"
@@ -37,8 +37,8 @@ func (resourcesBackup) CreateNewResourcesBackup() {
 	state_encoded, _ := json.Marshal(state)
 
 	// Store Database
-	repository := database.ResourcesBackupRepository{}
-	repository.Create(&database.ResourcesBackup{
+	repository := entities.ResourcesBackupRepository{}
+	repository.Create(&entities.ResourcesBackup{
 		Resources: datatypes.JSON(resources_encoded),
 		State:     datatypes.JSON(state_encoded),
 	})

@@ -1,6 +1,7 @@
-package database
+package entities
 
 import (
+	"smatflow/platform-installer/pkg/database"
 	"time"
 
 	"gorm.io/datatypes"
@@ -37,7 +38,7 @@ func (JobRepository) GetByRef(ref string) *Job {
 		Ref: ref,
 	}
 
-	dbConn.Last(object)
+	database.Conn.Last(object)
 
 	if object.ID == 0 {
 		return nil
@@ -49,7 +50,7 @@ func (JobRepository) GetByRef(ref string) *Job {
 func (JobRepository) Get(ID uint) *Job {
 	object := &Job{}
 
-	dbConn.Last(object, ID)
+	database.Conn.Last(object, ID)
 
 	if object.ID == 0 {
 		return nil
@@ -59,17 +60,17 @@ func (JobRepository) Get(ID uint) *Job {
 }
 
 func (JobRepository) Create(object *Job) {
-	dbConn.Create(object)
+	database.Conn.Create(object)
 }
 
 func (JobRepository) UpdateOrCreate(object *Job) {
-	dbConn.Save(object)
+	database.Conn.Save(object)
 }
 
 func (JobRepository) Delete(ID uint) {
-	dbConn.Delete(&Job{}, ID)
+	database.Conn.Delete(&Job{}, ID)
 }
 
 func init() {
-	dbConn.AutoMigrate(&Job{})
+	database.Conn.AutoMigrate(&Job{})
 }
