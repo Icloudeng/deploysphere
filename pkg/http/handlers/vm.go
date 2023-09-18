@@ -73,7 +73,7 @@ func (vmHandler) CreateVm(c *gin.Context) {
 	// then selected automatic node based on resourse Availability
 	if json.Vm.TargetNode == "auto" {
 		nodeStatus, err := proxmox.SelectNodeWithMostResources()
-		if err != nil || nodeStatus == nil {
+		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": "No enough proxmox resources",
 			})
