@@ -29,6 +29,7 @@ func init() {
 }
 
 func VmQemuIDExists(id int) bool {
+	PmClient.Login(env.Config.PROXMOX_USERNAME, env.Config.PROXMOX_PASSWORD)
 	cluster, err := PmClient.Cluster()
 	if err != nil {
 		return false
@@ -48,6 +49,7 @@ func VmQemuIDExists(id int) bool {
 }
 
 func SelectNodeWithMostResources() (*proxmox.NodeStatus, error) {
+	PmClient.Login(env.Config.PROXMOX_USERNAME, env.Config.PROXMOX_PASSWORD)
 	nodes, err := PmClient.Nodes()
 	if err != nil {
 		return nil, err
