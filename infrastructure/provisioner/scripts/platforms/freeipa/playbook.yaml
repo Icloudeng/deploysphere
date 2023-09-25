@@ -15,7 +15,6 @@
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
         ipa_domain: "{{ decoded_metadata | json_query('ipa_domain') }}"
-        ipa_hostname: "{{ decoded_metadata | json_query('ipa_hostname') }}"
 
     # Validate domain variables
     - include_tasks: ../../tasks/validator/domain-regex.yaml
@@ -24,7 +23,6 @@
       loop:
         - "{{ domain }}"
         - "{{ ipa_domain }}"
-        - "{{ ipa_hostname }}"
 
     # docker install
     - include_tasks: docker-install.yaml

@@ -2,7 +2,6 @@
 
 ```
 ipa_domain=example.com
-ipa_hostname=ipa.example.com
 domain=ipa.example.com
 ```
 
