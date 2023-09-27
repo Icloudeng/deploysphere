@@ -37,12 +37,12 @@ func (resourceState) ResourceStateCreate(ref string, job entities.Job) *entities
 	return resource_state
 }
 
-func (resourceState) ResourceStatePutTerraformState(resource_state *entities.ResourcesState) {
+func (resourceState) ResourceStatePutTerraformState(params *entities.ResourcesState) {
 	stateModule := terraform.Exec.Show()
 	repository := entities.ResourcesStateRepository{}
 
 	// Refresh Object
-	resource_state = repository.Get(resource_state.ID)
+	resource_state := repository.Get(params.ID)
 
 	if stateModule == nil {
 		return
