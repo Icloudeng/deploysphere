@@ -25,7 +25,7 @@ type ResourcesStateRepository struct{}
 func (ResourcesStateRepository) GetByRef(ref string) *ResourcesState {
 	var object ResourcesState
 
-	database.Conn.Where(&ResourcesState{
+	database.Conn.Joins("Job").Where(&ResourcesState{
 		Ref: ref,
 	}).Last(&object)
 

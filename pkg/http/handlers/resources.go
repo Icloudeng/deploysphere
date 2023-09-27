@@ -176,7 +176,7 @@ func (resourcesHandler) DeleteResources(c *gin.Context) {
 }
 
 // Get resources state from terraform
-func (resourcesHandler) GetResourcesState(c *gin.Context) {
+func (resourcesHandler) GetTerraformResourcesState(c *gin.Context) {
 	state := terraform.Exec.Show()
 
 	if state == nil {

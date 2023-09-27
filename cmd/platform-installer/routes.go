@@ -25,7 +25,7 @@ func BindLocalJobsRoutes(api *gin.RouterGroup) {
 
 	api.GET("/resources", handlers.Resources.GetResources)
 
-	api.GET("/resources/state", handlers.Resources.GetResourcesState)
+	api.GET("/resources/state", handlers.Resources.GetTerraformResourcesState)
 
 	// Domain
 	api.POST("/resources/domain", handlers.Domain.CreateDomain)
@@ -56,6 +56,9 @@ func BindLocalJobsRoutes(api *gin.RouterGroup) {
 
 	// Jobs
 	api.GET("/jobs/:id", handlers.Jobs.GetJobsByID)
+
+	// Resource State
+	api.GET("/resources-state/:ref", handlers.ResourceState.GetByRef)
 
 	// Client
 	api.POST("/clients", handlers.Client.CreateClient)
