@@ -53,10 +53,9 @@ func (resourceState) ResourceStatePutTerraformState(resource_state *entities.Res
 	state := map[string]interface{}{}
 
 	for _, module := range childModules {
-		address := module.Address
 		for _, resource := range module.Resources {
 			if resource.Name == resource_state.Ref {
-				state[address] = resource
+				state[resource.Type] = resource
 			}
 		}
 	}
