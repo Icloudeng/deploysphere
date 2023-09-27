@@ -27,14 +27,21 @@ func (resourcesStateHandler) GetByRef(c *gin.Context) {
 	repository := entities.ResourcesStateRepository{}
 	db_resources := repository.GetByRef(uri.Ref)
 
-	// Get resource state from terraform
-	tf := terraform.ResourceState{
+	// Get resource state from terraform proxmox module
+	proxmox := terraform.ResourceState{
 		Module: "proxmox",
 	}
-	state := tf.GetResourceState(uri.Ref)
+	vm_qemu := proxmox.GetResourceState(uri.Ref)
+
+	// Get resource state from terraform proxmox OVH
+	ovh := terraform.ResourceState{
+		Module: "ovh",
+	}
+	domain_zone_record := ovh.GetResourceState(uri.Ref)
 
 	c.JSON(http.StatusOK, gin.H{
-		"database":        db_resources,
-		"proxmox_vm_qemu": state,
+		"database":               db_resources,
+		"proxmox_vm_qemu":        vm_qemu,
+		"ovh_domain_zone_record": domain_zone_record,
 	})
 }
