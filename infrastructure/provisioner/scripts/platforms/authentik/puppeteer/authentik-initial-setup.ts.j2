@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import { wait } from "./utils";
 
 const baseUrl = "http://{{ vm_ip }}:9000";
 const ADMIN_EMAIL = "{{ admin_email }}";
@@ -72,7 +73,13 @@ const ADMIN_PASSWORD = "{{ app_secret }}";
         .click();
     });
 
-  await Promise.all([page.waitForNavigation(), submitBtn()]);
+  await Promise.all([
+    page.waitForNavigation(),
+    page.waitForNetworkIdle(),
+    submitBtn(),
+  ]);
+
+  await wait(10);
 
   await browser.close();
 })();
