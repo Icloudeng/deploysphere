@@ -181,6 +181,17 @@ def check_empty_fields(data, path=[]):
             raise ValueError(f"Empty field at path: {'.'.join(current_path)}")
 
 
+def format_to_filename_standard(input_string):
+    # Remove leading and trailing whitespace
+    input_string = input_string.strip()
+
+    # Replace spaces and other non-alphanumeric characters with hyphens
+    formatted_string = re.sub(r"[^\w\s-]", "", input_string)
+    formatted_string = re.sub(r"[\s]+", "-", formatted_string)
+
+    return formatted_string
+
+
 def add_default_email(data, default_email):
     if isinstance(data, dict):
         for key, value in data.items():
@@ -304,12 +315,12 @@ def write_jobid_to_upstream_file(
         # Get the temporary directory path
         temp_dir = tempfile.gettempdir()
         # Specify the filename
-        file_name = os.path.join(temp_dir, upstream.strip())
+        file_name = os.path.join(temp_dir, format_to_filename_standard(upstream))
         # Open the file in append mode ('a')
         with open(file_name, "a") as file:
             # Append content to the file
-            file.write(f"{platform}-jobid={jobid}\n")
-            file.write(f"{platform}-reference={reference}\n")
+            file.write(f"{platform}_jobid={jobid}\n")
+            file.write(f"{platform}_reference={reference}\n")
 
     except Exception as e:
         pass
