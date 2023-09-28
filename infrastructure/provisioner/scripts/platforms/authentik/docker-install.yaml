@@ -22,11 +22,11 @@
 - name: Pause play until a URL is reachable from this host
   ignore_errors: true
   ansible.builtin.uri:
-    url: "http://127.0.0.1:9000"
+    url: "http://{{ vm_ip }}:9000"
     follow_redirects: none
     validate_certs: no
     method: GET
   register: _result
-  until: _result.status >= 200
+  until: _result.status == 200
   retries: 30
-  delay: 5
+  delay: 10
