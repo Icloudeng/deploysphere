@@ -10,6 +10,15 @@ import time
 import requests
 
 
+print(
+    """
+    =============================================
+    # Authentik freeipa FREDERATION
+    =============================================
+    """
+)
+
+
 JOB_FETCH_INTERVAL = 5
 LAST_LOGS = ""
 
@@ -94,7 +103,6 @@ def get_resources_state(ref: str):
         f"{INSTALLER_URL}/resources-state/{ref.strip()}",
         headers=headers,
     )
-    print(f"Get Pesources State (Ref: {ref}): " + json.dumps(response.json(), indent=4))
     response.raise_for_status()
 
     return response.json()
