@@ -13,7 +13,7 @@ import requests
 print(
     """
     =============================================
-    # Authentik freeipa FREDERATION
+    # Nextcloud - Sso Authentik
     =============================================
     """
 )
@@ -145,28 +145,13 @@ def wait_job_status(jobid: str) -> bool:
 # =============================================================================
 # Authentik Functions
 # =============================================================================
-def domain_to_ldap_cn(domain):
-    # Remove leading and trailing whitespaces and convert to lowercase
-    domain = domain.strip().lower()
-
-    # Split the domain into components
-    domain_components = domain.split(".")
-
-    # Prefix each component with "cn="
-    ldap_cn_components = ["cn=" + component for component in domain_components]
-
-    # Join the components with commas
-    ldap_cn = ",".join(ldap_cn_components)
-
-    return ldap_cn
 
 
 def main():
     variables = read_and_extract_downstream_variables()
 
     # Authentik
-    authentik_reference = variables["authentik_reference"]
-    authentik_state = get_resources_state(authentik_reference)["data"]
+    authentik_state = get_resources_state(variables["authentik_reference"])["data"]
     authentik_domain = authentik_state["State"]["ovh_domain_zone_record"]["values"]
     authentik_domain = concatenate_domain(
         sub_domain=authentik_domain["subdomain"],
@@ -174,34 +159,33 @@ def main():
     )
     authentik_credentials = authentik_state["Credentials"][0]
 
-    # FreeIPA
-    freeipa_state = get_resources_state(variables["freeipa_reference"])["data"]
-    ipa_domain = freeipa_state["Job"]["PostBody"]["platform"]["metadata"]["ipa_domain"]
-    ipa_domain_cn = domain_to_ldap_cn(ipa_domain)
-    freeipa_credentials = freeipa_state["Credentials"][0]
-    freeipa_ipv4_address = freeipa_state["State"]["proxmox_vm_qemu"]["values"][
-        "default_ipv4_address"
-    ]
+    # Nextcloud
+    nextcloud_reference = variables["nextcloud_reference"]
+    nextcloud_state = get_resources_state(nextcloud_reference)["data"]
+    nextcloud_domain = nextcloud_state["State"]["ovh_domain_zone_record"]["values"]
+    nextcloud_domain = concatenate_domain(
+        sub_domain=nextcloud_domain["subdomain"],
+        root_domain=nextcloud_domain["zone"],
+    )
+    nextcloud_credentials = nextcloud_state["Credentials"][0]
 
     body = {
-        "ref": authentik_reference,
+        "ref": nextcloud_reference,
         "platform": {
-            "name": "authentik",
+            "name": "nextcloud",
             "metadata": {
-                "authentik_url": "https://%s" % authentik_domain,
-                "authentik_admin": authentik_credentials["username"],
-                "authentik_password": authentik_credentials["password"],
-                "configuration_type": "ldap",
+                "nextcloud_url": "https://%s" % nextcloud_domain,
+                "nextcloud_admin_username": nextcloud_credentials["username"],
+                "nextcloud_admin_password": nextcloud_credentials["password"],
+                "configuration_type": "authentik_sso",
                 "configuration": {
-                    "ldap_bind_dn": "uid=admin,cn=users,cn=accounts,%s" % ipa_domain_cn,
-                    "ldap_bind_password": freeipa_credentials["password"],
-                    "ldap_search_base": "cn=accounts,%s" % ipa_domain_cn,
-                    "ldap_server_url": "ldap://%s" % freeipa_ipv4_address,
+                    "authentik_url": "https://%s" % authentik_domain,
+                    "authentik_admin": authentik_credentials["username"],
+                    "authentik_password": authentik_credentials["password"],
                 },
             },
         },
     }
-
     response = post_provisioning_configuration(body)
     jobid = response["job"]["ID"]
     print(f"JobID: {jobid} ... ")
