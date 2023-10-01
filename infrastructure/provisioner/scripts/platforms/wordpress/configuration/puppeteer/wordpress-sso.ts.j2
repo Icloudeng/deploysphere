@@ -1,0 +1,144 @@
+import puppeteer from "puppeteer";
+import { wait } from "./utils";
+
+const baseUrl = "{{ instance_url }}";
+const ADMIN_USERNAME = "{{ admin_username }}";
+const ADMIN_PASSWORD = "{{ admin_password }}";
+
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+  });
+
+  const page = await browser.newPage();
+
+  // Navigate the page to a URL
+  await page.goto(baseUrl + "/wp-admin/plugin-install.php");
+
+  // Set screen size
+  await page.setViewport({ width: 1200, height: 1024 });
+
+  /**
+   * ===========================
+   * Login Form
+   */
+  //  Username
+  const username = await page.waitForSelector("#loginform #user_login");
+  await username.type(ADMIN_USERNAME);
+
+  // Password
+  const password = await page.waitForSelector("#loginform #user_pass");
+  await password.type(ADMIN_PASSWORD);
+
+  //   Login Submit
+  const loginBtn = await page.waitForSelector("#loginform #wp-submit");
+  await Promise.all([page.waitForNavigation(), loginBtn.click()]);
+
+  await wait(1);
+
+  // Active OpenID Plugin
+
+  //   Search for OpenID Connect Generic Client
+  const searchPluginEl = await page.waitForSelector("#search-plugins");
+  await Promise.all([
+    page.waitForNetworkIdle(),
+    searchPluginEl.type("OpenID Connect Generic Client"),
+  ]);
+
+  //   Wait to usure plugin fetched
+  await wait(5);
+
+  const pluginNotInstalled = await page.evaluate(() => {
+    return !!document.querySelector(
+      "[data-slug=daggerhart-openid-connect-generic]"
+    );
+  });
+
+  if (pluginNotInstalled) {
+    //   Select plugin plugin fromdaggerhart-openid-connect-generic
+    const oid_plugin = await page.waitForSelector(
+      "[data-slug=daggerhart-openid-connect-generic]"
+    );
+
+    //   Get Plugin Link
+    const link = await oid_plugin.evaluate((el) => el.getAttribute("href"));
+    if (!link) {
+      await browser.close();
+      throw Error("Cannot found oid plugin");
+    }
+
+    //   Install plugin
+    await page.goto(link);
+
+    //   Wait
+    await wait(5);
+  }
+
+  //   Plugin Page
+  await page.goto(baseUrl + "/wp-admin/plugins.php");
+
+  const pluginActivated = await page.evaluate(() => {
+    return !!document.getElementById(
+      "activate-daggerhart-openid-connect-generic"
+    );
+  });
+
+  //   Active plugin if not yet
+  if (pluginActivated) {
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click("#activate-daggerhart-openid-connect-generic"),
+    ]);
+  }
+
+  //   OpenID setting
+  await page.goto(
+    baseUrl +
+      "/wp-admin/options-general.php?page=openid-connect-generic-settings"
+  );
+
+  // Fill Form
+  // client_id
+  await (
+    await page.waitForSelector("input#client_id")
+  ).evaluate((el) => (el.value = "{{ oidc_client_id }}"));
+
+  // client_secret
+  await (
+    await page.waitForSelector("input#client_secret")
+  ).evaluate((el) => (el.value = "{{ oidc_client_secret }}"));
+
+  // scope
+  await (
+    await page.waitForSelector("input#scope")
+  ).evaluate((el) => (el.value = "{{ scopes }}"));
+
+  // endpoint_login
+  await (
+    await page.waitForSelector("input#endpoint_login")
+  ).evaluate((el) => (el.value = "{{ authorize_url }}"));
+
+  // endpoint_userinfo
+  await (
+    await page.waitForSelector("input#endpoint_userinfo")
+  ).evaluate((el) => (el.value = "{{ user_info_url }}"));
+
+  // endpoint_token
+  await (
+    await page.waitForSelector("input#endpoint_token")
+  ).evaluate((el) => (el.value = "{{ token_url }}"));
+
+  // endpoint_end_session
+  await (
+    await page.waitForSelector("input#endpoint_end_session")
+  ).evaluate((el) => (el.value = "{{ logout_url }}"));
+
+  //   Submit
+  await Promise.all([page.waitForNavigation(), page.click("form #submit")]);
+
+  // wait
+  await wait(1);
+
+  await browser.close();
+})();

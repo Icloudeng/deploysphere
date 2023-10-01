@@ -150,5 +150,19 @@
                 "ldap_bind_password"
             ]
         }
-    }
+    },
+    "wordpress": {
+        "authentik_sso": {
+            "fields": [
+                "wordpress_url",
+                "wordpress_admin_username",
+                "wordpress_admin_password"
+            ],
+            "configuration": [
+                "authentik_url",
+                "authentik_admin",
+                "authentik_password"
+            ]
+        }
+    },
 }

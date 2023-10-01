@@ -1,0 +1,21 @@
+- name: Extract Required Variables
+  set_fact:
+    instance_url: "{{ decoded_metadata | json_query('wordpress_url') }}"
+    admin_username: "{{ decoded_metadata | json_query('wordpress_admin_username') }}"
+    admin_password: "{{ decoded_metadata | json_query('wordpress_admin_password') }}"
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+# Validate domain variable
+- include_tasks: "{{ scripts_dir }}/tasks/validator/url-ws-regex.yaml"
+  vars:
+    url_var: "{{ item }}"
+  loop:
+    - "{{ configuration['authentik_url'] }}"
+    - "{{ instance_url }}"
+
+- include_tasks: authentik-sso-configuration.yaml
+
+- include_tasks: "{{ scripts_dir }}/tasks/expose-variable.yaml"
+  vars:
+    text: |
+      Configuration Type: Authentik SSO
