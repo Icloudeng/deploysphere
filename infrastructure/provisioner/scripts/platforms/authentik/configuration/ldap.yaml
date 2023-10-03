@@ -29,6 +29,9 @@
   args:
     chdir: "{{ puppeteer_folder }}"
   register: session_key
+  until: "session_key is not failed"
+  retries: 5
+  delay: 10
 
 - name: Authentik Session Tokens
   set_fact:
