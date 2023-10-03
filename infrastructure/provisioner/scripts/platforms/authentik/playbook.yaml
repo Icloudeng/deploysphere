@@ -37,6 +37,17 @@
       delegate_to: 127.0.0.1
       ignore_errors: true
 
+    - name: Restart Authentik Containers
+      become: true
+      command: "docker compose up --force-recreate -d"
+      ignore_errors: true
+      args:
+        chdir: "{{ project_path }}"
+
+    - name: Sleep for 10 seconds and continue with play
+      wait_for:
+        timeout: 10
+
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
         text: |
