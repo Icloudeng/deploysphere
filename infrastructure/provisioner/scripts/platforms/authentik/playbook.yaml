@@ -32,6 +32,10 @@
     # docker install
     - include_tasks: docker-install.yaml
 
+    - name: Sleep for 30 seconds and continue with play
+      wait_for:
+        timeout: 30
+
     # Account setup
     - import_tasks: initial-setup.yaml
       delegate_to: 127.0.0.1

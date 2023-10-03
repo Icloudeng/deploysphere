@@ -210,14 +210,31 @@ async function installPlugin(page: Page) {
     page.goto(baseUrl + "/admin/tool/installaddon/index.php"),
   ]);
 
-  const pluginFile = await downloadFile(oidcPluginUrl, "cache/" + oidcPluginName);
+  const pluginFile = await downloadFile(
+    oidcPluginUrl,
+    "cache/" + oidcPluginName
+  );
 
   // Open file picker
   const chooseFile = await page.waitForSelector(
     "#fitem_id_zipfile input.fp-btn-choose"
   );
-  await wait(3);
   await chooseFile.click();
+
+  await wait(3);
+
+  await page.evaluate(() => {
+    Array.from(document.querySelectorAll(".fp-repo-area .fp-repo a")).forEach(
+      (link: HTMLElement) => {
+        const text = link.textContent?.toLowerCase();
+        if (text?.includes("upload".toLowerCase())) {
+          link.click();
+        }
+      }
+    );
+  });
+
+  await wait(5);
 
   // Pick file
   const inputFile = await page.waitForSelector(

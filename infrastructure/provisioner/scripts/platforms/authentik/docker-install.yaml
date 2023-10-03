@@ -27,6 +27,6 @@
     validate_certs: no
     method: GET
   register: _result
-  until: _result.status == 200
+  until: _result.status >= 200
   retries: 30
   delay: 10
