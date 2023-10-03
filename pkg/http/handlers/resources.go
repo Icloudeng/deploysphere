@@ -82,15 +82,15 @@ func (resourcesHandler) CreateResources(c *gin.Context) {
 	}
 
 	// Check if VM Id doesn't exist
-	if json.Vm.Vmid != 0 {
-		if exists := proxmox.VmQemuIDExists(json.Vm.Vmid); exists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error": "VM ID already exists !",
-			})
+	// if json.Vm.Vmid != 0 {
+	// 	if exists := proxmox.VmQemuIDExists(json.Vm.Vmid); exists {
+	// 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+	// 			"error": "VM ID already exists !",
+	// 		})
 
-			return
-		}
-	}
+	// 		return
+	// 	}
+	// }
 
 	// If Target Node is set to auto,
 	// then selected automatic node based on resourse Availability
