@@ -145,20 +145,20 @@ def wait_job_status(jobid: str) -> bool:
 # =============================================================================
 # Authentik Functions
 # =============================================================================
-def domain_to_ldap_cn(domain):
+def domain_to_ldap_dc(domain):
     # Remove leading and trailing whitespaces and convert to lowercase
     domain = domain.strip().lower()
 
     # Split the domain into components
     domain_components = domain.split(".")
 
-    # Prefix each component with "cn="
-    ldap_cn_components = ["cn=" + component for component in domain_components]
+    # Prefix each component with "dc="
+    ldap_dc_components = ["dc=" + component for component in domain_components]
 
     # Join the components with commas
-    ldap_cn = ",".join(ldap_cn_components)
+    ldap_dc = ",".join(ldap_dc_components)
 
-    return ldap_cn
+    return ldap_dc
 
 
 def main():
@@ -177,7 +177,7 @@ def main():
     # FreeIPA
     freeipa_state = get_resources_state(variables["freeipa_reference"])["data"]
     ipa_domain = freeipa_state["Job"]["PostBody"]["platform"]["metadata"]["ipa_domain"]
-    ipa_domain_cn = domain_to_ldap_cn(ipa_domain)
+    ipa_domain_dc = domain_to_ldap_dc(ipa_domain)
     freeipa_credentials = freeipa_state["Credentials"][0]
     freeipa_ipv4_address = freeipa_state["State"]["proxmox_vm_qemu"]["values"][
         "default_ipv4_address"
@@ -193,9 +193,9 @@ def main():
                 "authentik_password": authentik_credentials["password"],
                 "configuration_type": "ldap",
                 "configuration": {
-                    "ldap_bind_dn": "uid=admin,cn=users,cn=accounts,%s" % ipa_domain_cn,
+                    "ldap_bind_dn": "uid=admin,cn=users,cn=accounts,%s" % ipa_domain_dc,
                     "ldap_bind_password": freeipa_credentials["password"],
-                    "ldap_search_base": "cn=accounts,%s" % ipa_domain_cn,
+                    "ldap_search_base": "cn=accounts,%s" % ipa_domain_dc,
                     "ldap_server_url": "ldap://%s" % freeipa_ipv4_address,
                 },
             },
