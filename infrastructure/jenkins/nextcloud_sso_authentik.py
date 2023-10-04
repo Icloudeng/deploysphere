@@ -24,7 +24,7 @@ LAST_LOGS = ""
 
 BUILD_TAG = os.environ.get("BUILD_TAG", "")
 
-INSTALLER_URL = os.environ.get("INSTALLER_URL", "https://installer.smatflow.xyz")
+INSTALLER_URL = os.environ.get("INSTALLER_URL", "https://installer.homelab.xyz")
 LDAP_USER_NAME = os.environ.get("LDAP_USER_NAME", "jenkins")
 LDAP_PASSWORD = os.environ.get("LDAP_PASSWORD", "")
 

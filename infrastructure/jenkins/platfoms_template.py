@@ -9,7 +9,7 @@ import json
 import tempfile
 
 
-INSTALLER_URL = os.environ.get("INSTALLER_URL", "https://installer.smatflow.xyz")
+INSTALLER_URL = os.environ.get("INSTALLER_URL", "https://installer.homelab.xyz")
 LDAP_USER_NAME = os.environ.get("LDAP_USER_NAME", "jenkins")
 LDAP_PASSWORD = os.environ.get("LDAP_PASSWORD", "")
 
@@ -381,7 +381,7 @@ DOMAIN_SUB = os.environ.get(
 ).strip()
 DOMAIN_FIELDTYPE = os.environ.get("DOMAIN_FIELDTYPE", "CNAME").strip()
 DOMAIN_TTL = os.environ.get("DOMAIN_TTL", "3600").strip()
-DOMAIN_TARGET = os.environ.get("DOMAIN_TARGET", "gateway.smatflow.net.")
+DOMAIN_TARGET = os.environ.get("DOMAIN_TARGET", "gateway.homelab.net.")
 DOMAIN_ENV = os.environ.get("DOMAIN_ENV", "").strip()
 
 if not DOMAIN_SUB or DOMAIN_SUB == "":
@@ -406,7 +406,7 @@ PROXMOX_VM_NAME = concatenate_resources(
 )
 
 # Client
-PROJECT_EMAIL = os.environ.get("PROJECT_EMAIL", "admin@smatflow.com").strip()
+PROJECT_EMAIL = os.environ.get("PROJECT_EMAIL", "admin@homelab.com").strip()
 PROJECT_COUNTRY = os.environ.get("PROJECT_COUNTRY", "french").strip()
 PROJECT_COUNTRY_CODE = os.environ.get("PROJECT_COUNTRY_CODE", "").strip()
 PROJECT_NAME = os.environ.get("PROJECT_NAME", "").strip()

@@ -5,3 +5,4 @@ platform-installer-*
 tmp
 .data.db
 *.sqlite
+.vscode/settings.json

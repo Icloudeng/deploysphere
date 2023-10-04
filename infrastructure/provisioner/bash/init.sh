@@ -81,4 +81,4 @@ external_db="$python_command lib/external_db.py"
 # END ############### PYTHON FUNTIONS ############### END
 
 # Get admin system email
-admin_email=$([ -z "$($getenv ADMIN_SYSTEM_EMAIL)" ] && echo "admin@smatflow.com" || echo "$($getenv ADMIN_SYSTEM_EMAIL)")
+admin_email=$([ -z "$($getenv ADMIN_SYSTEM_EMAIL)" ] && echo "admin@homelab.com" || echo "$($getenv ADMIN_SYSTEM_EMAIL)")
