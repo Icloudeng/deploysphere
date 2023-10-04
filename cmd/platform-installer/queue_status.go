@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"smatflow/platform-installer/pkg/pubsub"
-	"smatflow/platform-installer/pkg/pubsub/redis"
-	"smatflow/platform-installer/pkg/queue"
-	"smatflow/platform-installer/pkg/structs"
+	"smatflow/platform-installer/internal/pubsub"
+	"smatflow/platform-installer/internal/pubsub/redis"
+	"smatflow/platform-installer/internal/queue"
+	"smatflow/platform-installer/internal/structs"
 	"time"
 )
 

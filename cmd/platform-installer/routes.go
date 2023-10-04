@@ -2,7 +2,7 @@ package main
 
 import (
 	"net/http"
-	"smatflow/platform-installer/pkg/http/handlers"
+	"smatflow/platform-installer/internal/http/handlers"
 
 	"github.com/gin-gonic/gin"
 )

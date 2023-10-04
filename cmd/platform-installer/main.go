@@ -6,13 +6,13 @@ import (
 	"net/http"
 	"strconv"
 
-	"smatflow/platform-installer/pkg/env"
-	frontproxy "smatflow/platform-installer/pkg/http/front_proxy"
+	"smatflow/platform-installer/internal/env"
+	frontproxy "smatflow/platform-installer/internal/http/front_proxy"
 
-	"smatflow/platform-installer/pkg/http/validators"
-	"smatflow/platform-installer/pkg/http/ws"
-	"smatflow/platform-installer/pkg/ldap"
-	"smatflow/platform-installer/pkg/pubsub/subscribers"
+	"smatflow/platform-installer/internal/http/validators"
+	"smatflow/platform-installer/internal/http/ws"
+	"smatflow/platform-installer/internal/ldap"
+	"smatflow/platform-installer/internal/pubsub/subscribers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"smatflow/platform-installer/pkg/pubsub"
-	"smatflow/platform-installer/pkg/pubsub/redis"
+	"smatflow/platform-installer/internal/pubsub"
+	"smatflow/platform-installer/internal/pubsub/redis"
 )
 
 func main() {
