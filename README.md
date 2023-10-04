@@ -20,14 +20,13 @@ Infrastructure and auto platform provisioning, POST `/resources`
   },
   "vm": {
     "name": "wordpress-resource-vm",
-    "target_node": "promox-srv2", // Proxmox Node
+    "target_node": "proxmox-node", // Proxmox Node
     "clone": "ubuntu-22.04-cloudinit-template", // Proxmox Cloud image template (Must exists)
     "vmid": 0,
     "memory": 4096,
     "network": [
       {
-        "bridge": "vmbr1",
-        "tag": 10
+        "bridge": "vmbr0"
       }
     ]
   },
