@@ -6,7 +6,7 @@
 
 Infrastructure and auto platform provisioning
 
-```json
+```js
 {
   // Terraform Resource reference (Can be anything following this format: /^[a-z]+([0-9a-z]+(?:-[0-9a-z]+)?)*$/ )
   "ref": "wordpress-resource-infra",
