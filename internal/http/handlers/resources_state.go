@@ -2,7 +2,8 @@ package handlers
 
 import (
 	"net/http"
-	"smatflow/platform-installer/internal/database/entities"
+
+	"github.com/icloudeng/platform-installer/internal/database/entities"
 
 	"github.com/gin-gonic/gin"
 )

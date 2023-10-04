@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"smatflow/platform-installer/internal/env"
+
+	"github.com/icloudeng/platform-installer/internal/env"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,9 +1,9 @@
 package jobs
 
 import (
-	"smatflow/platform-installer/internal/pubsub/redis_events"
-	"smatflow/platform-installer/internal/resources/db"
-	"smatflow/platform-installer/internal/resources/websocket"
+	"github.com/icloudeng/platform-installer/internal/pubsub/redis_events"
+	"github.com/icloudeng/platform-installer/internal/resources/db"
+	"github.com/icloudeng/platform-installer/internal/resources/websocket"
 )
 
 func redis_pub_listeners(Ref string) func() {

@@ -1,4 +1,4 @@
-module smatflow/platform-installer
+module github.com/icloudeng/platform-installer
 
 go 1.20
 

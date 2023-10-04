@@ -6,13 +6,13 @@ import (
 	"net/http"
 	"strconv"
 
-	"smatflow/platform-installer/internal/env"
-	frontproxy "smatflow/platform-installer/internal/http/front_proxy"
+	"github.com/icloudeng/platform-installer/internal/env"
+	frontproxy "github.com/icloudeng/platform-installer/internal/http/front_proxy"
 
-	"smatflow/platform-installer/internal/http/validators"
-	"smatflow/platform-installer/internal/http/ws"
-	"smatflow/platform-installer/internal/ldap"
-	"smatflow/platform-installer/internal/pubsub/subscribers"
+	"github.com/icloudeng/platform-installer/internal/http/validators"
+	"github.com/icloudeng/platform-installer/internal/http/ws"
+	"github.com/icloudeng/platform-installer/internal/ldap"
+	"github.com/icloudeng/platform-installer/internal/pubsub/subscribers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

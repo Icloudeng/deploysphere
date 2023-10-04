@@ -4,9 +4,10 @@ import (
 	"context"
 	"log"
 	"path"
-	"smatflow/platform-installer/internal/filesystem"
-	"smatflow/platform-installer/internal/pubsub"
-	"smatflow/platform-installer/internal/structs"
+
+	"github.com/icloudeng/platform-installer/internal/filesystem"
+	"github.com/icloudeng/platform-installer/internal/pubsub"
+	"github.com/icloudeng/platform-installer/internal/structs"
 
 	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/hc-install/product"

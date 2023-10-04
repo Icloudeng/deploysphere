@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"smatflow/platform-installer/internal/filesystem"
-	"smatflow/platform-installer/internal/structs"
+
+	"github.com/icloudeng/platform-installer/internal/filesystem"
+	"github.com/icloudeng/platform-installer/internal/structs"
 )
 
 func SendNotification(notifier structs.Notifier) {

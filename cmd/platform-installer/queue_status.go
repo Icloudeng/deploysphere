@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"smatflow/platform-installer/internal/pubsub"
-	"smatflow/platform-installer/internal/pubsub/redis"
-	"smatflow/platform-installer/internal/queue"
-	"smatflow/platform-installer/internal/structs"
 	"time"
+
+	"github.com/icloudeng/platform-installer/internal/pubsub"
+	"github.com/icloudeng/platform-installer/internal/pubsub/redis"
+	"github.com/icloudeng/platform-installer/internal/queue"
+	"github.com/icloudeng/platform-installer/internal/structs"
 )
 
 func init() {

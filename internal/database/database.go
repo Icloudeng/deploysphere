@@ -3,7 +3,8 @@ package database
 import (
 	"fmt"
 	"log"
-	"smatflow/platform-installer/internal/env"
+
+	"github.com/icloudeng/platform-installer/internal/env"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"

@@ -1,7 +1,7 @@
 package redis
 
 import (
-	"smatflow/platform-installer/internal/env"
+	"github.com/icloudeng/platform-installer/internal/env"
 
 	"github.com/redis/go-redis/v9"
 )

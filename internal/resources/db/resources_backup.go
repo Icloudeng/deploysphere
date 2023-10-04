@@ -2,8 +2,9 @@ package db
 
 import (
 	"encoding/json"
-	"smatflow/platform-installer/internal/database/entities"
-	"smatflow/platform-installer/internal/resources/terraform"
+
+	"github.com/icloudeng/platform-installer/internal/database/entities"
+	"github.com/icloudeng/platform-installer/internal/resources/terraform"
 
 	"gorm.io/datatypes"
 )

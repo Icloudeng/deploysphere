@@ -1,9 +1,9 @@
 package terraform
 
 import (
-	"smatflow/platform-installer/internal/resources/terraform/ovh"
-	"smatflow/platform-installer/internal/resources/terraform/proxmox"
-	"smatflow/platform-installer/internal/structs"
+	"github.com/icloudeng/platform-installer/internal/resources/terraform/ovh"
+	"github.com/icloudeng/platform-installer/internal/resources/terraform/proxmox"
+	"github.com/icloudeng/platform-installer/internal/structs"
 )
 
 type resources struct{}

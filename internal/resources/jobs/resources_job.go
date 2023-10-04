@@ -2,10 +2,11 @@ package jobs
 
 import (
 	"context"
-	"smatflow/platform-installer/internal/database/entities"
-	"smatflow/platform-installer/internal/queue"
-	"smatflow/platform-installer/internal/resources/db"
-	"smatflow/platform-installer/internal/resources/websocket"
+
+	"github.com/icloudeng/platform-installer/internal/database/entities"
+	"github.com/icloudeng/platform-installer/internal/queue"
+	"github.com/icloudeng/platform-installer/internal/resources/db"
+	"github.com/icloudeng/platform-installer/internal/resources/websocket"
 )
 
 type TaskFunc func(context.Context, entities.Job) error

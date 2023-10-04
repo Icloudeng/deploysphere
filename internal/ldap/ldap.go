@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"html/template"
 	"log"
-	"smatflow/platform-installer/internal/env"
+
+	"github.com/icloudeng/platform-installer/internal/env"
 
 	"github.com/go-ldap/ldap/v3"
 )

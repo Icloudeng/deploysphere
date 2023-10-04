@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"smatflow/platform-installer/internal/filesystem"
-	"smatflow/platform-installer/internal/structs"
+
+	"github.com/icloudeng/platform-installer/internal/filesystem"
+	"github.com/icloudeng/platform-installer/internal/structs"
 )
 
 func provisioning(prov structs.Provisioning, file string, jobId uint) {

@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"smatflow/platform-installer/internal/filesystem"
-	"smatflow/platform-installer/internal/resources/terraform"
-	"smatflow/platform-installer/internal/structs"
+
+	"github.com/icloudeng/platform-installer/internal/filesystem"
+	"github.com/icloudeng/platform-installer/internal/resources/terraform"
+	"github.com/icloudeng/platform-installer/internal/structs"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,6 +1,6 @@
 package db
 
-import "smatflow/platform-installer/internal/database/entities"
+import "github.com/icloudeng/platform-installer/internal/database/entities"
 
 type (
 	ClientCountry struct {

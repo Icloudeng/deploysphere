@@ -3,11 +3,12 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"smatflow/platform-installer/internal/database/entities"
-	"smatflow/platform-installer/internal/http/validators"
-	"smatflow/platform-installer/internal/resources/jobs"
-	"smatflow/platform-installer/internal/resources/provisioning"
-	"smatflow/platform-installer/internal/structs"
+
+	"github.com/icloudeng/platform-installer/internal/database/entities"
+	"github.com/icloudeng/platform-installer/internal/http/validators"
+	"github.com/icloudeng/platform-installer/internal/resources/jobs"
+	"github.com/icloudeng/platform-installer/internal/resources/provisioning"
+	"github.com/icloudeng/platform-installer/internal/structs"
 
 	"github.com/gin-gonic/gin"
 )

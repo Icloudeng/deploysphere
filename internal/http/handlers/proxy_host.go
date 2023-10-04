@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"smatflow/platform-installer/internal/database/entities"
-	"smatflow/platform-installer/internal/filesystem"
-	"smatflow/platform-installer/internal/pubsub"
-	"smatflow/platform-installer/internal/resources/jobs"
-	proxyhost "smatflow/platform-installer/internal/resources/proxy_host"
-	"smatflow/platform-installer/internal/structs"
+
+	"github.com/icloudeng/platform-installer/internal/database/entities"
+	"github.com/icloudeng/platform-installer/internal/filesystem"
+	"github.com/icloudeng/platform-installer/internal/pubsub"
+	"github.com/icloudeng/platform-installer/internal/resources/jobs"
+	proxyhost "github.com/icloudeng/platform-installer/internal/resources/proxy_host"
+	"github.com/icloudeng/platform-installer/internal/structs"
 
 	"github.com/gin-gonic/gin"
 )

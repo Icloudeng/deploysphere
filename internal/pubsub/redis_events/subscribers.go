@@ -3,8 +3,9 @@ package redis_events
 import (
 	"context"
 	"fmt"
-	"smatflow/platform-installer/internal/pubsub"
-	"smatflow/platform-installer/internal/pubsub/redis"
+
+	"github.com/icloudeng/platform-installer/internal/pubsub"
+	"github.com/icloudeng/platform-installer/internal/pubsub/redis"
 )
 
 type SubscriberFunc func(playload pubsub.NetworkEventPayload)

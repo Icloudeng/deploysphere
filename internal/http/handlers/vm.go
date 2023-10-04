@@ -4,13 +4,14 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"smatflow/platform-installer/internal/database/entities"
-	"smatflow/platform-installer/internal/http/validators"
-	"smatflow/platform-installer/internal/pubsub"
-	"smatflow/platform-installer/internal/resources/jobs"
-	"smatflow/platform-installer/internal/resources/proxmox"
-	"smatflow/platform-installer/internal/resources/terraform"
-	"smatflow/platform-installer/internal/structs"
+
+	"github.com/icloudeng/platform-installer/internal/database/entities"
+	"github.com/icloudeng/platform-installer/internal/http/validators"
+	"github.com/icloudeng/platform-installer/internal/pubsub"
+	"github.com/icloudeng/platform-installer/internal/resources/jobs"
+	"github.com/icloudeng/platform-installer/internal/resources/proxmox"
+	"github.com/icloudeng/platform-installer/internal/resources/terraform"
+	"github.com/icloudeng/platform-installer/internal/structs"
 
 	"github.com/gin-gonic/gin"
 )

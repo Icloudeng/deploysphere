@@ -3,9 +3,10 @@ package websocket
 import (
 	"encoding/base64"
 	"encoding/json"
-	"smatflow/platform-installer/internal/database/entities"
-	"smatflow/platform-installer/internal/http/ws"
-	"smatflow/platform-installer/internal/pubsub"
+
+	"github.com/icloudeng/platform-installer/internal/database/entities"
+	"github.com/icloudeng/platform-installer/internal/http/ws"
+	"github.com/icloudeng/platform-installer/internal/pubsub"
 )
 
 func EmitDecodedEvent(playload pubsub.NetworkEventPayload) {

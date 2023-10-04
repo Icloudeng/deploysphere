@@ -5,8 +5,8 @@ import (
 	"log"
 	"path"
 
-	"smatflow/platform-installer/internal/filesystem"
-	structs "smatflow/platform-installer/internal/structs"
+	"github.com/icloudeng/platform-installer/internal/filesystem"
+	structs "github.com/icloudeng/platform-installer/internal/structs"
 )
 
 type ResourceJSONData struct {

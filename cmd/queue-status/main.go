@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"smatflow/platform-installer/internal/pubsub"
-	"smatflow/platform-installer/internal/pubsub/redis"
+
+	"github.com/icloudeng/platform-installer/internal/pubsub"
+	"github.com/icloudeng/platform-installer/internal/pubsub/redis"
 )
 
 func main() {

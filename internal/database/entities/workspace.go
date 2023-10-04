@@ -2,7 +2,8 @@ package entities
 
 import (
 	"database/sql"
-	"smatflow/platform-installer/internal/database"
+
+	"github.com/icloudeng/platform-installer/internal/database"
 
 	"gorm.io/gorm"
 )

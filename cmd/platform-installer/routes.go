@@ -2,7 +2,8 @@ package main
 
 import (
 	"net/http"
-	"smatflow/platform-installer/internal/http/handlers"
+
+	"github.com/icloudeng/platform-installer/internal/http/handlers"
 
 	"github.com/gin-gonic/gin"
 )

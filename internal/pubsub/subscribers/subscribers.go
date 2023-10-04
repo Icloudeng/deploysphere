@@ -1,9 +1,9 @@
 package subscribers
 
 import (
-	"smatflow/platform-installer/internal/pubsub"
-	proxyhost "smatflow/platform-installer/internal/resources/proxy_host"
-	"smatflow/platform-installer/internal/resources/utilities"
+	"github.com/icloudeng/platform-installer/internal/pubsub"
+	proxyhost "github.com/icloudeng/platform-installer/internal/resources/proxy_host"
+	"github.com/icloudeng/platform-installer/internal/resources/utilities"
 )
 
 func EventSubscribers() {
