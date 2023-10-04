@@ -2,6 +2,41 @@
 
 ## Getting started
 
+### Usage
+
+Infrastructure and auto platform provisioning
+
+```json
+{
+  // Terraform Resource reference (Can be anything following this format: /^[a-z]+([0-9a-z]+(?:-[0-9a-z]+)?)*$/ )
+  "ref": "wordpress-resource-infra",
+  //  Domain
+  "domain": {
+    "zone": "domain.xyz", // OVH Domain Zone
+    "subdomain": "wordpress",
+    "fieldtype": "A", // A, CNAME etc.
+    "ttl": 3600,
+    "target": "x.x.x.x" // Target IP
+  },
+  "vm": {
+    "name": "wordpress-resource-vm",
+    "target_node": "promox-srv2", // Proxmox Node
+    "clone": "ubuntu-22.04-cloudinit-template", // Proxmox Cloud image template (Must exists)
+    "vmid": 0,
+    "memory": 4096,
+    "network": [
+      {
+        "bridge": "vmbr1",
+        "tag": 10
+      }
+    ]
+  },
+  "platform": {
+    "name": "wordpress"
+  }
+}
+```
+
 ### 1. Prerequisite
 
 1. You must have a Linux environment, preferably `Ubuntu`
@@ -43,7 +78,14 @@ NGINX_PM_PASSWORD=
 
 # Redis
 REDIS_URL=
+
+# Proxmox
+PROXMOX_API_URL=
+PROXMOX_USERNAME=
+PROXMOX_PASSWORD=
 ```
+
+Check all variables here: `.env.example`
 
 #### 3. Write Required Terraform Variables
 
@@ -69,11 +111,11 @@ proxmox_api_token_id     = "**"
 proxmox_api_token_secret = "**"
 ```
 
+## Supported Platforms
+
+Check all supported platforms here: `infrastructure/provisioner/scripts/platforms`
+
 ## Test and Deploy
-
-...
-
-## Usage
 
 ...
 
