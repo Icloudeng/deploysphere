@@ -4,7 +4,7 @@
 
 ### Usage
 
-Infrastructure and auto platform provisioning
+Infrastructure and auto platform provisioning, POST `/resources`
 
 ```js
 {
