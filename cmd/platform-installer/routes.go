@@ -63,4 +63,9 @@ func BindLocalJobsRoutes(api *gin.RouterGroup) {
 
 	// Client
 	api.POST("/clients", handlers.Client.CreateClient)
+
+	// Platform Template
+	api.POST("/platforms/templates", handlers.PlatformsTemplates.CreateResourcesTemplate)
+
+	api.GET("/platforms/templates/:platform", handlers.PlatformsTemplates.GetResourcesTemplate)
 }

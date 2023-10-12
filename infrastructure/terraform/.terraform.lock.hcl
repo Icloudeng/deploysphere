@@ -5,6 +5,7 @@ provider "registry.terraform.io/ovh/ovh" {
   version = "0.34.0"
   hashes = [
     "h1:E5u8Fr+1guCxkyeM1uc0BFA2+pcxz9Dlg5eRaDB+7+I=",
+    "h1:kq5IVpK8CyqpZk71kVmoj4KSc22U2S9Y+0EIJL+1vsE=",
     "zh:46485004b49a537677a4d49726f6e6ff18c5f4ec76e126cc5a862d5395b87af3",
     "zh:52522e82c1d5fb12fb3338c6307008ae767bb08038f92686ba8cd75e1fea56f5",
     "zh:6e18187a5faca7d43cd159ad64079d56facc78da52fe45ad0e875bde2c50e348",
