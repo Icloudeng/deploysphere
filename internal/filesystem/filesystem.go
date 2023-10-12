@@ -89,6 +89,10 @@ func ReadPlatformMetadataFields() []byte {
 	return ReadFile(path.Join(ProvisionerDir, "scripts/platform-meta-fields.json"))
 }
 
+func ReadEnvironmentsFile() []byte {
+	return ReadFile(path.Join(ProvisionerDir, "scripts/environments.json"))
+}
+
 func ReadConfigurationMetadataFields() []byte {
 	return ReadFile(path.Join(ProvisionerDir, "scripts/platform-configuration-fields.json"))
 }

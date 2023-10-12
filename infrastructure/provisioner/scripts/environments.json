@@ -1,0 +1,37 @@
+{
+    "environments": {
+        "prod": 1,
+        "stage": 2,
+        "test": 3,
+        "dev": 4,
+        "lab": 5,
+        "tpl": 6,
+        "incub": 7,
+        "ngo": 8,
+        "infra": 9
+    },
+    "platforms": {
+        "freeipa": 10,
+        "authentik": 11,
+        "keycloak": 12,
+        "zimbra": 13,
+        "nextcloud": 14,
+        "wordpress": 15,
+        "discourse": 16,
+        "joomla": 17,
+        "xwiki": 18,
+        "moodle": 19,
+        "jupyterhub": 20,
+        "erpnext": 21,
+        "suitecrm": 22,
+        "mautic": 23,
+        "jenkins": 24,
+        "nifi": 25,
+        "prometheus": 26,
+        "elastic": 27,
+        "postgresql": 28,
+        "mariadb": 29,
+        "redash": 30,
+        "grafana": 31
+    }
+}

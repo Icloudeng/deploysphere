@@ -52,9 +52,9 @@ func (templateHandler) CreateResourcesTemplate(c *gin.Context) {
 
 	entity := &entities.ResourcesTemplate{
 		PlatformName: body.Platform.Name,
-		Domain:       datatypes.NewJSONType(*body.Domain),
-		Vm:           datatypes.NewJSONType(*body.Vm),
-		Platform:     datatypes.NewJSONType(*body.Platform),
+		Domain:       datatypes.NewJSONType(body.Domain),
+		Vm:           datatypes.NewJSONType(body.Vm),
+		Platform:     datatypes.NewJSONType(body.Platform),
 	}
 
 	repository.UpdateOrCreate(entity)

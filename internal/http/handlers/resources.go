@@ -20,10 +20,12 @@ import (
 // Store resources and apply
 type (
 	resourcesBody struct {
-		Ref      string                    `json:"ref" binding:"required,resourceref"`
-		Domain   *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
-		Vm       *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
-		Platform *structs.Platform         `json:"platform"`
+		Ref         string                    `json:"ref" binding:"required,resourceref"`
+		Domain      *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
+		Vm          *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
+		Platform    *structs.Platform         `json:"platform" binding:"omitempty,json"`
+		Client      *clientBody               `json:"client" binding:"omitempty,json"`
+		Environment string                    `json:"environment" binding:"omitempty,alpha"`
 	}
 
 	resourcesRefUri struct {
@@ -135,6 +137,7 @@ func (resourcesHandler) CreateResources(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
 
+// DELETE resources
 func (resourcesHandler) DeleteResources(c *gin.Context) {
 	var uri resourcesRefUri
 

@@ -11,9 +11,9 @@ import (
 type ResourcesTemplate struct {
 	gorm.Model
 	PlatformName string `gorm:"index,unique"`
-	Domain       datatypes.JSONType[structs.DomainZoneRecord]
-	Vm           datatypes.JSONType[structs.ProxmoxVmQemu]
-	Platform     datatypes.JSONType[structs.Platform]
+	Domain       datatypes.JSONType[*structs.DomainZoneRecord]
+	Vm           datatypes.JSONType[*structs.ProxmoxVmQemu]
+	Platform     datatypes.JSONType[*structs.Platform]
 }
 
 type ResourcesTemplateRepository struct{}
@@ -21,7 +21,7 @@ type ResourcesTemplateRepository struct{}
 func (ResourcesTemplateRepository) GetByPlatform(platformName string) *ResourcesTemplate {
 	var object ResourcesTemplate
 
-	database.Conn.Debug().Where(&ResourcesTemplate{
+	database.Conn.Where(&ResourcesTemplate{
 		PlatformName: platformName,
 	}).Last(&object)
 

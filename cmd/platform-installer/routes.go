@@ -18,6 +18,8 @@ func BindLocalJobsRoutes(api *gin.RouterGroup) {
 	// Resources
 	api.POST("/resources", handlers.Resources.CreateResources)
 
+	api.POST("/resources/templates", handlers.Resources.CreateResourcesFromTemplate)
+
 	api.PUT("/resources", handlers.Resources.CreateResources)
 
 	api.DELETE("/resources/:ref", handlers.Resources.DeleteResources)
