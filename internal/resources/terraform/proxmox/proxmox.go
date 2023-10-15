@@ -19,6 +19,13 @@ type Resource struct {
 
 type ProxmoxVmQemu map[string]*structs.ProxmoxVmQemu
 
+func NewResourceJSONData() ResourceJSONData {
+	proxmox_resource := ResourceJSONData{}
+	proxmox_resource.ParseResourcesJSON()
+
+	return proxmox_resource
+}
+
 func (j *ResourceJSONData) GetResource() *Resource {
 	if len(j.Resources) > 0 {
 		return j.Resources[0]

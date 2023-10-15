@@ -90,3 +90,14 @@ func (h helpers) GenerateVMId(platform string, env string, params ...int) (int, 
 
 	return joinedInt, nil
 }
+
+func (helpers) ExtractSubdomainAndRootDomain(fqdn string) (subdomain, rootDomain string) {
+	parts := strings.Split(fqdn, ".")
+	if len(parts) > 1 {
+		subdomain = strings.Join(parts[:len(parts)-2], ".")
+		rootDomain = strings.Join(parts[len(parts)-2:], ".")
+	} else if len(parts) == 1 {
+		rootDomain = parts[0]
+	}
+	return subdomain, rootDomain
+}

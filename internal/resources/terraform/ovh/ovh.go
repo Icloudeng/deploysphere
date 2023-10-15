@@ -19,6 +19,13 @@ type Resource struct {
 
 type OVHDomainZoneRecord map[string]*structs.DomainZoneRecord
 
+func NewResourceJSONData() ResourceJSONData {
+	ovh_resource := ResourceJSONData{}
+	ovh_resource.ParseResourcesJSON()
+
+	return ovh_resource
+}
+
 // Ovh domain record add resource
 func (j *ResourceJSONData) GetResource() *Resource {
 	if len(j.Resources) > 0 {

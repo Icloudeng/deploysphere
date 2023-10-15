@@ -6,9 +6,15 @@ import (
 	tfjson "github.com/hashicorp/terraform-json"
 )
 
-type ResourceState struct {
-	Module string
-}
+type (
+	ResourceState struct {
+		Module string
+	}
+
+	resources struct{}
+)
+
+var Resources resources
 
 func (f ResourceState) getResourceByRef(module *tfjson.StateModule, ref string) *tfjson.StateResource {
 	if strings.Contains(module.Address, f.Module) {
