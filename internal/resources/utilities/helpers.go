@@ -101,3 +101,26 @@ func (helpers) ExtractSubdomainAndRootDomain(fqdn string) (subdomain, rootDomain
 	}
 	return subdomain, rootDomain
 }
+
+func (helpers) ExtractCommandKeyValuePairs(command string) map[string]string {
+	keyValueMap := make(map[string]string)
+
+	// Define a regular expression pattern to match key-value pairs.
+	pattern := `--(\S+)\s+([^\s]+)`
+
+	// Compile the regular expression pattern.
+	regex := regexp.MustCompile(pattern)
+
+	// Find all submatches in the input command string.
+	matches := regex.FindAllStringSubmatch(command, -1)
+
+	for _, match := range matches {
+		key := match[1]
+		value := match[2]
+		// Remove any leading and trailing quotes if present.
+		value = strings.Trim(value, `"'`)
+		keyValueMap[key] = value
+	}
+
+	return keyValueMap
+}

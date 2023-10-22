@@ -1,7 +1,10 @@
 package terraform
 
 import (
+	"errors"
+
 	"github.com/icloudeng/platform-installer/internal/resources/terraform/proxmox"
+	"github.com/icloudeng/platform-installer/internal/resources/utilities"
 	"github.com/icloudeng/platform-installer/internal/structs"
 )
 
@@ -35,6 +38,24 @@ func (r resources) DeleteProxmoxVmQemuResource(ref string) {
 
 	// Write resource data
 	proxmox_resource.WriteResources()
+}
+
+func (r resources) GetPlatformNameByReference(ref string) (string, error) {
+	resource := r.GetProxmoxVmQemuResource(ref)
+	if resource == nil {
+		return "", errors.New("unable to platform respond the passed reference")
+	}
+
+	provisioner := resource.Provisioner[0].(*structs.PmLocalExecProvisioner)
+	provision := provisioner.LocalExec[0]
+
+	keyValueMap := utilities.Helpers.ExtractCommandKeyValuePairs(provision.Command)
+
+	if platform, ok := keyValueMap["platform"]; !ok {
+		return "", errors.New("unable to platform respond the passed reference")
+	} else {
+		return platform, nil
+	}
 }
 
 func init() {
