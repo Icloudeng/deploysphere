@@ -81,15 +81,6 @@ func (provisioningHandler) CreateAutoConfigurationProvisioning(ctx *gin.Context)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"data": body, "job": structs.AutoConfiguration{
-		Type:              body.Type,
-		Platform:          platformName,
-		PlatformRef:       platformRef,
-		PlatformConfigRef: platformConfigRef,
-	}})
-
-	return
-
 	output, err := provisioning.CreateAutoConfigurationProvisioning(structs.AutoConfiguration{
 		Type:              body.Type,
 		Platform:          platformName,
