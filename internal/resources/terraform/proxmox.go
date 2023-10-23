@@ -47,9 +47,10 @@ func (r resources) GetPlatformNameByReference(ref string) (string, error) {
 	}
 
 	provisioner := resource.Provisioner[0].(map[string]interface{})
-	provision := provisioner["local-exec"].([1]*structs.PmLocalExec)
+	provision := provisioner["local-exec"].([]interface{})
+	command := provision[0].(*structs.PmLocalExec)
 
-	keyValueMap := utilities.Helpers.ExtractCommandKeyValuePairs(provision[0].Command)
+	keyValueMap := utilities.Helpers.ExtractCommandKeyValuePairs(command.Command)
 
 	if platform, ok := keyValueMap["platform"]; !ok {
 		return "", errors.New("unable to platform respond the passed reference")
