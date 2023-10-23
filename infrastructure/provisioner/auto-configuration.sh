@@ -41,7 +41,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # # Check if the arguments was provided
-if [ -z "$ansible_user" ] || [ -z "$platform" ] || [ -z "$vm_ip" ]; then
+if [ -z "$type" ] || [ -z "$platform" ] || [ -z "$config_reference" ] || [ -z "$reference" ]; then
     echo "type, platform, reference, config-reference arguments are required. Usage: $0 --type <type> --platform <platform> ..."
     exit 1
 fi
