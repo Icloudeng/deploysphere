@@ -4,6 +4,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/icloudeng/platform-installer/internal/filesystem"
 	"github.com/icloudeng/platform-installer/internal/structs"
 )
 
@@ -16,6 +17,8 @@ func CreateAutoConfigurationProvisioning(params structs.AutoConfiguration) ([]by
 		"--reference", params.PlatformRef,
 		"--config-reference", params.PlatformConfigRef,
 	)
+
+	cmd.Dir = filesystem.ProvisionerDir
 
 	return cmd.CombinedOutput()
 }
