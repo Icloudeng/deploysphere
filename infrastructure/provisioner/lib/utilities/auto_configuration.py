@@ -68,6 +68,10 @@ def domain_to_ldap_dc(domain):
     return ldap_dc
 
 
+def log(text: str):
+    print(f"%%{text}%%")
+
+
 def get_command_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--reference", required=True)

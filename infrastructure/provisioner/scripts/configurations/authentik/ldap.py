@@ -12,6 +12,7 @@ from lib.utilities.auto_configuration import (
     domain_to_ldap_dc,
     post_provisioning_configuration,
     get_command_args,
+    log,
 )
 
 
@@ -54,7 +55,8 @@ def main(args):
         },
     }
 
-    post_provisioning_configuration(body)
+    response = post_provisioning_configuration(body)
+    log(response["job"]["ID"])
 
 
 if __name__ == "__main__":

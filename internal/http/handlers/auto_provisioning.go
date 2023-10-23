@@ -3,8 +3,10 @@ package handlers
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/icloudeng/platform-installer/internal/database/entities"
 	"github.com/icloudeng/platform-installer/internal/resources/provisioning"
 	"github.com/icloudeng/platform-installer/internal/resources/terraform"
 	"github.com/icloudeng/platform-installer/internal/structs"
@@ -79,7 +81,7 @@ func (provisioningHandler) CreateAutoConfigurationProvisioning(ctx *gin.Context)
 		return
 	}
 
-	err = provisioning.CreateAutoConfigurationProvisioning(structs.AutoConfiguration{
+	output, err := provisioning.CreateAutoConfigurationProvisioning(structs.AutoConfiguration{
 		Type:              body.Type,
 		Platform:          platformName,
 		PlatformRef:       platformRef,
@@ -93,5 +95,17 @@ func (provisioningHandler) CreateAutoConfigurationProvisioning(ctx *gin.Context)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"data": body})
+	jobid_str := provisioning.ExtractDataFromConfigurationOutputCommand(output)
+
+	jobid, err := strconv.ParseUint(jobid_str, 10, 64)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	job := entities.JobRepository{}.Get(uint(jobid))
+
+	ctx.JSON(http.StatusOK, gin.H{"data": body, "job": job})
 }
