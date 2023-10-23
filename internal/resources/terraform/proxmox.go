@@ -48,7 +48,7 @@ func (r resources) GetPlatformNameByReference(ref string) (string, error) {
 
 	provisioner := resource.Provisioner[0].(map[string]interface{})
 	provision := provisioner["local-exec"].([]interface{})
-	command := provision[0].(*structs.PmLocalExec)
+	command := provision[0].(structs.PmLocalExec)
 
 	keyValueMap := utilities.Helpers.ExtractCommandKeyValuePairs(command.Command)
 
