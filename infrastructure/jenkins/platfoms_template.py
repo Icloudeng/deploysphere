@@ -48,6 +48,7 @@ platforms = {
     "mariadb": "81",
     "redash": "95",
     "grafana": "96",
+    "wikijs": "33",
 }
 
 
