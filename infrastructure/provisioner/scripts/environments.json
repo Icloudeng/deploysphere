@@ -32,6 +32,7 @@
         "postgresql": 28,
         "mariadb": 29,
         "redash": 30,
-        "grafana": 31
+        "grafana": 31,
+        "wikijs": 32
     }
 }

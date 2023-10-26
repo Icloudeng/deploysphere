@@ -54,5 +54,9 @@
     "mautic": {
         "port": 8880,
         "protocol": "http"
+    },
+    "wikijs": {
+        "port": 3000,
+        "protocol": "http"
     }
 }

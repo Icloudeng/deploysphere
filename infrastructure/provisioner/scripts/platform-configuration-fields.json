@@ -164,5 +164,19 @@
                 "authentik_password"
             ]
         }
+    },
+    "wikijs": {
+        "authentik_sso": {
+            "fields": [
+                "wikijs_url",
+                "wikijs_admin_username",
+                "wikijs_admin_password"
+            ],
+            "configuration": [
+                "authentik_url",
+                "authentik_admin",
+                "authentik_password"
+            ]
+        }
     }
 }

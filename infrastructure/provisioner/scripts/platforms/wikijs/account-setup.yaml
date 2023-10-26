@@ -1,0 +1,10 @@
+- name: Execute the Python script (account-setup.py)
+  become: false
+  script: "scripts/account-setup.py"
+  args:
+    executable: python3
+  environment:
+    BASE_URL: "http://{{ vm_ip }}:3000"
+    SITE_URL: "{{ domain }}"
+    ADMIN_EMAIL: "{{ admin_email }}"
+    ADMIN_PASSWORD: "{{ app_secret }}"
