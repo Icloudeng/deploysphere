@@ -400,7 +400,7 @@ PROXMOX_CLOUD_INIT_TEMPLATE = os.environ.get(
 PROXMOX_TARGET_NODE = os.environ.get("PROXMOX_TARGET_NODE", "auto").strip()
 PROXMOX_VM_CORES = os.environ.get("PROXMOX_VM_CORES", "2").strip()
 PROXMOX_NETWORK_BRIDGE = os.environ.get("PROXMOX_NETWORK_BRIDGE", "vmbr3").strip()
-PROXMOX_NETWORK_TAG = os.environ.get("PROXMOX_NETWORK_TAG", "10").strip()
+PROXMOX_NETWORK_TAG = os.environ.get("PROXMOX_NETWORK_TAG", "11").strip()
 
 PROXMOX_VM_NAME = concatenate_resources(
     PLATFORM_NAME, DOMAIN_SUB, DOMAIN_ENV, DOMAIN_ROOT
