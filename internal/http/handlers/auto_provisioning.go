@@ -14,17 +14,19 @@ import (
 
 type (
 	autoProvisioning struct {
-		Type string `json:"type" binding:"required"`
+		Provision struct {
+			Type string `json:"type" binding:"required"`
 
-		Url *struct {
-			PlatformUrl       string `json:"platform_url" binding:"required_without_all=Reference,fqdn"`
-			PlatformConfigUrl string `json:"platform_config_url" binding:"required_without_all=Reference,fqdn"`
-		} `json:"url" binding:"required_without_all=Reference"`
+			Url *struct {
+				PlatformUrl       string `json:"platform_url" binding:"required_without_all=Reference,fqdn"`
+				PlatformConfigUrl string `json:"platform_config_url" binding:"required_without_all=Reference,fqdn"`
+			} `json:"url" binding:"required_without_all=Reference"`
 
-		Reference *struct {
-			PlatformRef       string `json:"platform_ref" binding:"required_without_all=Url,resourceref"`
-			PlatformConfigRef string `json:"platform_config_ref" binding:"required_without_all=Url,resourceref"`
-		} `json:"reference" binding:"required_without_all=Url"`
+			Reference *struct {
+				PlatformRef       string `json:"platform_ref" binding:"required_without_all=Url,resourceref"`
+				PlatformConfigRef string `json:"platform_config_ref" binding:"required_without_all=Url,resourceref"`
+			} `json:"reference" binding:"required_without_all=Url"`
+		} `json:"provision" binding:"required"`
 	}
 )
 
@@ -43,12 +45,14 @@ func platformDomainFromUrl(platformUrl string, platformConfigUrl string) (string
 }
 
 func (provisioningHandler) CreateAutoConfigurationProvisioning(ctx *gin.Context) {
-	body := &autoProvisioning{}
+	response_body := &autoProvisioning{}
 
-	if err := ctx.ShouldBindJSON(body); err != nil {
+	if err := ctx.ShouldBindJSON(response_body); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	body := response_body.Provision
 
 	var platformRef string
 	var platformConfigRef string
