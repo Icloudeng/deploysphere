@@ -1,6 +1,13 @@
 # Install Docker
 - include_tasks: ../../tasks/docker.yaml
 
+# Install Prerequisite
+- name: Install Prerequisite
+  ansible.builtin.package:
+    name:
+      - unzip
+    state: present
+
 - name: Download Docker Jitsi Meet and Unarchive
   ansible.builtin.unarchive:
     src: https://github.com/jitsi/docker-jitsi-meet/archive/refs/tags/stable-8960-1.zip
