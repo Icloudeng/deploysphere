@@ -14,7 +14,7 @@
     - name: Extract Required Variables
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
-        jitsi_meet_base_secret: "{{  }}"
+        jitsi_meet_base_secret: "{{ app_secret }}"
 
     # Validate domain variable
     - include_tasks: ../../tasks/validator/domain-regex.yaml
