@@ -8,8 +8,101 @@
       - unzip
     state: present
 
+- name: Jitsi Facts
+  set_fact:
+    jitsi_path: "{{ project_path }}"
+
 - name: Download Docker Jitsi Meet and Unarchive
   ansible.builtin.unarchive:
     src: https://github.com/jitsi/docker-jitsi-meet/archive/refs/tags/stable-8960-1.zip
     dest: "{{ project_path }}"
     remote_src: yes
+
+- name: Rename folder docker-jitsi-meet-stable* to default dir
+  shell: "mv {{ project_path }}/docker-jitsi-meet-stable-8960-1 {{ project_path }}"
+  args:
+    removes: "{{ project_path }}/docker-jitsi-meet-stable-8960-1"
+    executable: /bin/bash
+
+# Configs
+- name: Create a .env file by copying and adjusting env.example
+  shell: "cp env.example .env"
+  args:
+    creates: "{{ jitsi_path }}/.env"
+    executable: /bin/bash
+
+- name: Set strong passwords in the security section options of .env file by running the following bash script
+  shell: "./gen-passwords.sh && touch gen-passwords.txt"
+  args:
+    chdir: "{{ jitsi_path }}"
+    creates: "{{ jitsi_path }}/gen-passwords.txt"
+    executable: /bin/bash
+
+- name: Create required CONFIG directories
+  become: false
+  file:
+    state: directory
+    path: "/home/{{ ansible_user }}/.jitsi-meet-cfg/{{ item }}"
+    recurse: yes
+  loop:
+    - web
+    - transcripts
+    - prosody/config
+    - prosody/prosody-plugins-custom
+    - jicofo
+    - jvb
+    - jigasi
+    - jibri
+
+- name: Update .env config file
+  lineinfile:
+    path: "{{ jitsi_path }}/.env"
+    regexp: "^(#\\s+?)?{{item.regexp}}=.*"
+    line: "{{item.line}}"
+  with_items:
+    - regexp: "CONFIG"
+      line: "CONFIG=/home/{{ ansible_user }}/.jitsi-meet-cfg"
+
+    - regexp: "HTTP_PORT"
+      line: "HTTP_PORT=80"
+
+    - regexp: "HTTPS_PORT"
+      line: "HTTPS_PORT=443"
+
+    - regexp: "PUBLIC_URL"
+      line: "PUBLIC_URL=https://{{ domain }}"
+
+    - regexp: "ENABLE_LETSENCRYPT"
+      line: "ENABLE_LETSENCRYPT=1"
+
+    - regexp: "LETSENCRYPT_DOMAIN"
+      line: "LETSENCRYPT_DOMAIN={{ domain }}"
+
+    - regexp: "LETSENCRYPT_EMAIL"
+      line: "LETSENCRYPT_EMAIL={{ admin_email }}"
+
+    - regexp: "ENABLE_HTTP_REDIRECT"
+      line: "ENABLE_HTTP_REDIRECT=1"
+
+    - regexp: "ENABLE_AUTH"
+      line: "ENABLE_AUTH=1"
+
+    - regexp: "ETHERPAD_URL_BASE"
+      line: "ETHERPAD_URL_BASE=http://etherpad.meet.jitsi:9001"
+
+- name: Run Docker compose
+  command: "docker compose -f docker-compose.yml -f etherpad.yml up -d --force-recreate"
+  args:
+    chdir: "{{ jitsi_path }}"
+
+- name: Pause play until a URL is reachable from this host
+  ignore_errors: true
+  ansible.builtin.uri:
+    url: "http://127.0.0.1"
+    follow_redirects: none
+    validate_certs: no
+    method: GET
+  register: _result
+  until: _result.status >= 200
+  retries: 30
+  delay: 10
