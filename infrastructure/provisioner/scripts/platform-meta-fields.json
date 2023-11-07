@@ -1,6 +1,5 @@
 {
     "freeipa": [
-        "ipa_domain",
         "domain"
     ],
     "erpnext": [

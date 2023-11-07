@@ -1,0 +1,18 @@
+- name: Extract Required Variables
+  set_fact:
+    instance_url: "{{ decoded_metadata | json_query('wikijs_url') }}"
+    admin_username: "{{ decoded_metadata | json_query('wikijs_admin_username') }}"
+    admin_password: "{{ decoded_metadata | json_query('wikijs_admin_password') }}"
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+# Validate domain variable
+- include_tasks: "{{ scripts_dir }}/tasks/validator/url-ws-regex.yaml"
+  vars:
+    url_var: "{{ item }}"
+  loop:
+    - "{{ wikijs_url }}"
+    - "{{ configuration['authentik_url'] }}"
+
+# client_secret
+- import_tasks: authentik-sso-configuration.yaml
+  delegate_to: 127.0.0.1

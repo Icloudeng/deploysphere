@@ -19,10 +19,23 @@
     # Validate domain variables
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
-        domain_var: "{{ item }}"
-      loop:
-        - "{{ domain }}"
-        - "{{ ipa_domain }}"
+        domain_var: "{{ domain }}"
+
+    # Validate ipa_domain variables
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ ipa_domain }}"
+      when: ipa_domain | default('') | trim != ''
+
+    - name: Extract root domain from given domain
+      set_fact:
+        ipa_domain: "{{ domain | regex_search('(?:[a-zA-Z0-9-]+\\.)?([a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+)$', '\\1') }}"
+      when: ipa_domain == "" or ipa_domain is not defined
+
+    # If ipa_domain was modified, make sure still valide
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ ipa_domain }}"
 
     # docker install
     - include_tasks: docker-install.yaml
