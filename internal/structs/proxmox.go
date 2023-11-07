@@ -33,8 +33,8 @@ type ProxmoxVmQemu struct {
 
 	// Cloud Init
 	OsType    string `json:"os_type" binding:"oneof=ubuntu centos cloud-init"`
-	IpConfig0 string `json:"ip_config0"`
-	IpConfig1 string `json:"ip_config1"`
+	IpConfig0 string `json:"ipconfig0"`
+	IpConfig1 string `json:"ipconfig1"`
 
 	OnBoot bool   `json:"onboot"  binding:"boolean"`
 	Agent  int    `json:"agent"   binding:"number,oneof=1 0"`
