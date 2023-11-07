@@ -1,0 +1,23 @@
+- name: Let's encrypt
+  include_role:
+    name: systemli.letsencrypt
+  vars:
+    jitsi_meet_server_name: "{{ domain }}"
+    letsencrypt_account_email: "{{ admin_email }}"
+    letsencrypt_cert:
+      name: "{{ jitsi_meet_server_name }}"
+      domains:
+        - "{{ jitsi_meet_server_name }}"
+      challenge: dns
+
+- name: Install Jitsi Meet
+  include_role:
+    name: systemli.jitsi_meet
+  vars:
+    jitsi_meet_server_name: "{{ domain }}"
+    letsencrypt_account_email: "{{ admin_email }}"
+    letsencrypt_cert:
+      name: "{{ jitsi_meet_server_name }}"
+      domains:
+        - "{{ jitsi_meet_server_name }}"
+      challenge: dns

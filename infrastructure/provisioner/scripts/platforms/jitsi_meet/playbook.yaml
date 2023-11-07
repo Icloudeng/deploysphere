@@ -14,32 +14,11 @@
     - name: Extract Required Variables
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
+        jitsi_meet_base_secret: "{{  }}"
 
     # Validate domain variable
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
         domain_var: "{{ domain }}"
 
-    - name: Let's encrypt
-      include_role:
-        name: systemli.letsencrypt
-      vars:
-        jitsi_meet_server_name: "{{ domain }}"
-        letsencrypt_account_email: "{{ admin_email }}"
-        letsencrypt_cert:
-          name: "{{ jitsi_meet_server_name }}"
-          domains:
-            - "{{ jitsi_meet_server_name }}"
-          challenge: dns
-
-    - name: Install Jitsi Meet
-      include_role:
-        name: systemli.jitsi_meet
-      vars:
-        jitsi_meet_server_name: "{{ domain }}"
-        letsencrypt_account_email: "{{ admin_email }}"
-        letsencrypt_cert:
-          name: "{{ jitsi_meet_server_name }}"
-          domains:
-            - "{{ jitsi_meet_server_name }}"
-          challenge: dns
+    - include_tasks: docker-install.yaml
