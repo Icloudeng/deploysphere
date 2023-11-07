@@ -16,6 +16,7 @@ var IGNORE_CHANGES []string = []string{
 	"qemu_os",
 	"sshkeys",
 	"ipconfig0",
+	"ipconfig1",
 	"vmid",
 	"clone",
 }
@@ -30,7 +31,11 @@ type ProxmoxVmQemu struct {
 	FullClone bool `json:"full_clone" binding:"boolean"`
 	// OS_Network_Config string `json:"os_network_config"`
 
-	OsType string `json:"os_type" binding:"oneof=ubuntu centos cloud-init"`
+	// Cloud Init
+	OsType    string `json:"os_type" binding:"oneof=ubuntu centos cloud-init"`
+	IpConfig0 string `json:"ip_config0"`
+	IpConfig1 string `json:"ip_config1"`
+
 	OnBoot bool   `json:"onboot"  binding:"boolean"`
 	Agent  int    `json:"agent"   binding:"number,oneof=1 0"`
 	Memory int    `json:"memory"  binding:"number,min=1024"` //RAM
@@ -99,6 +104,8 @@ func NewProxmoxVmQemu(ref string) *ProxmoxVmQemu {
 		Cpu:       "host",
 		Numa:      true,
 		Tags:      "platform-installer",
+		IpConfig0: "ip6=auto,ip=dhcp",
+		IpConfig1: "ip6=auto,ip=dhcp",
 	}
 
 	vm.Network = append(vm.Network, &PmVmQemuNetwork{
