@@ -10,19 +10,13 @@
 
 - name: Jitsi Facts
   set_fact:
-    jitsi_path: "{{ project_path }}"
+    jitsi_path: "{{ project_path }}/docker-jitsi-meet-stable-8960-1"
 
 - name: Download Docker Jitsi Meet and Unarchive
   ansible.builtin.unarchive:
     src: https://github.com/jitsi/docker-jitsi-meet/archive/refs/tags/stable-8960-1.zip
     dest: "{{ project_path }}"
     remote_src: yes
-
-- name: Rename folder docker-jitsi-meet-stable* to default dir
-  shell: "mv {{ project_path }}/docker-jitsi-meet-stable-8960-1 {{ project_path }}"
-  args:
-    removes: "{{ project_path }}/docker-jitsi-meet-stable-8960-1"
-    executable: /bin/bash
 
 # Configs
 - name: Create a .env file by copying and adjusting env.example
