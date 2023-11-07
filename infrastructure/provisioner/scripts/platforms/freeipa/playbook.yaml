@@ -35,7 +35,7 @@
     # If ipa_domain was modified, make sure still valide
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
-        domain_var: "{{ ipa_domain }}"
+        domain_var: "{{ ipa_domain[0] }}"
 
     # docker install
     - include_tasks: docker-install.yaml
