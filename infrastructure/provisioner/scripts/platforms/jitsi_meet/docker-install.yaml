@@ -36,7 +36,7 @@
   become: false
   file:
     state: directory
-    path: "/home/{{ ansible_user }}/.jitsi-meet-cfg/{{ item }}"
+    path: "/home/{{ vm_user }}/.jitsi-meet-cfg/{{ item }}"
     recurse: yes
   loop:
     - web
@@ -55,7 +55,7 @@
     line: "{{item.line}}"
   with_items:
     - regexp: "CONFIG"
-      line: "CONFIG=/home/{{ ansible_user }}/.jitsi-meet-cfg"
+      line: "CONFIG=/home/{{ vm_user }}/.jitsi-meet-cfg"
 
     - regexp: "HTTP_PORT"
       line: "HTTP_PORT=80"
