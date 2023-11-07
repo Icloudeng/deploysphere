@@ -84,9 +84,6 @@
     - regexp: "ENABLE_HTTP_REDIRECT"
       line: "ENABLE_HTTP_REDIRECT=1"
 
-    - regexp: "ENABLE_AUTH"
-      line: "ENABLE_AUTH=1"
-
     - regexp: "ETHERPAD_URL_BASE"
       line: "ETHERPAD_URL_BASE=http://etherpad.meet.jitsi:9001"
 
