@@ -1,5 +1,5 @@
 ---
-- name: Jitsi Meet
+- name: Jitsi Meet Configuration
   hosts: all
   become: true
   gather_facts: true
@@ -13,16 +13,11 @@
 
     - name: Extract Required Variables
       set_fact:
-        domain: "{{ decoded_metadata | json_query('domain') }}"
-        jitsi_meet_base_secret: "{{ app_secret }}"
-
-    # Validate domain variable
-    - include_tasks: ../../tasks/validator/domain-regex.yaml
-      vars:
-        domain_var: "{{ domain }}"
+        configuration_type: "{{ decoded_metadata | json_query('configuration_type') }}"
 
     - name: Jitsi Facts
       set_fact:
         jitsi_path: "{{ project_path }}/docker-jitsi-meet-stable-8960-1"
 
-    - include_tasks: docker-install.yaml
+    - include_tasks: configuration/ldap.yaml
+      when: configuration_type == "ldap"

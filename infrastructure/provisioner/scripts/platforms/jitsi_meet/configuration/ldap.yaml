@@ -1,0 +1,55 @@
+- name: Extract Required Variables
+  set_fact:
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+- name: Check if .env the file exists
+  stat:
+    path: "{{ jitsi_path }}/.env"
+  register: file_info
+
+- name: Assert that the .env file exists
+  assert:
+    that:
+      - file_info.stat.exists
+    fail_msg: "The file does not exist."
+
+- name: Update .env config file
+  lineinfile:
+    path: "{{ jitsi_path }}/.env"
+    regexp: "^(#)?{{item.regexp}}=(.*)$"
+    line: "{{item.line}}"
+  with_items:
+    - regexp: "ENABLE_AUTH"
+      line: "ENABLE_AUTH=1"
+
+    - regexp: "AUTH_TYPE"
+      line: "AUTH_TYPE=ldap"
+
+    - regexp: "LDAP_URL"
+      line: "LDAP_URL={{ configuration['ldap_server_url'] }}"
+
+    - regexp: "LDAP_BASE"
+      line: "LDAP_BASE={{ configuration['ldap_search_base'] }}"
+
+    - regexp: "LDAP_BINDDN"
+      line: "LDAP_BINDDN={{ configuration['ldap_bind_dn'] }}"
+
+    - regexp: "LDAP_BINDPW"
+      line: "LDAP_BINDPW={{ configuration['ldap_bind_password'] }}"
+
+    - regexp: "LDAP_FILTER"
+      line: "LDAP_FILTER=(uid=%u)"
+
+    - regexp: "LDAP_AUTH_METHOD"
+      line: "LDAP_AUTH_METHOD=bind"
+
+    - regexp: "LDAP_VERSION"
+      line: "LDAP_VERSION=3"
+
+    - regexp: "LDAP_USE_TLS"
+      line: "LDAP_USE_TLS=0"
+
+- name: Run Docker compose
+  command: "docker compose -f docker-compose.yml -f etherpad.yml up -d --force-recreate"
+  args:
+    chdir: "{{ jitsi_path }}"

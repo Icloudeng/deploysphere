@@ -33,6 +33,7 @@
         "mariadb": 29,
         "redash": 30,
         "grafana": 31,
-        "wikijs": 32
+        "wikijs": 32,
+        "jitsi_meet": 33
     }
 }

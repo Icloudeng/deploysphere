@@ -8,10 +8,6 @@
       - unzip
     state: present
 
-- name: Jitsi Facts
-  set_fact:
-    jitsi_path: "{{ project_path }}/docker-jitsi-meet-stable-8960-1"
-
 - name: Download Docker Jitsi Meet and Unarchive
   ansible.builtin.unarchive:
     src: https://github.com/jitsi/docker-jitsi-meet/archive/refs/tags/stable-8960-1.zip

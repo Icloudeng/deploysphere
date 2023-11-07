@@ -178,5 +178,16 @@
                 "authentik_password"
             ]
         }
+    },
+    "jitsi_meet": {
+        "ldap": {
+            "fields": [],
+            "configuration": [
+                "ldap_server_url",
+                "ldap_search_base",
+                "ldap_bind_dn",
+                "ldap_bind_password"
+            ]
+        }
     }
 }
