@@ -51,7 +51,7 @@
 - name: Update .env config file
   lineinfile:
     path: "{{ jitsi_path }}/.env"
-    regexp: "^(#)?{{item.regexp}}"
+    regexp: "^(#)?{{item.regexp}}=(.*)$"
     line: "{{item.line}}"
   with_items:
     - regexp: "CONFIG"
