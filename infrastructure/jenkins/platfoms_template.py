@@ -264,8 +264,9 @@ def is_empty_key(dictionary: dict, key: str):
 
 
 def default_metadata_values_platform(metadata: dict, platfom: str):
-    if platfom == "freeipa" and is_empty_key(metadata, "ipa_domain"):
-        metadata["ipa_domain"] = DOMAIN_ROOT
+    # if platfom == "freeipa" and is_empty_key(metadata, "ipa_domain"):
+    #     metadata["ipa_domain"] = DOMAIN_ROOT
+    return
 
 
 def is_memory_binary_format(number):
