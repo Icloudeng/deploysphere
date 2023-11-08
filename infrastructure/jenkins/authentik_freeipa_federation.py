@@ -142,6 +142,12 @@ def wait_job_status(jobid: str) -> bool:
     return bool(done.get(status, False))
 
 
+def extract_root_domain(domain):
+    regex = r"(?:[a-zA-Z0-9-]+\.)?([a-zA-Z0-9-]+\.[a-zA-Z0-9-]+)$"
+    match = re.search(regex, domain)
+    return match.group(1) if match else None
+
+
 # =============================================================================
 # Authentik Functions
 # =============================================================================
@@ -176,7 +182,12 @@ def main():
 
     # FreeIPA
     freeipa_state = get_resources_state(variables["freeipa_reference"])["data"]
-    ipa_domain = freeipa_state["Job"]["PostBody"]["platform"]["metadata"]["ipa_domain"]
+    metadata = freeipa_state["Job"]["PostBody"]["platform"]["metadata"]
+    ipa_domain = metadata.get("ipa_domain")
+
+    if not ipa_domain:
+        ipa_domain = extract_root_domain(metadata.get("domain"))
+
     ipa_domain_dc = domain_to_ldap_dc(ipa_domain)
     freeipa_credentials = freeipa_state["Credentials"][0]
     freeipa_ipv4_address = freeipa_state["State"]["proxmox_vm_qemu"]["values"][
