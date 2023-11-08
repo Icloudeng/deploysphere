@@ -13,6 +13,7 @@ from lib.utilities.auto_configuration import (
     post_provisioning_configuration,
     get_command_args,
     log,
+    extract_root_domain,
 )
 
 
@@ -29,8 +30,14 @@ def main(args):
 
     # FreeIPA
     freeipa_state = get_resources_state(args.config_reference)["data"]
-    ipa_domain = freeipa_state["Job"]["PostBody"]["platform"]["metadata"]["ipa_domain"]
+    metadata = freeipa_state["Job"]["PostBody"]["platform"]["metadata"]
+    ipa_domain = metadata.get("ipa_domain")
+
+    if not ipa_domain:
+        ipa_domain = extract_root_domain(metadata.get("domain"))
+
     ipa_domain_dc = domain_to_ldap_dc(ipa_domain)
+
     freeipa_credentials = freeipa_state["Credentials"][0]
     freeipa_ipv4_address = freeipa_state["State"]["proxmox_vm_qemu"]["values"][
         "default_ipv4_address"

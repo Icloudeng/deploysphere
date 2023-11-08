@@ -1,3 +1,4 @@
+import re
 import argparse
 import base64
 
@@ -66,6 +67,12 @@ def domain_to_ldap_dc(domain):
     ldap_dc = ",".join(ldap_dc_components)
 
     return ldap_dc
+
+
+def extract_root_domain(domain):
+    regex = r"(?:[a-zA-Z0-9-]+\.)?([a-zA-Z0-9-]+\.[a-zA-Z0-9-]+)$"
+    match = re.search(regex, domain)
+    return match.group(1) if match else None
 
 
 def log(text: str):
