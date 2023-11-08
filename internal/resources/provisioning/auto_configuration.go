@@ -20,11 +20,17 @@ func CreateAutoConfigurationProvisioning(params structs.AutoConfiguration) ([]by
 	)
 
 	fmt.Printf("CMD string: %s\n", cmd.String())
-	fmt.Printf("CMD string: %s\n", cmd.Args)
+	fmt.Printf("CMD Args: %s\n", cmd.Args)
 
 	cmd.Dir = filesystem.ProvisionerDir
 
-	return cmd.CombinedOutput()
+	output, err := cmd.CombinedOutput()
+
+	if cmd.Process != nil && err != nil {
+		cmd.Process.Kill()
+	}
+
+	return output, err
 }
 
 func ExtractDataFromConfigurationOutputCommand(output []byte) string {
