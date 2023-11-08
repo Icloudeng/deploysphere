@@ -1,6 +1,7 @@
 package provisioning
 
 import (
+	"fmt"
 	"os/exec"
 	"strings"
 
@@ -17,6 +18,9 @@ func CreateAutoConfigurationProvisioning(params structs.AutoConfiguration) ([]by
 		"--reference", params.PlatformRef,
 		"--config-reference", params.PlatformConfigRef,
 	)
+
+	fmt.Printf("CMD string: %s\n", cmd.String())
+	fmt.Printf("CMD string: %s\n", cmd.Args)
 
 	cmd.Dir = filesystem.ProvisionerDir
 
