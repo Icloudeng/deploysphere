@@ -48,7 +48,10 @@ func (provisioningHandler) CreateAutoConfigurationProvisioning(ctx *gin.Context)
 	response_body := &autoProvisioning{}
 
 	if err := ctx.ShouldBindJSON(response_body); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+			"type":  "BindJSON",
+		})
 		return
 	}
 
@@ -63,6 +66,7 @@ func (provisioningHandler) CreateAutoConfigurationProvisioning(ctx *gin.Context)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
+				"type":  "platformDomainFromUrl: PlatformUrl, PlatformConfigUrl",
 			})
 			return
 		}
@@ -81,6 +85,7 @@ func (provisioningHandler) CreateAutoConfigurationProvisioning(ctx *gin.Context)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
+			"type":  "GetPlatformNameByReference: platformName",
 		})
 		return
 	}
@@ -95,6 +100,7 @@ func (provisioningHandler) CreateAutoConfigurationProvisioning(ctx *gin.Context)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
+			"type":  "CreateAutoConfigurationProvisioning",
 		})
 		return
 	}
@@ -105,6 +111,7 @@ func (provisioningHandler) CreateAutoConfigurationProvisioning(ctx *gin.Context)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
+			"type":  "ParseUint jobid_str",
 		})
 		return
 	}
