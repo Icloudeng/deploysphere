@@ -75,6 +75,13 @@ def extract_root_domain(domain):
     return match.group(1) if match else None
 
 
+def extract_subdomain(full_domain: str):
+    parts = full_domain.split(".")
+    if len(parts) > 2:
+        return ".".join(parts[-(len(parts) - 1) :])
+    return full_domain
+
+
 def log(text: str):
     print(f"%%{text}%%")
 

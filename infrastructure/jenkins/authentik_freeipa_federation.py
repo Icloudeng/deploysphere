@@ -142,10 +142,11 @@ def wait_job_status(jobid: str) -> bool:
     return bool(done.get(status, False))
 
 
-def extract_root_domain(domain):
-    regex = r"(?:[a-zA-Z0-9-]+\.)?([a-zA-Z0-9-]+\.[a-zA-Z0-9-]+)$"
-    match = re.search(regex, domain)
-    return match.group(1) if match else None
+def extract_subdomain(full_domain):
+    parts = full_domain.split(".")
+    if len(parts) > 2:
+        return ".".join(parts[-(len(parts) - 1) :])
+    return full_domain
 
 
 # =============================================================================
@@ -186,7 +187,7 @@ def main():
     ipa_domain = metadata.get("ipa_domain")
 
     if not ipa_domain:
-        ipa_domain = extract_root_domain(metadata.get("domain"))
+        ipa_domain = extract_subdomain(metadata.get("domain"))
 
     ipa_domain_dc = domain_to_ldap_dc(ipa_domain)
     freeipa_credentials = freeipa_state["Credentials"][0]

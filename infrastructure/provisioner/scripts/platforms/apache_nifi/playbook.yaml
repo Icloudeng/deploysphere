@@ -1,0 +1,34 @@
+---
+- name: Apache Nifi
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path)
+    - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Extract Required Variables
+      set_fact:
+        domain: "{{ decoded_metadata | json_query('domain') }}"
+
+    # Validate domain variables
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ domain }}"
+
+    # docker install
+    - include_tasks: docker-install.yaml
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        text: |
+          Login
+          Username: admin
+          Password: {{ app_secret }}
+        credentials:
+          username: admin
+          password: "{{ app_secret }}"

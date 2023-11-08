@@ -27,17 +27,25 @@
         domain_var: "{{ ipa_domain }}"
       when: ipa_domain | default('') | trim != ''
 
-    - name: Extract root domain from given domain
+    - name: Extract IPA DC domain from given domain
       block:
-        - name: Extract root domain from given domain
-          set_fact:
-            ipa_domain: "{{ domain | regex_search('(?:[a-zA-Z0-9-]+\\.)?([a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+)$', '\\1') | first }}"
-          when: ipa_domain == "" or ipa_domain is not defined
+        - name: Extract IPA DC domain from given domain
+          become: false
+          delegate_to: 127.0.0.1
+          script: "scripts/extract_subdomain.py {{ domain }}"
+          args:
+            executable: python3
+          register: script_output
+
+        - set_fact:
+            ipa_domain: "{{ script_output }}"
 
         # If ipa_domain was modified, make sure still valide
         - include_tasks: ../../tasks/validator/domain-regex.yaml
           vars:
             domain_var: "{{ ipa_domain }}"
+
+      when: ipa_domain == "" or ipa_domain is not defined
 
     # docker install
     - include_tasks: docker-install.yaml
