@@ -94,7 +94,7 @@ def get_certificate_keypairs():
 
 def get_provider_oauth2(name: str):
     response = requests.get(
-        f"{AUTHENTIK_URL}/providers/all/?search={name}&superuser_full_list=true",
+        f"{AUTHENTIK_URL}/providers/all/?search={name}",
         headers=headers
     )
 
