@@ -15,7 +15,7 @@ import (
 )
 
 type ResourcesRefBulk struct {
-	Refs []string `json:"refs" binding:"required"`
+	Refs []string `json:"refs"`
 }
 
 // DELETE resources bulk
