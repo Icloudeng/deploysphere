@@ -5,6 +5,9 @@
     admin_password: "{{ decoded_metadata | json_query('wikijs_admin_password') }}"
     configuration: "{{ decoded_metadata | json_query('configuration') }}"
 
+    # WikiJS
+    wikijs_oidc_id: "99866de9-eeb2-4c3e-985a-512683c5c4dd"
+
 # Validate domain variable
 - include_tasks: "{{ scripts_dir }}/tasks/validator/url-ws-regex.yaml"
   vars:
@@ -16,3 +19,24 @@
 # client_secret
 - import_tasks: authentik-sso-configuration.yaml
   delegate_to: 127.0.0.1
+
+- name: Execute the Python script (wikijs_sso.py)
+  become: false
+  script: "scripts/wikijs_sso.py"
+  args:
+    executable: python3
+  delegate_to: 127.0.0.1
+  environment:
+    INSTANCE_URL: "{{ instance_url }}"
+
+    LOGIN_USERNAME: "{{ admin_username }}"
+    LOGIN_PASSWORD: "{{ admin_password }}"
+
+    OIDC_KEY: "{{ wikijs_oidc_id }}"
+    OIDC_CLIENT_ID: "{{ authentik_data['client_id'] }}"
+    OIDC_CLIENT_SECRET: "{{ authentik_data['client_secret'] }}"
+    OIDC_AUTHORIZATION_URL: "{{ authentik_data['authorize'] }}"
+    OIDC_TOKEN_URL: "{{ authentik_data['token'] }}"
+    OIDC_USER_INFO_URL: "{{ authentik_data['user_info'] }}"
+    OIDC_ISSUER: "{{ authentik_data['issuer'] }}"
+    OIDC_LOGOUT_URL: "{{ authentik_data['logout'] }}"
