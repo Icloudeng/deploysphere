@@ -24,6 +24,8 @@ func BindLocalJobsRoutes(api *gin.RouterGroup) {
 
 	api.DELETE("/resources/:ref", handlers.Resources.DeleteResources)
 
+	api.DELETE("/resources/bulk", handlers.Resources.DeleteResourcesBulk)
+
 	api.GET("/resources/:ref", handlers.Resources.GetResourcesByReference)
 
 	api.GET("/resources", handlers.Resources.GetResources)
