@@ -15,7 +15,7 @@ import (
 )
 
 type ResourcesRefBulk struct {
-	Refs []*string `json:"refs"`
+	Refs []string `json:"refs"`
 }
 
 // DELETE resources bulk
@@ -37,8 +37,8 @@ func (resourcesHandler) DeleteResourcesBulk(c *gin.Context) {
 		Task: func(ctx context.Context, job entities.Job) error {
 			for _, ref := range bulk.Refs {
 				// Remove resources
-				terraform.Resources.DeleteOvhDomainZoneResource(*ref)
-				terraform.Resources.DeleteProxmoxVmQemuResource(*ref)
+				terraform.Resources.DeleteOvhDomainZoneResource(ref)
+				terraform.Resources.DeleteProxmoxVmQemuResource(ref)
 			}
 
 			// Terraform Apply changes
