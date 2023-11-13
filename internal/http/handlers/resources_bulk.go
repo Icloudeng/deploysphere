@@ -15,32 +15,30 @@ import (
 )
 
 type ResourcesRefBulk struct {
-	Resources []*struct {
-		Ref string `json:"ref" binding:"required,resourceref"`
-	} `json:"resources"`
+	Refs []string `json:"refs" binding:"required"`
 }
 
 // DELETE resources bulk
 func (resourcesHandler) DeleteResourcesBulk(c *gin.Context) {
-	var bulk ResourcesRefBulk
+	var reqBody ResourcesRefBulk
 
-	if err := c.ShouldBindUri(&bulk); err != nil {
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		c.AbortWithStatusJSON(400, gin.H{"msg": err.Error()})
 		return
 	}
 
 	task := jobs.ResourcesJob{
 		Ref:           "resources-bulk-deletion",
-		PostBody:      bulk,
+		PostBody:      reqBody,
 		Description:   "Resources bulk deletion",
 		ResourceState: false, // Disable on resource deletion
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
 		Task: func(ctx context.Context, job entities.Job) error {
-			for _, res := range bulk.Resources {
+			for _, ref := range reqBody.Refs {
 				// Remove resources
-				terraform.Resources.DeleteOvhDomainZoneResource(res.Ref)
-				terraform.Resources.DeleteProxmoxVmQemuResource(res.Ref)
+				terraform.Resources.DeleteOvhDomainZoneResource(ref)
+				terraform.Resources.DeleteProxmoxVmQemuResource(ref)
 			}
 
 			// Terraform Apply changes
@@ -60,5 +58,5 @@ func (resourcesHandler) DeleteResourcesBulk(c *gin.Context) {
 
 	job := jobs.ResourcesJobTask(task)
 
-	c.JSON(http.StatusOK, gin.H{"data": bulk, "job": job})
+	c.JSON(http.StatusOK, gin.H{"data": reqBody, "job": job})
 }
