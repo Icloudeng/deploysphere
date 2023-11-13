@@ -14,8 +14,10 @@ import (
 	"github.com/icloudeng/platform-installer/internal/structs"
 )
 
-type ResourcesRefBulk []*struct {
-	Ref string `json:"ref" binding:"required,resourceref"`
+type ResourcesRefBulk struct {
+	Resources []*struct {
+		Ref string `json:"ref" binding:"required,resourceref"`
+	} `json:"resources" binding:"required"`
 }
 
 // DELETE resources bulk
@@ -35,7 +37,7 @@ func (resourcesHandler) DeleteResourcesBulk(c *gin.Context) {
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
 		Task: func(ctx context.Context, job entities.Job) error {
-			for _, res := range bulk {
+			for _, res := range bulk.Resources {
 				// Remove resources
 				terraform.Resources.DeleteOvhDomainZoneResource(res.Ref)
 				terraform.Resources.DeleteProxmoxVmQemuResource(res.Ref)
