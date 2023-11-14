@@ -121,7 +121,7 @@ async def send_notification(
 
         installer_details = installer_details.replace("\\n", "\n")
 
-        content = f"##########################\n{slicetop if decoded_logs[:3000] else decoded_logs[-3000:]}\n########################"
+        content = f"##########################\n{decoded_logs[:3000] if slicetop else decoded_logs[-3000:]}\n########################"
         text = f"\n{emoji} {status.title()}{domain_text}\n\n{installer_details}\n\n{content}"
         await bot.send_message(chat_id=chat_id, text=text)
     except Exception as error:
