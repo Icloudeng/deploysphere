@@ -13,7 +13,7 @@
   vars:
     url_var: "{{ item }}"
   loop:
-    - "{{ wikijs_url }}"
+    - "{{ instance_url }}"
     - "{{ configuration['authentik_url'] }}"
 
 # client_secret
