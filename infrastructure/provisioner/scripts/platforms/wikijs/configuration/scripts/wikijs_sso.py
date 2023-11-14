@@ -2,22 +2,22 @@ import os
 import requests
 
 
-INSTANCE_URL = os.getenv("INSTANCE_URL")
+INSTANCE_URL = os.getenv("INSTANCE_URL", "")
 
 # LOGIN
-LOGIN_USERNAME = os.getenv("LOGIN_USERNAME")
-LOGIN_PASSWORD = os.getenv("LOGIN_PASSWORD")
+LOGIN_USERNAME = os.getenv("LOGIN_USERNAME", "")
+LOGIN_PASSWORD = os.getenv("LOGIN_PASSWORD", "")
 
 
 # OIDC
-OIDC_KEY = os.getenv("OIDC_KEY")
-OIDC_CLIENT_ID = os.getenv("OIDC_CLIENT_ID")
-OIDC_CLIENT_SECRET = os.getenv("OIDC_CLIENT_SECRET")
-OIDC_AUTHORIZATION_URL = os.getenv("OIDC_AUTHORIZATION_URL")
-OIDC_TOKEN_URL = os.getenv("OIDC_TOKEN_URL")
-OIDC_USER_INFO_URL = os.getenv("OIDC_USER_INFO_URL")
-OIDC_ISSUER = os.getenv("OIDC_ISSUER")
-OIDC_LOGOUT_URL = os.getenv("OIDC_LOGOUT_URL")
+OIDC_KEY = os.getenv("OIDC_KEY", "")
+OIDC_CLIENT_ID = os.getenv("OIDC_CLIENT_ID", "")
+OIDC_CLIENT_SECRET = os.getenv("OIDC_CLIENT_SECRET", "")
+OIDC_AUTHORIZATION_URL = os.getenv("OIDC_AUTHORIZATION_URL", "")
+OIDC_TOKEN_URL = os.getenv("OIDC_TOKEN_URL", "")
+OIDC_USER_INFO_URL = os.getenv("OIDC_USER_INFO_URL", "")
+OIDC_ISSUER = os.getenv("OIDC_ISSUER", "")
+OIDC_LOGOUT_URL = os.getenv("OIDC_LOGOUT_URL", "")
 
 
 for value in (

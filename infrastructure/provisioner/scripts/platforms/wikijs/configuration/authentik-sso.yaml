@@ -18,14 +18,12 @@
 
 # client_secret
 - import_tasks: authentik-sso-configuration.yaml
-  delegate_to: 127.0.0.1
 
 - name: Execute the Python script (wikijs_sso.py)
   become: false
   script: "scripts/wikijs_sso.py"
   args:
     executable: python3
-  delegate_to: 127.0.0.1
   environment:
     INSTANCE_URL: "{{ instance_url }}"
 

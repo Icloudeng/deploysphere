@@ -1,5 +1,5 @@
 ---
-- name: Jitsi Configuration
+- name: WikiJS Configuration
   hosts: localhost
   become: false
   gather_facts: true
