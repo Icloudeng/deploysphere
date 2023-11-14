@@ -40,7 +40,7 @@
     SESSION_HEADERS: "{{ session_headers }}"
     AUTHENTIK_URL: "{{ configuration['authentik_url'] }}"
     PROVIDER_NAME: "{{ platform_name }}"
-    REDIRECT_URL: "{{ instance_url }}/login/{{ wikijs_oidc_id }}/callback"
+    REDIRECT_URL: ".*"
     LAUNCH_URL: "{{ instance_url }}"
   register: script_output
 
