@@ -17,11 +17,13 @@ const headers = { value: {} };
   await page.setRequestInterception(true);
 
   page.on("request", (request) => {
-    headers.value = request.headers();
+    headers.value = {
+      ...headers.value,
+      ...request.headers(),
+    };
     // Allow the request to continue
     request.continue();
   });
-
 
   // Set screen size
   await page.setViewport({ width: 1200, height: 1024 });
