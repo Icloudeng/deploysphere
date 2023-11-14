@@ -5,6 +5,6 @@
     executable: python3
   environment:
     BASE_URL: "http://{{ vm_ip }}:3000"
-    SITE_URL: "{{ domain }}"
+    SITE_URL: "https://{{ domain }}"
     ADMIN_EMAIL: "{{ admin_email }}"
     ADMIN_PASSWORD: "{{ app_secret }}"
