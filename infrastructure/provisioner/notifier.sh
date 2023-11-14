@@ -6,6 +6,7 @@ logs=""
 status=""
 details=""
 metadata=""
+slicetop=""
 
 # Parse named arguments
 while [[ $# -gt 0 ]]; do
@@ -32,6 +33,12 @@ while [[ $# -gt 0 ]]; do
         shift
         shift
         ;;
+
+    --slicetop)
+        slicetop="$2"
+        shift
+        shift
+        ;;
     *)
         echo "Invalid argument: $1"
         exit 1
@@ -48,7 +55,7 @@ fi
 # Include python command and activate python venv
 source $MY_DIR/bash/init.sh
 
-$python_command lib/notifier.py --logs "$logs" --status "$status" --details "$details" --metadata "$metadata"
+$python_command lib/notifier.py --logs "$logs" --status "$status" --details "$details" --metadata "$metadata" --slicetop "$slicetop"
 
 # Deactivate the virtual environment
 deactivate

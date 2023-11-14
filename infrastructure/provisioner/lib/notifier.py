@@ -77,8 +77,9 @@ async def send_notification(
     status: str,
     installer_details: str,
     metadata: str,
-    slicetop: bool,
+    slicetop: str,
 ):
+    slicetop = slicetop == "true"
     bot, chat_id = create_bot()
     if bot == None:
         logging.warning("Invalid BOT Configuration!")
@@ -135,12 +136,7 @@ if __name__ == "__main__":
     parser.add_argument("--status", required=True)
     parser.add_argument("--details", required=False, default="")
     parser.add_argument("--metadata", required=False, default="")
-    parser.add_argument(
-        "--slicetop",
-        type=bool,
-        required=False,
-        default=False,
-    )
+    parser.add_argument("--slicetop", required=False, default="")
     args = parser.parse_args()
 
     logging.info(args)
