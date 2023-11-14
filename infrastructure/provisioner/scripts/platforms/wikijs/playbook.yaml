@@ -43,5 +43,5 @@
           Password: {{ app_secret }}
 
         credentials:
-          email: "{{ admin_email }}"
+          username: "{{ admin_email }}"
           password: "{{ app_secret }}"
