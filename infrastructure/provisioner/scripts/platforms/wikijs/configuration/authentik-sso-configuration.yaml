@@ -29,7 +29,7 @@
 
 - name: Session Headers
   ansible.builtin.debug:
-    var: session_headers
+    msg: "{{ session_headers | b64decode }}"
 
 - name: Execute the Python script  (authentik-oidc-provider.py)
   become: false
