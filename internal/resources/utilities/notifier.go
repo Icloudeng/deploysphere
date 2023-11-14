@@ -19,6 +19,7 @@ func SendNotification(notifier structs.Notifier) {
 		"--details", notifier.Details,
 		"--logs", base64.StdEncoding.EncodeToString([]byte(notifier.Logs)),
 		"--metadata", base64.StdEncoding.EncodeToString([]byte(notifier.Metadata)),
+		"--slicetop", "true",
 	)
 
 	cmd.Dir = filesystem.ProvisionerDir
