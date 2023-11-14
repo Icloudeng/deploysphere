@@ -27,6 +27,10 @@
   set_fact:
     session_headers: "{{ session_key.stdout | regex_search('%%%(.*?)%%%') | replace('%%%', '') }}"
 
+- name: Session Headers
+  ansible.builtin.debug:
+    var: session_headers
+
 - name: Execute the Python script  (authentik-oidc-provider.py)
   become: false
   script: "{{ scripts_dir }}/scripts/authentik-oidc-provider.py"

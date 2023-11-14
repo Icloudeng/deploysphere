@@ -96,28 +96,28 @@ def create_oidc():
                         "config": [
                             {
                                 "key": "clientId",
-                                "value": '{"v":"%s"}' % (OIDC_CLIENT_ID),
+                                "value": '{"v":"%s"}' % OIDC_CLIENT_ID,
                             },
                             {
                                 "key": "clientSecret",
-                                "value": '{"v":"%s"}' % (OIDC_CLIENT_SECRET),
+                                "value": '{"v":"%s"}' % OIDC_CLIENT_SECRET,
                             },
                             {
-                                "key": "authorizationURL" % (OIDC_AUTHORIZATION_URL),
-                                "value": '{"v":"%s"}',
+                                "key": "authorizationURL",
+                                "value": '{"v":"%s"}' % OIDC_AUTHORIZATION_URL,
                             },
                             {
                                 "key": "tokenURL",
-                                "value": '{"v":"%s"}' % (OIDC_TOKEN_URL),
+                                "value": '{"v":"%s"}' % OIDC_TOKEN_URL,
                             },
                             {
                                 "key": "userInfoURL",
-                                "value": '{"v":"%s"}' % (OIDC_USER_INFO_URL),
+                                "value": '{"v":"%s"}' % OIDC_USER_INFO_URL,
                             },
                             {"key": "skipUserProfile", "value": '{"v":false}'},
                             {
                                 "key": "issuer",
-                                "value": '{"v":"%s"}' % (OIDC_ISSUER),
+                                "value": '{"v":"%s"}' % OIDC_ISSUER,
                             },
                             {"key": "emailClaim", "value": '{"v":"email"}'},
                             {"key": "displayNameClaim", "value": '{"v":"displayName"}'},
@@ -125,7 +125,7 @@ def create_oidc():
                             {"key": "groupsClaim", "value": '{"v":"groups"}'},
                             {
                                 "key": "logoutURL",
-                                "value": '{"v":"%s"}' % (OIDC_LOGOUT_URL),
+                                "value": '{"v":"%s"}' % OIDC_LOGOUT_URL,
                             },
                             {"key": "acrValues", "value": '{"v":""}'},
                         ],
