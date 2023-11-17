@@ -134,7 +134,7 @@ def concatenate_resources(
     # Join the filtered variables with "-" separator
     resource_ref = "-".join(filtered_variables)
 
-    return resource_ref
+    return resource_ref.replace(".", "-")
 
 
 def concatenate_domain(sub_domain=None, env_domain=None, root_domain=None):
