@@ -121,20 +121,13 @@ def concatenate_resources(
     # Create a list of variables
     variables = [platform_name, sub_domain, env_domain, root_domain]
 
-    # If root_domain has a ".", replace it with "-"
-    if root_domain:
-        root_domain = root_domain.replace(".", "-")
-        variables[
-            -1
-        ] = root_domain  # Update the last element with the modified root_domain
-
     # Filter out any variables that are None or empty
     filtered_variables = [v for v in variables if v]
 
     # Join the filtered variables with "-" separator
     resource_ref = "-".join(filtered_variables)
 
-    return resource_ref.replace(".", "-")
+    return resource_ref.replace(".", "-").replace("_", "-")
 
 
 def concatenate_domain(sub_domain=None, env_domain=None, root_domain=None):
