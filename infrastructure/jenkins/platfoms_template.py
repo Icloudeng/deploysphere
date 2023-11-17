@@ -76,6 +76,7 @@ platforms_subdomain = {
     "mariadb": "mysql",
     "redash": "analytics",
     "grafana": "metrics",
+    "apache_nifi": "flow",
 }
 
 cloud_init_templates = {
