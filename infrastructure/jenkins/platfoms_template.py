@@ -109,6 +109,7 @@ environments = {
     "incub": "7",
     "ngo": "8",
     "infra": "9",
+    "learn": "10",
 }
 
 
