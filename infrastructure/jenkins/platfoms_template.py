@@ -49,6 +49,7 @@ platforms = {
     "redash": "95",
     "grafana": "96",
     "wikijs": "33",
+    "apache_nifi": "55",
 }
 
 
@@ -96,6 +97,7 @@ cloud_init_templates = {
     "jenkins": "ubuntu-20.04-cloudinit-template",
     "mysql": "ubuntu-22.04-cloudinit-template",
     "redash": "ubuntu-22.04-cloudinit-template",
+    "apache_nifi": "ubuntu-22.04-cloudinit-template",
 }
 
 
