@@ -76,5 +76,8 @@
     "wikijs": [
         "domain",
         "admin_email"
+    ],
+    "apache_nifi": [
+        "domain"
     ]
 }
