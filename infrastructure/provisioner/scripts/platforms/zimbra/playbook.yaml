@@ -27,6 +27,13 @@
       vars:
         timezone_var: "{{ _zimbra_timezone }}"
 
+    - ansible.builtin.debug:
+        var: item
+      loop:
+        - "{{ _zimbra_fqdn }}"
+        - "{{ _zimbra_timezone }}"
+        - "{{ zimbra_verion }}"
+
     - name: "Include zimbra"
       include_role:
         name: zimbra-single
