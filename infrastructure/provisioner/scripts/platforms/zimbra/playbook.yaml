@@ -14,8 +14,18 @@
     - name: Extract Required Variables
       set_fact:
         _zimbra_fqdn: "{{ decoded_metadata | json_query('domain') }}"
-        _zimbra_timezone: "{{ decoded_metadata | json_query('zimbra_timezone') | default('Africa/Central') }}"
-        zimbra_verion: "{{ decoded_metadata | json_query('zimbra_verion') | default('zimbra8') }}"
+        _zimbra_timezone: "{{ decoded_metadata | json_query('zimbra_timezone') }}"
+        zimbra_verion: "{{ decoded_metadata | json_query('zimbra_verion') }}"
+
+    - name: default value zimbra_timezone
+      set_fact:
+        _zimbra_timezone: "Europe/Paris"
+      when: _zimbra_timezone == ""
+
+    - name: default value zimbra_verion
+      set_fact:
+        zimbra_verion: "zimbra8"
+      when: zimbra_verion == ""
 
     # Validate domain variables
     - include_tasks: ../../tasks/validator/domain-regex.yaml
@@ -33,6 +43,12 @@
         - "{{ _zimbra_fqdn }}"
         - "{{ _zimbra_timezone }}"
         - "{{ zimbra_verion }}"
+
+    - name: Assert Zimbra 8 or 9
+      assert:
+        that:
+          - zimbra_verion == "zimbra8" or zimbra_verion == "zimbra9"
+        fail_msg: "only zimbra8 or zimbra9 supported"
 
     - name: "Include zimbra"
       include_role:
