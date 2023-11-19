@@ -211,6 +211,20 @@
     path: /opt/zimbra
   register: zimbra_stat
 
+# Disable FIPS provider
+- name: Disable FIPS provider
+  block:
+    - name: Backup openssl.cnf file
+      command: "cp openssl.cnf openssl.cnf.bk"
+      args:
+        chdir: "/opt/zimbra/common/etc/ssl"
+        creates: "/opt/zimbra/common/etc/ssl/openssl.cnf.bk"
+
+    - name: Replace openssl.cnf with openssl-fips.cnf
+      command: cp openssl-fips.cnf openssl.cnf
+      args:
+        chdir: "/opt/zimbra/common/etc/ssl"
+
 - name: Run installer
   block:
     - name: run zimbra installer phase 1
