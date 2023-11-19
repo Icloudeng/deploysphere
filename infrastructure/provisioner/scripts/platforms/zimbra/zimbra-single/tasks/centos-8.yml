@@ -124,6 +124,8 @@
     src: /root/zcs-8.8.15_GA_4362.RHEL8_64.20220721104405.tgz
     dest: /root
     remote_src: yes
+    list_files: true
+  register: zimbra_zip
 
 - name: configure answer file
   template:
@@ -165,7 +167,7 @@
     - name: run zimbra installer phase 1
       shell: ./install.sh -s < /tmp/zimbra_answers.txt
       args:
-        chdir: /root/zcs-8.8.15_GA_4362.RHEL8_64.20220721104405/
+        chdir: /root/{{ zimbra_zip.files[0] }}
 
     - name: run zimbra installer phase 2
       command: /opt/zimbra/libexec/zmsetup.pl -c /tmp/zimbra_config.txt
