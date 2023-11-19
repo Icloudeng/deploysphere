@@ -23,8 +23,7 @@
         "suitecrm_email"
     ],
     "zimbra": [
-        "zimbra_fqdn",
-        "zimbra_timezone",
+        "domain",
         "_mapping"
     ],
     "jenkins": [

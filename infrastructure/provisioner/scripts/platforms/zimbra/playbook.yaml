@@ -13,8 +13,8 @@
 
     - name: Extract Required Variables
       set_fact:
-        _zimbra_fqdn: "{{ decoded_metadata | json_query('zimbra_fqdn') }}"
-        _zimbra_timezone: "{{ decoded_metadata | json_query('zimbra_timezone') }}"
+        _zimbra_fqdn: "{{ decoded_metadata | json_query('domain') }}"
+        _zimbra_timezone: "{{ decoded_metadata | json_query('zimbra_timezone') | default('Africa/Central') }}"
         zimbra_verion: "{{ decoded_metadata | json_query('zimbra_verion') | default('zimbra8') }}"
 
     # Validate domain variables
@@ -30,10 +30,6 @@
     - name: "Include zimbra"
       include_role:
         name: zimbra-single
-        apply:
-          tags: install
-      tags:
-        - always
       vars:
         zimbra_fqdn: "{{ _zimbra_fqdn }}"
         zimbra_timezone: "{{ _zimbra_timezone }}"
