@@ -36,18 +36,6 @@
       args:
         removes: "{{ project_path }}/output"
 
-- name: Create directory "project/nifi"
-  ansible.builtin.file:
-    path: "{{ project_path }}/nifi"
-    state: directory
-    mode: "0777"
-
-- name: Set directory permissions for "project/nifi" to 777
-  ansible.builtin.file:
-    path: "{{ project_path }}/nifi"
-    mode: "0777"
-    recurse: yes
-
 - name: Slurp the content of nifi.properties file
   ansible.builtin.slurp:
     src: "{{ project_path }}/localhost/nifi.properties"
