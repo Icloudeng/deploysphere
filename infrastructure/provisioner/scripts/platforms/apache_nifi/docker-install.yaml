@@ -75,14 +75,14 @@
   args:
     chdir: "{{ project_path }}"
 
-- name: Pause play until a URL is reachable from this host
-  ignore_errors: true
-  ansible.builtin.uri:
-    url: "https://{{ vm_ip }}:8443"
-    follow_redirects: none
-    validate_certs: no
-    method: GET
-  register: _result
-  until: _result.status >= 200
-  retries: 30
-  delay: 10
+# - name: Pause play until a URL is reachable from this host
+#   ignore_errors: true
+#   ansible.builtin.uri:
+#     url: "https://{{ vm_ip }}:8443"
+#     follow_redirects: none
+#     validate_certs: no
+#     method: GET
+#   register: _result
+#   until: _result.status >= 200
+#   retries: 30
+#   delay: 10
