@@ -93,21 +93,28 @@
     creates: "{{ project_path }}/conf"
   register: copy_conf_cmd
 
-- name: Set directory permissions for ./conf to 777
-  ansible.builtin.file:
-    path: "{{ project_path }}/conf"
-    mode: "0777"
-    recurse: yes
-  when: copy_conf_cmd.rc == 0
+- block:
+    - name: Set directory permissions for ./conf to 777
+      ansible.builtin.file:
+        path: "{{ project_path }}/conf"
+        mode: "0777"
+        recurse: yes
 
-# Restart services by enable conf mapping
-- name: Restart services by enable conf mapping
-  command: "docker compose up -d --force-recreate"
-  args:
-    chdir: "{{ project_path }}"
-  vars:
-    conf_mapping: true
-  when: copy_conf_cmd.rc == 0
+    - name: Copy Again  Dkr compose template
+      template:
+        src: "docker-compose.yaml.j2"
+        dest: "{{ project_path }}/docker-compose.yaml"
+        force: yes
+      vars:
+        conf_mapping: true
+
+    # Restart services by enable conf mapping
+    - name: Restart services by enable conf mapping
+      command: "docker compose up -d --force-recreate"
+      args:
+        chdir: "{{ project_path }}"
+
+  when: copy_conf_cmd is defined and copy_conf_cmd.rc == 0
 
 - name: Pause play until a URL is reachable from this host
   ignore_errors: true
