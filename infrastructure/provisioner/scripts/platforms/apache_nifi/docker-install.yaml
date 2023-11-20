@@ -20,18 +20,16 @@
         creates: "{{ project_path }}/localhost/keystore.jks"
 
     - name: Copy output folder
-      command: "mv {{ project_path }}/output/* {{ project_path }}"
+      shell: "mv {{ project_path }}/output/* {{ project_path }}"
       ignore_errors: true
       args:
         removes: "{{ project_path }}/output"
-        executable: /bin/bash
 
     - name: Remove output folder
       command: "rm -rf {{ project_path }}/output"
       ignore_errors: true
       args:
         removes: "{{ project_path }}/output"
-        executable: /bin/bash
 
 - name: Slurp the content of nifi.properties file
   ansible.builtin.slurp:
