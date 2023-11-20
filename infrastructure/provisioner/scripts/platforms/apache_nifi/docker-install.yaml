@@ -36,6 +36,23 @@
       args:
         removes: "{{ project_path }}/output"
 
+- name: Create directory project/nifi
+  become: false
+  file:
+    path: "{{ project_path }}/nifi"
+    state: directory
+    owner: "1000"
+    group: "1000"
+    mode: "0755"
+
+- name: Change ownership of project/nifi to user and group with ID 1000
+  become: false
+  file:
+    path: "{{ project_path }}/nifi"
+    owner: "1000"
+    group: "1000"
+    recurse: yes
+
 - name: Slurp the content of nifi.properties file
   ansible.builtin.slurp:
     src: "{{ project_path }}/localhost/nifi.properties"
