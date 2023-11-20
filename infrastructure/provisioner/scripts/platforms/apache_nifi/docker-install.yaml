@@ -81,14 +81,15 @@
 
 - name: Sleep for 10 seconds and continue with play
   ansible.builtin.wait_for:
-    timeout: 10
+    timeout: 15
 
 # Copy config files
 - name: Copy config files from containers
   become: false
-  command: "docker compose cp nifi:/opt/nifi/nifi-current/conf {{ project_path }}/conf"
+  shell: "docker compose cp nifi:/opt/nifi/nifi-current/conf {{ project_path }}/conf"
   ignore_errors: true
   args:
+    chdir: "{{ project_path }}"
     creates: "{{ project_path }}/conf"
   register: copy_conf_cmd
 
