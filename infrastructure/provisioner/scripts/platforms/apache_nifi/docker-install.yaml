@@ -16,6 +16,8 @@
 
     - name: Change files permission
       command: chmod -R 777 {{ project_path }}/output
+      args:
+        removes: "{{ project_path }}/output"
 
     - name: Remove Docker nifi-toolkit temp container
       command: docker container rm apache-nifi-ssl
