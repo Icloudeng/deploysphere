@@ -10,7 +10,7 @@
         creates: "{{ project_path }}/localhost/keystore.jks"
 
     - name: Copy Generated SSL certificates to Local
-      command: docker cp apache-nifi-ssl:/opt/nifi-toolkit/output {{ project_path }}
+      command: docker cp apache-nifi-ssl:/opt/nifi-toolkit/output/ {{ project_path }}
       args:
         creates: "{{ project_path }}/localhost/keystore.jks"
 
