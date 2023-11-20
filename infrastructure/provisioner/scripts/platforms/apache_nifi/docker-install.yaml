@@ -79,17 +79,25 @@
   args:
     chdir: "{{ project_path }}"
 
+- name: Sleep for 10 seconds and continue with play
+  ansible.builtin.wait_for:
+    timeout: 10
+
 # Copy config files
 - name: Copy config files from containers
+  become: false
   command: "docker compose cp nifi:/opt/nifi/nifi-current/conf {{ project_path }}/conf"
+  ignore_errors: true
   args:
     creates: "{{ project_path }}/conf"
+  register: copy_conf_cmd
 
 - name: Set directory permissions for ./conf to 777
   ansible.builtin.file:
     path: "{{ project_path }}/conf"
     mode: "0777"
     recurse: yes
+  when: copy_conf_cmd.rc == 0
 
 # Restart services by enable conf mapping
 - name: Restart services by enable conf mapping
@@ -98,6 +106,7 @@
     chdir: "{{ project_path }}"
   vars:
     conf_mapping: true
+  when: copy_conf_cmd.rc == 0
 
 - name: Pause play until a URL is reachable from this host
   ignore_errors: true
