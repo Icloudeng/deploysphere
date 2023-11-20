@@ -70,7 +70,7 @@ def concatenate_resources(
     # Join the filtered variables with "-" separator
     resource_ref = "-".join(filtered_variables)
 
-    return resource_ref
+    return resource_ref.replace(".", "-")
 
 
 def concatenate_domain(sub_domain=None, env_domain=None, root_domain=None):
@@ -176,19 +176,23 @@ def create_or_get_client(
 
 
 # PLATFORM
+ZIMBRA_VERSION = os.environ.get("ZIMBRA_VERSION", "").strip()
 PLATFORM_NAME = os.environ.get("PLATFORM_NAME", "").strip()
 PLATFORM_CODE = platforms[PLATFORM_NAME]
+
 
 # DOMAIN  VARIABLES
 DOMAIN_ROOT = os.environ.get("DOMAIN_ROOT", "").strip()
 DOMAIN_SUB = os.environ.get(
     "DOMAIN_SUB", platforms_subdomain.get(PLATFORM_NAME, "")
 ).strip()
-DOMAIN_FIELDTYPE = os.environ.get("DOMAIN_FIELDTYPE", "CNAME").strip()
+DOMAIN_FIELDTYPE = os.environ.get("DOMAIN_FIELDTYPE", "A").strip()
 DOMAIN_TTL = os.environ.get("DOMAIN_TTL", "3600").strip()
-DOMAIN_TARGET = os.environ.get("DOMAIN_TARGET", "gateway.homelab.net.")
-DOMAIN_ENV = os.environ.get("DOMAIN_ENV", "").strip()
 
+DOMAIN_TARGET = os.environ.get("DOMAIN_TARGET", "")
+DOMAIN_TARGET_MAC = os.environ.get("DOMAIN_TARGET_MAC", "")
+
+DOMAIN_ENV = os.environ.get("DOMAIN_ENV", "").strip()
 if not DOMAIN_SUB or DOMAIN_SUB == "":
     raise Exception("DOMAIN_SUB Cannot be empty")
 
@@ -203,8 +207,10 @@ PROXMOX_CLOUD_INIT_TEMPLATE = os.environ.get(
 ).strip()
 PROXMOX_TARGET_NODE = os.environ.get("PROXMOX_TARGET_NODE", "auto").strip()
 PROXMOX_VM_CORES = os.environ.get("PROXMOX_VM_CORES", "2").strip()
+# Proxmox Network
 PROXMOX_NETWORK_BRIDGE = os.environ.get("PROXMOX_NETWORK_BRIDGE", "vmbr3").strip()
-PROXMOX_NETWORK_TAG = os.environ.get("PROXMOX_NETWORK_TAG", "11").strip()
+PROXMOX_NETWORK_TAG = os.environ.get("PROXMOX_NETWORK_TAG", "-1").strip()
+PROXMOX_NETWORK_2_BRIDGE = os.environ.get("PROXMOX_NETWORK_2_BRIDGE", "vmbr0").strip()
 
 PROXMOX_VM_NAME = concatenate_resources(
     PLATFORM_NAME, DOMAIN_SUB, DOMAIN_ENV, DOMAIN_ROOT
@@ -216,8 +222,6 @@ PROJECT_COUNTRY = os.environ.get("PROJECT_COUNTRY", "french").strip()
 PROJECT_COUNTRY_CODE = os.environ.get("PROJECT_COUNTRY_CODE", "").strip()
 PROJECT_NAME = os.environ.get("PROJECT_NAME", "").strip()
 
-# Metadata
-METADATA = os.environ.get("METADATA", "")
 
 # UPSTREAM
 UPSTREAM_BUILD_TAG = os.environ.get("UPSTREAM_BUILD_TAG")
@@ -266,14 +270,19 @@ body = {
         "memory": int(PROXMOX_VM_MEMORY),
         "cores": int(PROXMOX_VM_CORES),
         "network": [
-            {"bridge": PROXMOX_NETWORK_BRIDGE},
+            {"bridge": PROXMOX_NETWORK_BRIDGE, "tag": int(PROXMOX_NETWORK_TAG)},
+            {
+                "bridge": PROXMOX_NETWORK_2_BRIDGE,
+                "macaddr": DOMAIN_TARGET_MAC,
+                "model": "virtio",
+                "tag": -1,
+            },
         ],
     },
     "platform": {
         "name": PLATFORM_NAME,
         "metadata": {
-            "zimbra_fqdn": fqdn_domain,
-            "zimbra_timezone": "Africa/Central",
+            "zimbra_version": ZIMBRA_VERSION,
             "mapping": False,
         },
     },
@@ -286,7 +295,7 @@ mx_body = {
         "subdomain": first_split_domain(DOMAIN_SUB_RESULT),
         "fieldtype": "MX",
         "ttl": 3600,
-        "target": f"{fqdn_domain}.",
+        "target": f"1 {fqdn_domain}.",
     },
 }
 
