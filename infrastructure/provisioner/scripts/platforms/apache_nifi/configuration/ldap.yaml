@@ -1,0 +1,25 @@
+- name: Extract Required Variables
+  set_fact:
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+- name: Check if .env the file exists
+  stat:
+    path: "{{ project_path }}/.env.auth"
+  register: env_auth_info
+
+- name: Assert that the .env.auth file exists
+  assert:
+    that:
+      - env_auth_info.stat.exists
+    fail_msg: "The file does not exist."
+
+- name: "Copy .env.auth template"
+  template:
+    src: "../.env.auth.j2"
+    dest: "{{ project_path }}/.env.auth"
+    force: yes
+
+- name: Reload Apache NIFI
+  command: docker compose up -d --force-recreate
+  args:
+    chdir: "{{ project_path }}"

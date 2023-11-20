@@ -189,5 +189,16 @@
                 "ldap_bind_password"
             ]
         }
-    }
+    },
+    "apache_nifi": {
+        "ldap": {
+            "fields": [],
+            "configuration": [
+                "ldap_server_url",
+                "ldap_search_base",
+                "ldap_bind_dn",
+                "ldap_bind_password"
+            ]
+        }
+    },
 }
