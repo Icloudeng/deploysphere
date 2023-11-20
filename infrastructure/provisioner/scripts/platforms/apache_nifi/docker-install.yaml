@@ -81,9 +81,8 @@
 
 # Copy config files
 - name: Copy config files from containers
-  command: "docker compose cp nifi_logs:/opt/nifi/nifi-current/conf ./conf"
+  command: "docker compose cp nifi:/opt/nifi/nifi-current/conf {{ project_path }}/conf"
   args:
-    chdir: "{{ project_path }}"
     creates: "{{ project_path }}/conf"
 
 - name: Set directory permissions for ./conf to 777
