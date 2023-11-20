@@ -1,0 +1,31 @@
+version: "3"
+services:
+  zookeeper:
+    hostname: zookeeper
+    container_name: zookeeper
+    image: "zookeeper:latest"
+    ports:
+      - 2181
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+    nifi:
+      image: apache/nifi:1.23.2
+      container_name: nifi
+      hostname: "{{ domain }}"
+      restart: unless-stopped
+      env_file:
+        - .env
+        - .env.auth
+      ports:
+        # - 8080:8080
+        - 8443:8443
+      depends_on:
+        - zookeeper
+
+      volumes:
+        - ./localhost/keystore.jks:/opt/certs/keystore.jks
+        - ./localhost/truststore.jks:/opt/certs/truststore.jks
+        - ./data:/data
+        - ./driver:/driver
+        - ./extensions:/opt/nifi/nifi-current/extensions

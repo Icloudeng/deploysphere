@@ -1,17 +1,38 @@
 # Install Docker
 - include_tasks: ../../tasks/docker.yaml
 
-- name: Copy Dkr file
-  ansible.builtin.copy:
-    src: "docker-compose.yaml"
+# Generate Apache SSL
+- name: Generate Apache SSL
+  block:
+    - name: Generate the SSL certificates and the necessary configurations
+      command: docker run --name apache-nifi-ssl apache/nifi-toolkit tls-toolkit standalone -n localhost -C 'CN=admin,OU=NiFi' --subjectAlternativeNames 'localhost,{{ domain }},0.0.0.0,nifiserver' -o /opt/nifi-toolkit/output
+      args:
+        creates: "{{ project_path }}/localhost/keystore.jks"
+
+    - name: Copy Generated SSL certificates to Local
+      command: docker cp apache-nifi-ssl:/opt/nifi-toolkit/output {{ project_path }}
+      args:
+        creates: "{{ project_path }}/localhost/keystore.jks"
+
+    - name: Remove Docker nifi-toolkit temp container
+      command: docker container rm apache-nifi-ssl
+      args:
+        creates: "{{ project_path }}/localhost/keystore.jks"
+
+- name: Copy Dkr compose template
+  template:
+    src: "docker-compose.yaml.j2"
     dest: "{{ project_path }}/docker-compose.yaml"
     force: yes
 
 - name: "Copy .env template"
   template:
-    src: .env.j2
-    dest: "{{ project_path }}/.env"
+    src: "{{ item }}.j2"
+    dest: "{{ project_path }}/{{ item }}"
     force: yes
+  loop:
+    - .env
+    - .env.auth
 
 - name: Install Authentik using Dkr Compose
   become: true
