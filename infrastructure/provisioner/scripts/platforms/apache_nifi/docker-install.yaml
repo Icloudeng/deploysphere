@@ -5,7 +5,7 @@
 - name: Generate Apache SSL
   block:
     - name: Generate the SSL certificates and the necessary configurations
-      command: docker run --name apache-nifi-ssl apache/nifi-toolkit tls-toolkit standalone -n localhost -C 'CN=admin,OU=NiFi' --subjectAlternativeNames 'localhost,{{ domain }},0.0.0.0,nifiserver' -o /opt/nifi-toolkit/output
+      command: docker run --name apache-nifi-ssl apache/nifi-toolkit tls-toolkit standalone -n localhost --subjectAlternativeNames 'localhost,{{ domain }},0.0.0.0,nifiserver' -o /opt/nifi-toolkit/output
       args:
         creates: "{{ project_path }}/localhost/keystore.jks"
 
