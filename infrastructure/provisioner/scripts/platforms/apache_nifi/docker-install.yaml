@@ -19,6 +19,29 @@
       args:
         creates: "{{ project_path }}/localhost/keystore.jks"
 
+- name: Slurp the content of nifi.properties file
+  ansible.builtin.slurp:
+    src: "{{ project_path }}/localhost/nifi.properties"
+  register: slurped_file
+
+- name: Decode the file content
+  set_fact:
+    file_content: "{{ slurped_file['content'] | b64decode }}"
+
+- name: Extract keystore password
+  set_fact:
+    keystore_passwd: "{{ file_content | regex_search('nifi.security.keystorePasswd=(.*)', '\\1') | first }}"
+
+- name: Extract truststore password
+  set_fact:
+    truststore_passwd: "{{ file_content | regex_search('nifi.security.truststorePasswd=(.*)', '\\1') | first }}"
+
+- name: Print the extracted passwords
+  debug:
+    msg:
+      - "Keystore Password: {{ keystore_passwd }}"
+      - "Truststore Password: {{ truststore_passwd }}"
+
 - name: Copy Dkr compose template
   template:
     src: "docker-compose.yaml.j2"
