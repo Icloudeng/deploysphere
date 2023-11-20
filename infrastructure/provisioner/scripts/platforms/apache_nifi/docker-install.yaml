@@ -75,18 +75,39 @@
     - .env.auth
 
 - name: Install Authentik using Dkr Compose
-  become: true
   command: "docker compose up -d --force-recreate"
   args:
     chdir: "{{ project_path }}"
-# - name: Pause play until a URL is reachable from this host
-#   ignore_errors: true
-#   ansible.builtin.uri:
-#     url: "https://{{ vm_ip }}:8443"
-#     follow_redirects: none
-#     validate_certs: no
-#     method: GET
-#   register: _result
-#   until: _result.status >= 200
-#   retries: 30
-#   delay: 10
+
+# Copy config files
+- name: Copy config files from containers
+  command: "docker compose cp nifi_logs:/opt/nifi/nifi-current/conf ./conf"
+  args:
+    chdir: "{{ project_path }}"
+    creates: "{{ project_path }}/conf"
+
+- name: Set directory permissions for ./conf to 777
+  ansible.builtin.file:
+    path: "{{ project_path }}/conf"
+    mode: "0777"
+    recurse: yes
+
+# Restart services by enable conf mapping
+- name: Restart services by enable conf mapping
+  command: "docker compose up -d --force-recreate"
+  args:
+    chdir: "{{ project_path }}"
+  vars:
+    conf_mapping: true
+
+- name: Pause play until a URL is reachable from this host
+  ignore_errors: true
+  ansible.builtin.uri:
+    url: "https://{{ vm_ip }}:8443"
+    follow_redirects: none
+    validate_certs: no
+    method: GET
+  register: _result
+  until: _result.status >= 200
+  retries: 30
+  delay: 10

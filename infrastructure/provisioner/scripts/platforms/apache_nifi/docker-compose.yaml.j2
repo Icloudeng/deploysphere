@@ -32,6 +32,9 @@ services:
       - nifi_provenance_repository:/opt/nifi/nifi-current/provenance_repository
       - nifi_state:/opt/nifi/nifi-current/state
       - nifi_logs:/opt/nifi/nifi-current/logs
+{% if conf_mapping is defined and (conf_mapping == true or conf_mapping == "true") %}
+      - ./conf:/opt/nifi/nifi-current/conf
+{% endif %}
 
 volumes:
   nifi_database_repository:
