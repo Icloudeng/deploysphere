@@ -200,5 +200,5 @@
                 "ldap_bind_password"
             ]
         }
-    },
+    }
 }
