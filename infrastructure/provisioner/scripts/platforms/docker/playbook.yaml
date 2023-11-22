@@ -11,7 +11,7 @@
     # Playbook init (with decoded_metadata, project_path, app_secret)
     - include_tasks: ../../tasks/playbook-init.yaml
 
-    # Install mysql
+    # Install Docker
     - include_tasks: ../../tasks/docker.yaml
 
     - name: Read Docker version

@@ -1,0 +1,54 @@
+---
+- name: Eturnal
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path, app_secret)
+    - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Extract Required Variables
+      set_fact:
+        domain: "{{ decoded_metadata | json_query('domain') }}"
+
+    # Validate domain variable
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ domain }}"
+
+    # Install Docker
+    - include_tasks: ../../tasks/docker.yaml
+
+    - name: Run a container named
+      block:
+        - set_facts:
+            c_ports: "-p 3478:3478 -p 3478:3478/udp -p 50000-50500:50000-50500/udp"
+            c_envs: "-e ETURNAL_RELAY_MIN_PORT=50000 -e ETURNAL_RELAY_MAX_PORT=50500"
+            c_params: "--name eturnal --read-only --cap-drop=ALL --security-opt no-new-privileges"
+
+        - name: Stop eturnal container
+          command: "docker stop eturnal"
+          ignore_errors: true
+
+        - name: Remove eturnal container
+          command: "docker rm eturnal"
+          ignore_errors: true
+
+        - name: Pull Image
+          command: "docker pull ghcr.io/processone/eturnal:latest"
+
+        - name: "Run a container"
+          shell: "timeout 10m docker run -d {{ c_params }} {{ c_ports }} {{ c_envs }} ghcr.io/processone/eturnal:latest"
+          args:
+            executable: /bin/bash
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        text: |
+          Eturnal instance details:
+
+          Ports: {{ c_ports }}

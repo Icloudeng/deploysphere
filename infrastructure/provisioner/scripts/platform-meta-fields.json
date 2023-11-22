@@ -81,5 +81,9 @@
     ],
     "collabora": [
         "domain"
+    ],
+    "eturnal": [
+        "domain",
+        "_mapping"
     ]
 }

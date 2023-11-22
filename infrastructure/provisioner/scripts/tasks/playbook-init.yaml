@@ -4,6 +4,12 @@
     upgrade: true
     update_cache: yes
 
+- name: Install prerequisite
+  ansible.builtin.package:
+    name:
+      - bash
+    state: present
+
 - include_tasks: variables.yaml
 
 - name: Create root path
