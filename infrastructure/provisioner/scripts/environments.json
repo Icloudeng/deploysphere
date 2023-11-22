@@ -35,6 +35,7 @@
         "grafana": 31,
         "wikijs": 32,
         "jitsi_meet": 33,
-        "apache_nifi": 34
+        "apache_nifi": 34,
+        "collabora": 35
     }
 }

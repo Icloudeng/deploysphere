@@ -62,5 +62,9 @@
     "apache_nifi": {
         "port": 8443,
         "protocol": "https"
+    },
+    "collabora": {
+        "port": 9980,
+        "protocol": "http"
     }
 }

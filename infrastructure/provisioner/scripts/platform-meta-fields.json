@@ -78,5 +78,8 @@
     ],
     "apache_nifi": [
         "domain"
+    ],
+    "collabora": [
+        "domain"
     ]
 }

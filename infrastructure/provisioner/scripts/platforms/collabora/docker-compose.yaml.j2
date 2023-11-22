@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  collabora:
+    image: collabora/code:{{ collabora_version }}
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "9980:9980"
+    cap_add:
+      - MKNOD
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
