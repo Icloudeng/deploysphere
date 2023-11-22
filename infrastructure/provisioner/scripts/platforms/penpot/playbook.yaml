@@ -1,5 +1,5 @@
 ---
-- name: Mautic
+- name: Penpot
   hosts: all
   become: true
   gather_facts: true
@@ -8,11 +8,10 @@
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
 
-    # Playbook init (with decoded_metadata, project_path, app_secret)
+    # Playbook init (with decoded_metadata, project_path)
     - include_tasks: ../../tasks/playbook-init.yaml
 
-    - name: Fact | Database Password
-      set_fact:
+    - set_fact:
         database_password: "{{ app_secret }}"
 
     - name: Extract Required Variables
@@ -23,6 +22,8 @@
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
         domain_var: "{{ domain }}"
+
+    - name: Fact | Database Password
 
     # docker install
     - include_tasks: docker-install.yaml

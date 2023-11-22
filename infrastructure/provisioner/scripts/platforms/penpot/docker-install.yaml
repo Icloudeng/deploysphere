@@ -1,0 +1,38 @@
+# Install Docker
+- include_tasks: ../../tasks/docker.yaml
+
+- name: Copy Dkr file
+  ansible.builtin.copy:
+    src: "docker-compose.yaml"
+    dest: "{{ project_path }}/docker-compose.yaml"
+    force: yes
+
+- name: "Copy templates"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ project_path }}/{{ item }}"
+    force: yes
+  loop:
+    - .env
+    - .env.auth
+    - .env.smtp
+    - .env.front
+    - .env.back
+
+- name: Install Penpot using Dkr Compose
+  become: true
+  command: docker compose up -d
+  args:
+    chdir: "{{ project_path }}"
+
+- name: Pause play until a URL is reachable from this host
+  ignore_errors: true
+  ansible.builtin.uri:
+    url: "http://{{ vm_ip }}:9001"
+    follow_redirects: none
+    validate_certs: no
+    method: GET
+  register: _result
+  until: _result.status >= 200
+  retries: 30
+  delay: 5
