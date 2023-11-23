@@ -22,7 +22,7 @@
     expect "Repeat password:"
     send "{{ app_secret }}\r"
 
-    expect "\nEnsuring account is active!"
+    expect "Do you want to grant Admin privileges"
     send "Y\r"
 
     expect "root@"
