@@ -1,0 +1,39 @@
+- name: Extract Required Variables
+  set_fact:
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+# Validate domain variable
+- include_tasks: ../../tasks/validator/domain-regex.yaml
+  vars:
+    domain_var: "{{ item }}"
+  loop:
+    - "{{ configuration['smtp_address'] }}"
+
+# Validate email variable
+- include_tasks: ../../tasks/validator/email-regex.yaml
+  vars:
+    email_var: "{{ item }}"
+  loop:
+    - "{{ configuration['smtp_username'] }}"
+    - "{{ configuration['smtp_email_from'] }}"
+
+- name: Write SMTP Config
+  become: true
+  ansible.builtin.blockinfile:
+    path: "/var/discourse/containers/app.yml"
+    marker: "  # {mark} ANSIBLE MANAGED BLOCK - SMTP CONFIGURATION"
+    insertafter: "(?m)  # ADDITIONAL SMTP SETTINGS HERE(.*)"
+    block: |2
+        DISCOURSE_SMTP_ADDRESS: "{{ configuration['smtp_address'] }}"
+        DISCOURSE_SMTP_PORT: {{ configuration['smtp_port'] }}
+        DISCOURSE_SMTP_USER_NAME: "{{ configuration['smtp_username'] }}"
+        DISCOURSE_SMTP_PASSWORD: "{{ configuration['smtp_password'] }}"
+        # DISCOURSE_SMTP_ENABLE_START_TLS: true
+        DISCOURSE_NOTIFICATION_EMAIL: "{{ configuration['smtp_email_from'] }}"
+
+- name: Build and Start app
+  become: true
+  shell: "./launcher rebuild app"
+  args:
+    chdir: "/var/discourse"
+    executable: /bin/bash

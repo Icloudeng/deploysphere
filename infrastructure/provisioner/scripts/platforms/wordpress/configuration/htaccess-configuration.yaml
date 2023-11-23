@@ -6,7 +6,7 @@
 - name: Write Site URL Config
   ansible.builtin.blockinfile:
     path: "{{ htaccess_file_stat.stat.path }}"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK - HTACCES CONGIRURATION"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - HTACCES CONFIGURATION"
     block: |
       php_value upload_max_filesize {{ php_upload_max_filesize }}
       php_value post_max_size {{ php_post_max_size }}

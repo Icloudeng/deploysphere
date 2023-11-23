@@ -1,0 +1,19 @@
+---
+- name: Discourse Configuration
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path)
+    - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Extract Required Variables
+      set_fact:
+        configuration_type: "{{ decoded_metadata | json_query('configuration_type') }}"
+
+    - include_tasks: configuration/smtp.yaml
+      when: configuration_type == "smtp"

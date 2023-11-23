@@ -1,0 +1,36 @@
+- name: Install Execpt
+  ansible.builtin.package:
+    name:
+      - expect
+    state: present
+
+- name: Run expect to wait for a successful PXE boot via out-of-band CIMC
+  ansible.builtin.shell: |
+    set timeout 300
+
+    spawn ./launcher enter app
+
+    expect "root@"
+    send "rake admin:create\r"
+
+    expect "Email:"
+    send "{{ admin_email }}\r"
+
+    expect "Password:"
+    send "{{ app_secret }}\r"
+
+    expect "Repeat password:"
+    send "{{ app_secret }}\r"
+
+    expect "\nEnsuring account is active!"
+    send "Y\r"
+
+    expect "root@"
+    send "exit\r"
+
+    expect eof
+
+    exit 0
+  args:
+    chdir: /var/discourse
+    executable: /usr/bin/expect

@@ -200,5 +200,17 @@
                 "ldap_bind_password"
             ]
         }
+    },
+    "discourse": {
+        "smtp": {
+            "fields": [],
+            "configuration": [
+                "smtp_address",
+                "smtp_port",
+                "smtp_username",
+                "smtp_password",
+                "smtp_email_from"
+            ]
+        }
     }
 }

@@ -7,7 +7,7 @@
   ansible.builtin.blockinfile:
     path: "{{ config_file_stat.stat.path }}"
     insertbefore: "(?m)define\\( 'DB_NAME'.*"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK - SITE URL CONGIRURATION"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - SITE URL CONFIGURATION"
     block: |
       define( 'WP_HOME', 'https://{{ domain }}' );
       define( 'WP_SITEURL', 'https://{{ domain }}' );
