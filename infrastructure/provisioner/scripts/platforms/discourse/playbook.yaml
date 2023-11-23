@@ -59,7 +59,7 @@
     - name: Pause play until a URL is reachable from this host
       ignore_errors: true
       ansible.builtin.uri:
-        url: "http://127.0.0.1"
+        url: "http://{{ vm_ip }}"
         follow_redirects: none
         validate_certs: no
         method: GET

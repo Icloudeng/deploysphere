@@ -28,7 +28,6 @@
         DISCOURSE_SMTP_PORT: {{ configuration['smtp_port'] }}
         DISCOURSE_SMTP_USER_NAME: "{{ configuration['smtp_username'] }}"
         DISCOURSE_SMTP_PASSWORD: "{{ configuration['smtp_password'] }}"
-        # DISCOURSE_SMTP_ENABLE_START_TLS: true
         DISCOURSE_NOTIFICATION_EMAIL: "{{ configuration['smtp_email_from'] }}"
 
 - name: Build and Start app
