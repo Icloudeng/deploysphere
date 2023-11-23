@@ -68,6 +68,10 @@
       retries: 50
       delay: 5
 
+    - name: Sleep for 30 seconds and continue with play
+      ansible.builtin.wait_for:
+        timeout: 30
+
     - include_tasks: initial-account.yaml
 
     - include_tasks: ../../tasks/expose-variable.yaml
