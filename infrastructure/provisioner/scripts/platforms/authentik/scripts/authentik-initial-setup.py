@@ -21,13 +21,15 @@ for value in (
 AUTHENTIK_URL = f"{AUTHENTIK_URL}/api/v3"
 
 
-def main(headers={}):
+def main(headers: dict):
     body = {
         "email": AUTHENTIK_ADMIN_EMAIL,
         "password": AUTHENTIK_ADMIN_PASSWORD,
         "password_repeat": AUTHENTIK_ADMIN_PASSWORD,
         "component": "ak-stage-prompt",
     }
+
+    del headers["content-type"]
 
     requests.post(
         f"{AUTHENTIK_URL}/flows/executor/initial-setup/?query=",
