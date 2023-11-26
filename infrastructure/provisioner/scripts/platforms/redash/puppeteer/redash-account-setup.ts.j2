@@ -10,6 +10,7 @@ const ORGANIZATION_NAME = "{{ organization_name }}";
   const browser = await puppeteer.launch({
     headless: "new",
     args: ["--no-sandbox"],
+    timeout: 60_000,
   });
 
   const page = await browser.newPage();
