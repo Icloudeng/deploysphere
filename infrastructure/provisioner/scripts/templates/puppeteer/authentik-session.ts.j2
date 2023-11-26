@@ -39,6 +39,8 @@ const headers = { value: {} };
   await page.waitForNetworkIdle();
 
   if (SKIP_LOGIN) {
+    delete headers.value["content-type"];
+
     log(Buffer.from(JSON.stringify(headers.value)).toString("base64"));
 
     await browser.close();
@@ -123,6 +125,8 @@ const headers = { value: {} };
   await page.goto(baseUrl);
 
   // await wait(2);
+
+  delete headers.value["content-type"];
 
   log(Buffer.from(JSON.stringify(headers.value)).toString("base64"));
 
