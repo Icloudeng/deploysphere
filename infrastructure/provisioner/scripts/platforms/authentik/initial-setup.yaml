@@ -40,6 +40,10 @@
         AUTHENTIK_ADMIN_EMAIL: "{{ admin_email }}"
         AUTHENTIK_ADMIN_PASSWORD: "{{ app_secret }}"
 
+    - name: "Remove {{ authentik_client_file }}"
+      become: false
+      command: "rm -rf {{ authentik_client_file }}"
+
 - name: Puppeteer  authentik-initial-setup.ts
   block:
     - name: "Copy authentik-initial-setup.ts template"
