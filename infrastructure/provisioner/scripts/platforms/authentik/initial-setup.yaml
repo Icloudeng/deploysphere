@@ -33,7 +33,7 @@
 
     - name: Display script output
       ansible.builtin.debug:
-        var: session_headers
+        msg: "{{ session_headers | b64decode }}"
 
     - name: Execute the Python script (authentik-initial-setup.py)
       become: false
