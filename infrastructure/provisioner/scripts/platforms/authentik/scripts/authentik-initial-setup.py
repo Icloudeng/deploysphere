@@ -29,8 +29,6 @@ def main(headers: dict):
         "component": "ak-stage-prompt",
     }
 
-    del headers["content-type"]
-
     requests.post(
         f"{AUTHENTIK_URL}/flows/executor/initial-setup/?query=",
         headers=headers,

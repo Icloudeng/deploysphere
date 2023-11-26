@@ -23,14 +23,14 @@ headers = {}
 
 
 def slugify(text):
-    text = re.sub(r'[^\w\s-]', '', text).strip().lower()
-    text = re.sub(r'[-\s]+', '-', text)
+    text = re.sub(r"[^\w\s-]", "", text).strip().lower()
+    text = re.sub(r"[-\s]+", "-", text)
     return text
 
 
 def generate_random_key(length: int):
     characters = string.ascii_letters + string.digits
-    random_key = ''.join(secrets.choice(characters) for _ in range(length))
+    random_key = "".join(secrets.choice(characters) for _ in range(length))
     return random_key
 
 
@@ -50,8 +50,7 @@ def get_pk(results=[], field=None, value=None):
 
 def get_property_mappings():
     response = requests.get(
-        f"{AUTHENTIK_URL}/propertymappings/scope/?ordering=scope_name",
-        headers=headers
+        f"{AUTHENTIK_URL}/propertymappings/scope/?ordering=scope_name", headers=headers
     )
 
     response.raise_for_status()
@@ -62,7 +61,7 @@ def get_property_mappings():
 def get_authentication_flows_instances():
     response = requests.get(
         f"{AUTHENTIK_URL}/flows/instances/?designation=authentication&ordering=slug",
-        headers=headers
+        headers=headers,
     )
 
     response.raise_for_status()
@@ -73,7 +72,7 @@ def get_authentication_flows_instances():
 def get_authorization_flows_instances():
     response = requests.get(
         f"{AUTHENTIK_URL}/flows/instances/?designation=authorization&ordering=slug",
-        headers=headers
+        headers=headers,
     )
 
     response.raise_for_status()
@@ -84,7 +83,7 @@ def get_authorization_flows_instances():
 def get_certificate_keypairs():
     response = requests.get(
         f"{AUTHENTIK_URL}/crypto/certificatekeypairs/?has_key=true&include_details=false&ordering=name",
-        headers=headers
+        headers=headers,
     )
 
     response.raise_for_status()
@@ -94,8 +93,7 @@ def get_certificate_keypairs():
 
 def get_provider_oauth2(name: str):
     response = requests.get(
-        f"{AUTHENTIK_URL}/providers/all/?search={name}",
-        headers=headers
+        f"{AUTHENTIK_URL}/providers/all/?search={name}", headers=headers
     )
 
     response.raise_for_status()
@@ -107,7 +105,7 @@ def get_application(name: str):
     name = slugify(name)
     response = requests.get(
         f"{AUTHENTIK_URL}/core/applications/?search={name}&superuser_full_list=true",
-        headers=headers
+        headers=headers,
     )
 
     response.raise_for_status()
@@ -116,10 +114,7 @@ def get_application(name: str):
 
 
 def get_provider_oauth2_pk(pk: str):
-    response = requests.get(
-        f"{AUTHENTIK_URL}/providers/oauth2/{pk}/",
-        headers=headers
-    )
+    response = requests.get(f"{AUTHENTIK_URL}/providers/oauth2/{pk}/", headers=headers)
 
     response.raise_for_status()
     return response.json()
@@ -127,8 +122,7 @@ def get_provider_oauth2_pk(pk: str):
 
 def get_provider_oauth2_setup_urls_pk(pk: str):
     response = requests.get(
-        f"{AUTHENTIK_URL}/providers/oauth2/{pk}/setup_urls/",
-        headers=headers
+        f"{AUTHENTIK_URL}/providers/oauth2/{pk}/setup_urls/", headers=headers
     )
 
     response.raise_for_status()
@@ -137,24 +131,20 @@ def get_provider_oauth2_setup_urls_pk(pk: str):
 
 def log(provider_pk):
     provider = get_provider_oauth2_pk(provider_pk)
-    json_string = json.dumps({
-        **get_provider_oauth2_setup_urls_pk(provider_pk),
-        "client_id": provider['client_id'],
-        "client_secret": provider['client_secret'],
-    })
-    base64_encoded = base64.b64encode(
-        json_string.encode('utf-8')
-    ).decode('utf-8')
+    json_string = json.dumps(
+        {
+            **get_provider_oauth2_setup_urls_pk(provider_pk),
+            "client_id": provider["client_id"],
+            "client_secret": provider["client_secret"],
+        }
+    )
+    base64_encoded = base64.b64encode(json_string.encode("utf-8")).decode("utf-8")
 
     print(f"%%%{base64_encoded}%%%")
 
 
 def main():
-    provider_pk = get_pk(
-        get_provider_oauth2(PROVIDER_NAME),
-        "name",
-        PROVIDER_NAME
-    )
+    provider_pk = get_pk(get_provider_oauth2(PROVIDER_NAME), "name", PROVIDER_NAME)
 
     if provider_pk:
         log(provider_pk)
@@ -165,11 +155,18 @@ def main():
         headers=headers,
         json={
             "name": PROVIDER_NAME,
-            "authentication_flow": get_pk(get_authentication_flows_instances(), "slug", "default-authentication-flow"),
-            "authorization_flow":  get_pk(get_authorization_flows_instances(), "slug", "default-provider-authorization-explicit-consent"),
+            "authentication_flow": get_pk(
+                get_authentication_flows_instances(),
+                "slug",
+                "default-authentication-flow",
+            ),
+            "authorization_flow": get_pk(
+                get_authorization_flows_instances(),
+                "slug",
+                "default-provider-authorization-explicit-consent",
+            ),
             "signing_key": get_pk(get_certificate_keypairs())[0],
             "property_mappings": get_pk(get_property_mappings()),
-
             "client_type": "confidential",
             "client_id": generate_random_key(40),
             "client_secret": generate_random_key(128),
@@ -180,8 +177,8 @@ def main():
             "redirect_uris": REDIRECT_URL,
             "sub_mode": "hashed_user_id",
             "issuer_mode": "per_provider",
-            "jwks_sources": []
-        }
+            "jwks_sources": [],
+        },
     )
 
     response.raise_for_status()
@@ -194,23 +191,22 @@ def main():
         json={
             "name": PROVIDER_NAME,
             "slug": slugify(PROVIDER_NAME),
-            "provider": provider['pk'],
+            "provider": provider["pk"],
             "backchannel_providers": [],
             "open_in_new_tab": False,
             "meta_launch_url": LAUNCH_URL,
             "meta_description": "",
             "meta_publisher": "",
             "policy_engine_mode": "any",
-            "group": ""
-        }
+            "group": "",
+        },
     ).raise_for_status()
 
-    log(provider['pk'])
+    log(provider["pk"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     decoded_bytes = base64.b64decode(SESSION_HEADERS)
     headers = json.loads(decoded_bytes.decode("utf-8"))
-    del headers["content-type"]
 
     main()
