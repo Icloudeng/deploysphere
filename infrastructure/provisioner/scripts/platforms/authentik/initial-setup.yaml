@@ -26,6 +26,7 @@
         chdir: "{{ puppeteer_folder }}"
       environment:
         SKIP_LOGIN: true
+        INIT_URL_PATH: "/if/flow/initial-setup/"
       register: session_key
 
     - set_fact:

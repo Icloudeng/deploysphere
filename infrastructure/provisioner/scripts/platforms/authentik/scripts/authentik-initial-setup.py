@@ -20,10 +20,8 @@ for value in (
 
 AUTHENTIK_URL = f"{AUTHENTIK_URL}/api/v3"
 
-headers = {}
 
-
-def main():
+def main(headers={}):
     body = {
         "email": AUTHENTIK_ADMIN_EMAIL,
         "password": AUTHENTIK_ADMIN_PASSWORD,
@@ -40,5 +38,4 @@ def main():
 
 if __name__ == "__main__":
     decoded_bytes = base64.b64decode(SESSION_HEADERS)
-    headers = json.loads(decoded_bytes.decode("utf-8"))
-    main()
+    main(json.loads(decoded_bytes.decode("utf-8")))

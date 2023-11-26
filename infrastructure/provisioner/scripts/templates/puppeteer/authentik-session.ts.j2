@@ -5,6 +5,7 @@ const baseUrl = "{{ authentik_url }}";
 const ADMIN_UID = "{{ authentik_admin }}";
 const ADMIN_PASSWORD = "{{ authentik_password }}";
 const SKIP_LOGIN = process.env.SKIP_LOGIN;
+const INIT_URL_PATH = process.env.INIT_URL_PATH;
 const headers = { value: {} };
 
 (async () => {
@@ -30,7 +31,10 @@ const headers = { value: {} };
   await page.setViewport({ width: 1200, height: 1024 });
 
   // Navigate the page to a URL
-  await Promise.all([page.goto(baseUrl), page.waitForNavigation()]);
+  await Promise.all([
+    page.goto(baseUrl + (INIT_URL_PATH || "")),
+    page.waitForNavigation(),
+  ]);
 
   await page.waitForNetworkIdle();
 
