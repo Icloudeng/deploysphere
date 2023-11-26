@@ -211,5 +211,6 @@ def main():
 if __name__ == '__main__':
     decoded_bytes = base64.b64decode(SESSION_HEADERS)
     headers = json.loads(decoded_bytes.decode("utf-8"))
+    del headers["content-type"]
 
     main()

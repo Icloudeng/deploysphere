@@ -4,7 +4,7 @@ import { log, wait } from "./utils";
 const baseUrl = "{{ authentik_url }}";
 const ADMIN_UID = "{{ authentik_admin }}";
 const ADMIN_PASSWORD = "{{ authentik_password }}";
-const SKIP_LOGIN = process.env.SKIP_LOGIN;
+const SKIP_LOGIN = process.env.SKIP_LOGIN === "true";
 const INIT_URL_PATH = process.env.INIT_URL_PATH;
 const headers = { value: {} };
 
