@@ -24,10 +24,16 @@
       command: "pnpm ts-node {{ authentik_client_file }}"
       args:
         chdir: "{{ puppeteer_folder }}"
+      environment:
+        SKIP_LOGIN: true
       register: session_key
 
     - set_fact:
         session_headers: "{{ session_key.stdout | regex_search('%%%(.*?)%%%') | replace('%%%', '') }}"
+
+    - name: Display script output
+      ansible.builtin.debug:
+        var: session_headers
 
     - name: Execute the Python script (authentik-initial-setup.py)
       become: false
