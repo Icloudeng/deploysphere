@@ -4,22 +4,58 @@
 - name: Puppeteer Files
   set_fact:
     authentik_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-authentik-initial-setup.ts"
+    authentik_client_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-authentik.ts"
 
-- name: "Copy authentik-initial-setup.ts template"
-  become: false
-  template:
-    src: puppeteer/authentik-initial-setup.ts.j2
-    dest: "{{ authentik_file }}"
-    force: yes
+- name: Python Script authentik-initial-setup.py
+  block:
+    - name: "Copy authentik-session.ts template"
+      become: false
+      template:
+        src: "{{ scripts_dir }}/templates/puppeteer/authentik-session.ts.j2"
+        dest: "{{ authentik_client_file }}"
+        force: yes
+      vars:
+        authentik_url: "http://{{ vm_ip }}:9000"
+        authentik_admin: ""
+        authentik_password: ""
 
-- name: "Run authentik-initial-setup.ts"
-  become: false
-  command: "pnpm ts-node {{ authentik_file }}"
-  args:
-    chdir: "{{ puppeteer_folder }}"
+    - name: "Run authentik-session.ts"
+      become: false
+      command: "pnpm ts-node {{ authentik_client_file }}"
+      args:
+        chdir: "{{ puppeteer_folder }}"
+      register: session_key
 
-- name: "Remove {{ authentik_file }}"
-  become: false
-  command: "rm -rf {{ authentik_file }}"
-  args:
-    chdir: "{{ puppeteer_folder }}"
+    - set_fact:
+        session_headers: "{{ session_key.stdout | regex_search('%%%(.*?)%%%') | replace('%%%', '') }}"
+
+    - name: Execute the Python script (authentik-initial-setup.py)
+      become: false
+      script: "scripts/authentik-initial-setup.py"
+      args:
+        executable: python3
+      environment:
+        SESSION_HEADERS: "{{ session_headers }}"
+        AUTHENTIK_URL: "http://{{ vm_ip }}:9000"
+        AUTHENTIK_ADMIN_EMAIL: "{{ admin_email }}"
+        AUTHENTIK_ADMIN_PASSWORD: "{{ app_secret }}"
+
+- name: Puppeteer  authentik-initial-setup.ts
+  block:
+    - name: "Copy authentik-initial-setup.ts template"
+      become: false
+      template:
+        src: puppeteer/authentik-initial-setup.ts.j2
+        dest: "{{ authentik_file }}"
+        force: yes
+
+    - name: "Run authentik-initial-setup.ts"
+      become: false
+      command: "pnpm ts-node {{ authentik_file }}"
+      args:
+        chdir: "{{ puppeteer_folder }}"
+
+    - name: "Remove {{ authentik_file }}"
+      become: false
+      command: "rm -rf {{ authentik_file }}"
+  when: false

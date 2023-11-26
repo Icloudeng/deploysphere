@@ -4,6 +4,7 @@ import { log, wait } from "./utils";
 const baseUrl = "{{ authentik_url }}";
 const ADMIN_UID = "{{ authentik_admin }}";
 const ADMIN_PASSWORD = "{{ authentik_password }}";
+const SKIP_LOGIN = process.env.SKIP_LOGIN;
 const headers = { value: {} };
 
 (async () => {
@@ -32,6 +33,13 @@ const headers = { value: {} };
   await Promise.all([page.goto(baseUrl), page.waitForNavigation()]);
 
   await page.waitForNetworkIdle();
+
+  if (SKIP_LOGIN) {
+    log(Buffer.from(JSON.stringify(headers.value)).toString("base64"));
+
+    await browser.close();
+    return;
+  }
 
   /**
    * ===========================
