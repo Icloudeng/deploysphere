@@ -51,7 +51,7 @@ const ADMIN_PASSWORD = "{{ app_secret }}";
 
   await Promise.all([request, page.waitForNetworkIdle()]);
 
-  await wait(5);
+  await wait(10);
 
   await browser.close();
 })();
