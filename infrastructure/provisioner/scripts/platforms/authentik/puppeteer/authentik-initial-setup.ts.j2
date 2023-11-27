@@ -29,58 +29,33 @@ const ADMIN_PASSWORD = "{{ app_secret }}";
    * ===========================
    * Authentik Initial Setup
    */
-
-  const inputSelectorValue = async (
-    input_selector: string,
-    input_value: string
-  ) => {
-    const inputHandle = await page.evaluate(
-      (input_selector, input_value) => {
-        const inputs: NodeListOf<Element> | Element[] = document
-          .querySelector("ak-flow-executor")
-          .shadowRoot.querySelector("ak-stage-prompt")
-          .shadowRoot.querySelectorAll("ak-form-element");
-
-        Array.from(inputs).forEach((element) => {
-          const input: HTMLInputElement = element.querySelector(input_selector);
-
-          if (input) {
-            input.value = input_value;
-          }
-        });
-      },
-      input_selector,
-      input_value
-    );
-
-    return inputHandle;
-  };
-
-  // EMAIL
-  await inputSelectorValue("input[name=email]", ADMIN_EMAIL);
-
-  //   PASSWORD
-  await inputSelectorValue("input[name=password]", ADMIN_PASSWORD);
-
-  //   PASSWORD REPEAT
-  await inputSelectorValue("input[name=password_repeat]", ADMIN_PASSWORD);
-
-  const submitBtn = () =>
-    page.evaluate(() => {
-      document
-        .querySelector("ak-flow-executor")
-        .shadowRoot.querySelector("ak-stage-prompt")
-        .shadowRoot.querySelector<HTMLButtonElement>("button[type=submit]")
-        .click();
-    });
+  const request = page.evaluate(
+    (ADMIN_EMAIL, ADMIN_PASSWORD) => {
+      return fetch("/api/v3/flows/executor/initial-setup/?query=", {
+        method: "POST",
+        body: JSON.stringify({
+          email: ADMIN_EMAIL,
+          password: ADMIN_PASSWORD,
+          password_repeat: ADMIN_PASSWORD,
+          component: "ak-stage-prompt",
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "same-origin",
+      });
+    },
+    ADMIN_EMAIL,
+    ADMIN_PASSWORD
+  );
 
   await Promise.all([
+    request,
     page.waitForNavigation(),
     page.waitForNetworkIdle(),
-    submitBtn(),
   ]);
 
-  await wait(10);
+  await wait(5);
 
   await browser.close();
 })();

@@ -50,6 +50,7 @@
     - name: "Remove {{ authentik_client_file }}"
       become: false
       command: "rm -rf {{ authentik_client_file }}"
+  when: false
 
 - name: Puppeteer  authentik-initial-setup.ts
   block:
@@ -69,4 +70,3 @@
     - name: "Remove {{ authentik_file }}"
       become: false
       command: "rm -rf {{ authentik_file }}"
-  when: false
