@@ -23,7 +23,5 @@
       vars:
         domain_var: "{{ domain }}"
 
-    - name: Fact | Database Password
-
     # docker install
     - include_tasks: docker-install.yaml
