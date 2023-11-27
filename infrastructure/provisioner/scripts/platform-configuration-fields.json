@@ -212,5 +212,28 @@
                 "smtp_email_from"
             ]
         }
+    },
+    "penpot": {
+        "smtp": {
+            "fields": [],
+            "configuration": [
+                "smtp_address",
+                "smtp_port",
+                "smtp_username",
+                "smtp_password",
+                "smtp_email_from",
+                "smtp_email_reply_to"
+            ]
+        },
+        "ldap": {
+            "fields": [],
+            "configuration": [
+                "ldap_server_host",
+                "ldap_server_port",
+                "ldap_search_base",
+                "ldap_bind_dn",
+                "ldap_bind_password"
+            ]
+        }
     }
 }

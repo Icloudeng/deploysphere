@@ -1,0 +1,15 @@
+- name: Extract Required Variables
+  set_fact:
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+- name: "Copy .env.smtp"
+  template:
+    src: "../.env.smtp.j2"
+    dest: "{{ project_path }}/.env.smtp"
+    force: yes
+
+- name: Force recreate Penpot using Dkr Compose
+  become: true
+  command: docker compose up -d --force-recreate
+  args:
+    chdir: "{{ project_path }}"
