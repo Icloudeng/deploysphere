@@ -234,6 +234,16 @@
                 "ldap_bind_dn",
                 "ldap_bind_password"
             ]
+        },
+        "authentik_sso": {
+            "fields": [
+                "penpot_url"
+            ],
+            "configuration": [
+                "authentik_url",
+                "authentik_admin",
+                "authentik_password"
+            ]
         }
     }
 }

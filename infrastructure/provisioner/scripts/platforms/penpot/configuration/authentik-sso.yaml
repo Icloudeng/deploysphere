@@ -1,0 +1,28 @@
+- name: Extract Required Variables
+  set_fact:
+    instance_url: "{{ decoded_metadata | json_query('penpot_url') }}"
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+# Validate domain variable
+- include_tasks: "{{ scripts_dir }}/tasks/validator/url-ws-regex.yaml"
+  vars:
+    url_var: "{{ item }}"
+  loop:
+    - "{{ instance_url }}"
+    - "{{ configuration['authentik_url'] }}"
+
+# client_secret
+- import_tasks: authentik-sso-configuration.yaml
+  delegate_to: 127.0.0.1
+
+- name: "Copy .env.auth"
+  template:
+    src: "../.env.auth.j2"
+    dest: "{{ project_path }}/.env.auth"
+    force: yes
+
+- name: Force recreate Penpot using Dkr Compose
+  become: true
+  command: docker compose up -d --force-recreate
+  args:
+    chdir: "{{ project_path }}"
