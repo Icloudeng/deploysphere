@@ -50,6 +50,7 @@ platforms = {
     "grafana": "96",
     "wikijs": "33",
     "apache_nifi": "55",
+    "penpot": "56"
 }
 
 
@@ -78,6 +79,7 @@ platforms_subdomain = {
     "redash": "analytics",
     "grafana": "metrics",
     "apache_nifi": "flow",
+    "penpot": "draw",
 }
 
 cloud_init_templates = {
@@ -98,6 +100,7 @@ cloud_init_templates = {
     "mysql": "ubuntu-22.04-cloudinit-template",
     "redash": "ubuntu-22.04-cloudinit-template",
     "apache_nifi": "ubuntu-22.04-cloudinit-template",
+    "penpot": "ubuntu-22.04-cloudinit-template",
 }
 
 
