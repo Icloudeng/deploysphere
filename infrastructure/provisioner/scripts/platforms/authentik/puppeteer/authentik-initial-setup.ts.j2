@@ -49,11 +49,7 @@ const ADMIN_PASSWORD = "{{ app_secret }}";
     ADMIN_PASSWORD
   );
 
-  await Promise.all([
-    request,
-    page.waitForNavigation(),
-    page.waitForNetworkIdle(),
-  ]);
+  await Promise.all([request, page.waitForNetworkIdle()]);
 
   await wait(5);
 
