@@ -31,7 +31,7 @@
         # https://github.com/nextcloud/ansible-collection-nextcloud-admin/tree/main/roles/install_nextcloud
         nextcloud_version_channel: "releases"
         nextcloud_get_latest: true
-        nextcloud_version_major: 28
+        nextcloud_version_major: 27
         nextcloud_db_pwd: "{{ app_secret }}"
         nextcloud_admin_pwd: "{{ app_secret }}"
         nextcloud_mysql_root_pwd: "{{ app_secret }}"
