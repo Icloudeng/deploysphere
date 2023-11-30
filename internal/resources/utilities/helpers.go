@@ -124,3 +124,11 @@ func (helpers) ExtractCommandKeyValuePairs(command string) map[string]string {
 
 	return keyValueMap
 }
+
+func RemoveFirstSegment(domain string) string {
+	parts := strings.Split(domain, ".")
+	if len(parts) > 1 {
+		return strings.Join(parts[1:], ".")
+	}
+	return ""
+}

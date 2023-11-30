@@ -1,21 +1,14 @@
 package handlers
 
 import (
-	"context"
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/icloudeng/platform-installer/internal/database/entities"
-	"github.com/icloudeng/platform-installer/internal/http/validators"
 	"github.com/icloudeng/platform-installer/internal/resources/db"
-	"github.com/icloudeng/platform-installer/internal/resources/jobs"
-	"github.com/icloudeng/platform-installer/internal/resources/proxmox"
-	"github.com/icloudeng/platform-installer/internal/resources/terraform"
 	"github.com/icloudeng/platform-installer/internal/resources/utilities"
-	"github.com/icloudeng/platform-installer/internal/structs"
 )
 
 // Create resources from platform template
@@ -123,60 +116,11 @@ func (resourcesHandler) CreateResourcesFromTemplate(ctx *gin.Context) {
 		body.Vm.Name = reference
 	}
 
-	// If domain key doesn't exist in metadata platform
-	// then auto fill with the passed domain resource
-	metadata := body.Platform.Metadata
-	_, domain_exists := metadata["domain"]
-	if !domain_exists {
-		domain := fmt.Sprintf("%s.%s", body.Domain.Subdomain, body.Domain.Zone)
-		body.Platform.Metadata["domain"] = domain
-	}
+	job := createResourceJob(ctx, body)
 
-	// Chech if platform the password corresponse to an existing platform folder
-	if !validators.ValidatePlatformMetadata(ctx, *body.Platform) {
+	if job == nil {
 		return
 	}
 
-	// If Target Node is set to auto,
-	// then selected automatic node based on resourse Availability
-	if body.Vm.TargetNode == "auto" {
-		nodeStatus, err := proxmox.SelectNodeWithMostResources()
-		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error": "No enough proxmox resources",
-			})
-			return
-		}
-
-		body.Vm.TargetNode = nodeStatus.Node
-	}
-
-	task := jobs.ResourcesJob{
-		Ref:           body.Ref,
-		PostBody:      body,
-		ResourceState: true,
-		Description:   "Resources creation",
-		Handler:       ctx.Request.URL.String(),
-		Method:        ctx.Request.Method,
-		Task: func(ctx context.Context, job entities.Job) error {
-			// Reset unmutable vm fields
-			structs.ResetUnmutableProxmoxVmQemu(structs.ResetProxmoxVmQemuFields{
-				Vm:       body.Vm,
-				Platform: *body.Platform,
-				Ref:      body.Ref,
-				JobID:    job.ID,
-			})
-			// Create or update resources
-			terraform.Resources.WriteOvhDomainZoneResource(body.Ref, body.Domain)
-			terraform.Resources.WriteProxmoxVmQemuResource(body.Ref, body.Vm)
-
-			// Terraform Apply changes
-			return terraform.Exec.Apply(true)
-		},
-	}
-
-	job := jobs.ResourcesJobTask(task)
-
 	ctx.JSON(http.StatusOK, gin.H{"data": body, "job": job})
-
 }

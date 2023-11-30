@@ -9,10 +9,8 @@ import (
 
 	"github.com/icloudeng/platform-installer/internal/database/entities"
 	"github.com/icloudeng/platform-installer/internal/filesystem"
-	"github.com/icloudeng/platform-installer/internal/http/validators"
 	"github.com/icloudeng/platform-installer/internal/pubsub"
 	"github.com/icloudeng/platform-installer/internal/resources/jobs"
-	"github.com/icloudeng/platform-installer/internal/resources/proxmox"
 	"github.com/icloudeng/platform-installer/internal/resources/terraform"
 	"github.com/icloudeng/platform-installer/internal/structs"
 )
@@ -26,6 +24,8 @@ type (
 		Platform    *structs.Platform         `json:"platform" binding:"omitempty,json"`
 		Client      *clientBody               `json:"client" binding:"omitempty,json"`
 		Environment string                    `json:"environment" binding:"omitempty,alpha"`
+		MxDomain    *string                   `json:"mx_domain" binding:"omitempty,fqdn|eq=auto"`
+		Mx          interface{}               `json:"Mx"`
 	}
 
 	resourcesRefUri struct {
@@ -52,87 +52,11 @@ func (resourcesHandler) CreateResources(c *gin.Context) {
 		return
 	}
 
-	// If domain key doesn't exist in metadata platform
-	// then auto fill with the passed domain resource
-	metadata := json.Platform.Metadata
-	_, domain_exists := metadata["domain"]
-	if !domain_exists {
-		domain := fmt.Sprintf("%s.%s", json.Domain.Subdomain, json.Domain.Zone)
-		json.Platform.Metadata["domain"] = domain
-	}
+	job := createResourceJob(c, json)
 
-	// Chech if platform the password corresponse to an existing platform folder
-	if !validators.ValidatePlatformMetadata(c, *json.Platform) {
+	if job == nil {
 		return
 	}
-
-	// Check if Resource when post request
-	if c.Request.Method == "POST" {
-		_vm := terraform.Resources.GetProxmoxVmQemuResource(json.Ref)
-		_domain := terraform.Resources.GetOvhDomainZoneResource(json.Ref)
-
-		if _vm != nil || _domain != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error": ResourceExistsError,
-				"resource": map[string]interface{}{
-					"vm":     _vm,
-					"domain": _domain,
-				},
-			})
-			return
-		}
-	}
-
-	// Check if VM Id doesn't exist
-	// if json.Vm.Vmid != 0 {
-	// 	if exists := proxmox.VmQemuIDExists(json.Vm.Vmid); exists {
-	// 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-	// 			"error": "VM ID already exists !",
-	// 		})
-
-	// 		return
-	// 	}
-	// }
-
-	// If Target Node is set to auto,
-	// then selected automatic node based on resourse Availability
-	if json.Vm.TargetNode == "auto" {
-		nodeStatus, err := proxmox.SelectNodeWithMostResources()
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error": "No enough proxmox resources",
-			})
-			return
-		}
-
-		json.Vm.TargetNode = nodeStatus.Node
-	}
-
-	task := jobs.ResourcesJob{
-		Ref:           json.Ref,
-		PostBody:      json,
-		ResourceState: true,
-		Description:   "Resources creation",
-		Handler:       c.Request.URL.String(),
-		Method:        c.Request.Method,
-		Task: func(ctx context.Context, job entities.Job) error {
-			// Reset unmutable vm fields
-			structs.ResetUnmutableProxmoxVmQemu(structs.ResetProxmoxVmQemuFields{
-				Vm:       json.Vm,
-				Platform: *json.Platform,
-				Ref:      json.Ref,
-				JobID:    job.ID,
-			})
-			// Create or update resources
-			terraform.Resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
-			terraform.Resources.WriteProxmoxVmQemuResource(json.Ref, json.Vm)
-
-			// Terraform Apply changes
-			return terraform.Exec.Apply(true)
-		},
-	}
-
-	job := jobs.ResourcesJobTask(task)
 
 	c.JSON(http.StatusOK, gin.H{"data": json, "job": job})
 }
