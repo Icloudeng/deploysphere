@@ -118,9 +118,9 @@ func (resourcesHandler) CreateResourcesFromTemplate(ctx *gin.Context) {
 
 	job := createResourceJob(ctx, body)
 
-	if job == nil {
-		return
-	}
+	// if job == nil {
+	// 	return
+	// }
 
 	ctx.JSON(http.StatusOK, gin.H{"data": body, "job": job})
 }
