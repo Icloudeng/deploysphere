@@ -116,7 +116,7 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 func autoComposeMxDomain(resourceDomain string, json *resourcesBody) *structs.DomainZoneRecord {
 	if json.MxDomain != nil && len(*json.MxDomain) > 1 {
 		mx_value := *json.MxDomain
-		if mx_value == "auto" {
+		if mx_value == "auto" || mx_value == resourceDomain {
 			subdomain, rootDomain := utilities.Helpers.ExtractSubdomainAndRootDomain(resourceDomain)
 			return &structs.DomainZoneRecord{
 				Zone:      rootDomain,
