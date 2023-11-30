@@ -13,7 +13,7 @@ import (
 	"github.com/icloudeng/platform-installer/internal/structs"
 )
 
-func createResourceJob(ctx *gin.Context, json resourcesBody) *entities.Job {
+func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 	// If domain key doesn't exist in metadata platform
 	// then auto fill with the passed domain resource
 	metadata := json.Platform.Metadata
@@ -72,9 +72,9 @@ func createResourceJob(ctx *gin.Context, json resourcesBody) *entities.Job {
 		json.Vm.TargetNode = nodeStatus.Node
 	}
 
-	mxDomain := autoMxDomain(domain, json)
+	mxDomain := autoComposeMxDomain(domain, json)
 	if mxDomain != nil {
-		json.DomainMx = mxDomain
+		json.MxDomainValue = mxDomain
 	}
 
 	// task := jobs.ResourcesJob{
@@ -113,7 +113,7 @@ func createResourceJob(ctx *gin.Context, json resourcesBody) *entities.Job {
 	return nil
 }
 
-func autoMxDomain(resourceDomain string, json resourcesBody) *structs.DomainZoneRecord {
+func autoComposeMxDomain(resourceDomain string, json *resourcesBody) *structs.DomainZoneRecord {
 	if json.MxDomain != nil && len(*json.MxDomain) > 1 {
 		mx_value := *json.MxDomain
 		if mx_value == "auto" {

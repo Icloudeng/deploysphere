@@ -116,7 +116,7 @@ func (resourcesHandler) CreateResourcesFromTemplate(ctx *gin.Context) {
 		body.Vm.Name = reference
 	}
 
-	job := createResourceJob(ctx, body)
+	job := createResourceJob(ctx, &body)
 
 	// if job == nil {
 	// 	return

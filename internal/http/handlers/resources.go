@@ -18,14 +18,14 @@ import (
 // Store resources and apply
 type (
 	resourcesBody struct {
-		Ref         string                    `json:"ref" binding:"required,resourceref"`
-		Domain      *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
-		Vm          *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
-		Platform    *structs.Platform         `json:"platform" binding:"omitempty,json"`
-		Client      *clientBody               `json:"client" binding:"omitempty,json"`
-		Environment string                    `json:"environment" binding:"omitempty,alpha"`
-		MxDomain    *string                   `json:"mx_domain" binding:"omitempty,fqdn|eq=auto"`
-		DomainMx    *structs.DomainZoneRecord `json:"domain_mx" binding:"omitempty,json"`
+		Ref           string                    `json:"ref" binding:"required,resourceref"`
+		Domain        *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
+		Vm            *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
+		Platform      *structs.Platform         `json:"platform" binding:"omitempty,json"`
+		Client        *clientBody               `json:"client" binding:"omitempty,json"`
+		Environment   string                    `json:"environment" binding:"omitempty,alpha"`
+		MxDomain      *string                   `json:"mx_domain" binding:"omitempty,fqdn|eq=auto"`
+		MxDomainValue *structs.DomainZoneRecord `json:"mx_domain_value" binding:"omitempty,json"`
 	}
 
 	resourcesRefUri struct {
@@ -52,7 +52,7 @@ func (resourcesHandler) CreateResources(c *gin.Context) {
 		return
 	}
 
-	job := createResourceJob(c, json)
+	job := createResourceJob(c, &json)
 
 	if job == nil {
 		return
