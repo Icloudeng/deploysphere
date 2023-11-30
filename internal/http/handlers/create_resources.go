@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/icloudeng/platform-installer/internal/database/entities"
 	"github.com/icloudeng/platform-installer/internal/http/validators"
+	"github.com/icloudeng/platform-installer/internal/resources/jobs"
 	"github.com/icloudeng/platform-installer/internal/resources/proxmox"
 	"github.com/icloudeng/platform-installer/internal/resources/terraform"
 	"github.com/icloudeng/platform-installer/internal/resources/utilities"
@@ -77,40 +79,39 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 		json.MxDomainValue = mxDomain
 	}
 
-	// task := jobs.ResourcesJob{
-	// 	Ref:           json.Ref,
-	// 	PostBody:      json,
-	// 	ResourceState: true,
-	// 	Description:   "Resources creation",
-	// 	Handler:       ctx.Request.URL.String(),
-	// 	Method:        ctx.Request.Method,
-	// 	Task: func(ctx context.Context, job entities.Job) error {
-	// 		// Reset unmutable vm fields
-	// 		structs.ResetUnmutableProxmoxVmQemu(structs.ResetProxmoxVmQemuFields{
-	// 			Vm:       json.Vm,
-	// 			Platform: *json.Platform,
-	// 			Ref:      json.Ref,
-	// 			JobID:    job.ID,
-	// 		})
-	// 		// Create or update resources
-	// 		terraform.Resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
-	// 		// MX Domain
-	// 		if mxDomain != nil {
-	// 			terraform.Resources.WriteOvhDomainZoneResource(
-	// 				fmt.Sprintf("mx-%s", json.Ref),
-	// 				mxDomain,
-	// 			)
-	// 		}
-	// 		terraform.Resources.WriteProxmoxVmQemuResource(json.Ref, json.Vm)
+	task := jobs.ResourcesJob{
+		Ref:           json.Ref,
+		PostBody:      json,
+		ResourceState: true,
+		Description:   "Resources creation",
+		Handler:       ctx.Request.URL.String(),
+		Method:        ctx.Request.Method,
+		Task: func(ctx context.Context, job entities.Job) error {
+			// Reset unmutable vm fields
+			structs.ResetUnmutableProxmoxVmQemu(structs.ResetProxmoxVmQemuFields{
+				Vm:       json.Vm,
+				Platform: *json.Platform,
+				Ref:      json.Ref,
+				JobID:    job.ID,
+			})
+			// Create or update resources
+			terraform.Resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
+			// MX Domain
+			if mxDomain != nil {
+				terraform.Resources.WriteOvhDomainZoneResource(
+					fmt.Sprintf("mx-%s", json.Ref),
+					mxDomain,
+				)
+			}
+			terraform.Resources.WriteProxmoxVmQemuResource(json.Ref, json.Vm)
 
-	// 		// Terraform Apply changes
-	// 		return terraform.Exec.Apply(true)
-	// 	},
-	// }
+			// Terraform Apply changes
+			return terraform.Exec.Apply(true)
+		},
+	}
 
-	// return jobs.ResourcesJobTask(task)
+	return jobs.ResourcesJobTask(task)
 
-	return nil
 }
 
 func autoComposeMxDomain(resourceDomain string, json *resourcesBody) *structs.DomainZoneRecord {
