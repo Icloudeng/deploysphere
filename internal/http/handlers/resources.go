@@ -25,7 +25,7 @@ type (
 		Client      *clientBody               `json:"client" binding:"omitempty,json"`
 		Environment string                    `json:"environment" binding:"omitempty,alpha"`
 		MxDomain    *string                   `json:"mx_domain" binding:"omitempty,fqdn|eq=auto"`
-		Mx          interface{}               `json:"Mx"`
+		Mx          interface{}               `json:"mx"`
 	}
 
 	resourcesRefUri struct {
