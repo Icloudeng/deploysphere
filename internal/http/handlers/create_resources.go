@@ -74,7 +74,7 @@ func createResourceJob(ctx *gin.Context, json resourcesBody) *entities.Job {
 
 	mxDomain := autoMxDomain(domain, json)
 	if mxDomain != nil {
-		json.Mx = mxDomain
+		json.DomainMx = mxDomain
 	}
 
 	// task := jobs.ResourcesJob{
