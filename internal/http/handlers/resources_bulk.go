@@ -38,6 +38,7 @@ func (resourcesHandler) DeleteResourcesBulk(c *gin.Context) {
 			for _, ref := range reqBody.Refs {
 				// Remove resources
 				terraform.Resources.DeleteOvhDomainZoneResource(ref)
+				terraform.Resources.DeleteOvhDomainZoneResource(fmt.Sprintf("mx-%s", ref))
 				terraform.Resources.DeleteProxmoxVmQemuResource(ref)
 			}
 
