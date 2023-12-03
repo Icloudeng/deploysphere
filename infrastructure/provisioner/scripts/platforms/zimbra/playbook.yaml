@@ -27,7 +27,7 @@
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
         domain_var: "{{ _zimbra_domain }}"
-      when: _zimbra_domain | bool
+      when: _zimbra_domain != ''
 
     # Validate timezone variables
     - include_tasks: ../../tasks/validator/timezone-regex.yaml
