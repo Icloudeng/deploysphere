@@ -19,6 +19,7 @@ var IGNORE_CHANGES []string = []string{
 	"ipconfig1",
 	"vmid",
 	"clone",
+	"agent",
 }
 
 type ProxmoxVmQemu struct {
