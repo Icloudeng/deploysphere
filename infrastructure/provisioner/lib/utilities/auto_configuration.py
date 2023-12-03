@@ -39,6 +39,10 @@ def get_resources_state(ref: str):
         f"{INSTALLER_URL}/resources-state/{ref.strip()}",
         headers=headers,
     )
+    if response.status_code >= 400:
+        print(f"Type: get_resources_state, Error: {response.text}")
+    
+    
     response.raise_for_status()
 
     return response.json()
@@ -48,6 +52,10 @@ def post_provisioning_configuration(body):
     response = requests.post(
         f"{INSTALLER_URL}/provisioning/configuration", headers=headers, json=body
     )
+    
+    if response.status_code >= 400:
+        print(f"Type: post_provisioning_configuration, Error: {response.text}")
+    
     response.raise_for_status()
 
     return response.json()
