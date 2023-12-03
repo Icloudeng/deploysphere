@@ -124,7 +124,7 @@ func autoComposeMxDomain(resourceDomain string, json *resourcesBody) *structs.Do
 				Subdomain: utilities.RemoveFirstSegment(subdomain),
 				Fieldtype: "MX",
 				Ttl:       3600,
-				Target:    fmt.Sprintf("1 %s", resourceDomain),
+				Target:    fmt.Sprintf("1 %s.", resourceDomain),
 			}
 		} else {
 			subdomain, rootDomain := utilities.Helpers.ExtractSubdomainAndRootDomain(mx_value)
@@ -133,7 +133,7 @@ func autoComposeMxDomain(resourceDomain string, json *resourcesBody) *structs.Do
 				Subdomain: subdomain,
 				Fieldtype: "MX",
 				Ttl:       3600,
-				Target:    fmt.Sprintf("1 %s", resourceDomain),
+				Target:    fmt.Sprintf("1 %s.", resourceDomain),
 			}
 		}
 	}
