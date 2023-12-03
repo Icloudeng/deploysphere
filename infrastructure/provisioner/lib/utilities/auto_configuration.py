@@ -41,8 +41,7 @@ def get_resources_state(ref: str):
     )
     if response.status_code >= 400:
         print(f"Type: get_resources_state, Error: {response.text}")
-    
-    
+
     response.raise_for_status()
 
     return response.json()
@@ -52,16 +51,16 @@ def post_provisioning_configuration(body):
     response = requests.post(
         f"{INSTALLER_URL}/provisioning/configuration", headers=headers, json=body
     )
-    
+
     if response.status_code >= 400:
         print(f"Type: post_provisioning_configuration, Error: {response.text}")
-    
+
     response.raise_for_status()
 
     return response.json()
 
 
-def domain_to_ldap_dc(domain):
+def domain_to_ldap_dc(domain: str):
     # Remove leading and trailing whitespaces and convert to lowercase
     domain = domain.strip().lower()
 
@@ -75,6 +74,14 @@ def domain_to_ldap_dc(domain):
     ldap_dc = ",".join(ldap_dc_components)
 
     return ldap_dc
+
+
+def remove_first_segment(domain: str):
+    parts = domain.split(".")
+    if len(parts) > 1:
+        return ".".join(parts[1:])
+    else:
+        return ""
 
 
 def extract_root_domain(domain):

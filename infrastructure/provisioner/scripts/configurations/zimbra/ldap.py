@@ -13,7 +13,8 @@ from lib.utilities.auto_configuration import (
     get_command_args,
     log,
     extract_subdomain,
-    concatenate_domain
+    concatenate_domain,
+    remove_first_segment,
 )
 
 
@@ -26,20 +27,29 @@ def main(args):
         sub_domain=zimbra_domain["subdomain"],
         root_domain=zimbra_domain["zone"],
     )
+
     # zimbra MX
-    zimbra_mx_domain = zimbra_state["Job"]["PostBody"]["mx_domain_value"]
-    zimbra_mx_domain_value = concatenate_domain(
-        sub_domain=zimbra_mx_domain["subdomain"],
-        root_domain=zimbra_mx_domain["zone"],
-    )
+    zimbra_post_body = zimbra_state["Job"]["PostBody"]
+    zimbra_metadata = zimbra_post_body["platform"]["metadata"]
+    zimbra_mx_domain = zimbra_metadata.get("mx_domain")
+
+    if not zimbra_mx_domain:
+        if zimbra_post_body.get("mx_domain_value"):
+            zimbra_mx_domain_value = zimbra_post_body["mx_domain_value"]
+            zimbra_mx_domain = concatenate_domain(
+                sub_domain=zimbra_mx_domain_value["subdomain"],
+                root_domain=zimbra_mx_domain_value["zone"],
+            )
+        else:
+            zimbra_mx_domain = remove_first_segment(zimbra_domain)
 
     # FreeIPA
     freeipa_state = get_resources_state(args.config_reference)["data"]
-    metadata = freeipa_state["Job"]["PostBody"]["platform"]["metadata"]
-    ipa_domain = metadata.get("ipa_domain")
+    freeipa_metadata = freeipa_state["Job"]["PostBody"]["platform"]["metadata"]
+    ipa_domain = freeipa_metadata.get("ipa_domain")
 
     if not ipa_domain:
-        ipa_domain = extract_subdomain(metadata.get("domain"))
+        ipa_domain = extract_subdomain(freeipa_metadata.get("domain"))
 
     ipa_domain_dc = domain_to_ldap_dc(ipa_domain)
     freeipa_credentials = freeipa_state["Credentials"][0]
@@ -53,7 +63,7 @@ def main(args):
             "name": args.platform,
             "metadata": {
                 "zimbra_fqdn": zimbra_domain,
-                "zimbra_domain": zimbra_mx_domain_value,
+                "zimbra_domain": zimbra_mx_domain,
                 "configuration_type": args.type,
                 "configuration": {
                     "ldap_filter_username": "uid=%u",

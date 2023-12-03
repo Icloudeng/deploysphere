@@ -133,7 +133,7 @@
         path: /etc/resolv.conf
         create: yes
         block: |
-          search {{ ansible_domain }}
+          search {{ zimbra_domain | default(ansible_domain, true) }}
           nameserver 8.8.8.8
           nameserver 8.8.4.4
 
@@ -161,7 +161,7 @@
         path: /etc/resolv.conf
         create: yes
         block: |
-          search {{ ansible_domain }}
+          search {{ zimbra_domain | default(ansible_domain, true) }}
           nameserver 127.0.0.1
 
 - name: download zimbra installer

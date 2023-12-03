@@ -15,12 +15,19 @@
       set_fact:
         _zimbra_fqdn: "{{ decoded_metadata | json_query('domain') }}"
         _zimbra_timezone: "{{ decoded_metadata | json_query('zimbra_timezone') | default('Europe/Paris', true) }}"
+        _zimbra_domain: "{{ decoded_metadata | json_query('mx_domain') | default('', true) }}"
         zimbra_version: "{{ decoded_metadata | json_query('zimbra_version') | default('zimbra8', true) }}"
 
     # Validate domain variables
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
         domain_var: "{{ _zimbra_fqdn }}"
+
+    # Validate _zimbra_domain variables
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ _zimbra_domain }}"
+      when: _zimbra_domain | bool
 
     # Validate timezone variables
     - include_tasks: ../../tasks/validator/timezone-regex.yaml
@@ -47,6 +54,7 @@
         zimbra_fqdn: "{{ _zimbra_fqdn }}"
         zimbra_timezone: "{{ _zimbra_timezone }}"
         zimbra_admin_password: "{{ app_secret }}"
+        zimbra_domain: "{{ _zimbra_domain }}"
 
       # Generate SSL Certificat
     - include_tasks: ssl-certificate.yaml
