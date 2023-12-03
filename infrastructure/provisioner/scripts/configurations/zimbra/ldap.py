@@ -21,7 +21,7 @@ from lib.utilities.auto_configuration import (
 def main(args):
     # zimbra
     zimbra_reference = args.reference
-    zimbra_state = get_resources_state(args.config_reference)["data"]
+    zimbra_state = get_resources_state(zimbra_reference)["data"]
     zimbra_domain = zimbra_state["State"]["ovh_domain_zone_record"]["values"]
     zimbra_domain = concatenate_domain(
         sub_domain=zimbra_domain["subdomain"],
