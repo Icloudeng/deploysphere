@@ -97,7 +97,7 @@ publish_redis_playbook_details() {
     # Publish Credentials
     if [ "$ran_status" == "succeeded" ]; then
         # Read and extract credentials exposed from ansible logs
-        exposed_credentials=$($extract_vars --text "$ansible_logs" --credentials "true")
+        exposed_credentials=$($extract_vars --text "$ansible_logs_8191" --credentials "true")
 
         # Publish credentials if not empty
         if [ -n "$exposed_credentials" ]; then

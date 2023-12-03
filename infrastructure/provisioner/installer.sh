@@ -101,13 +101,14 @@ create_domain_mapping
 
 # Get the ansible logs content from last run and pipe it to base64
 ansible_logs=$(tail -n +$logs_lines $ansible_log_file)
+ansible_logs_8191=$(get_last_n_chars "$ansible_logs" 8191)
 ansible_logs_4096=$(get_last_n_chars "$ansible_logs" 4096 | base64)
 
 # @@Function@@
 publish_redis_playbook_details
 
 # Read and extract variables exposed from ansible logs
-exposed_variables=$($extract_vars --text "$ansible_logs")
+exposed_variables=$($extract_vars --text "$ansible_logs_8191")
 # Execute python notifier script
 installer_details+="$exposed_variables\n"
 
