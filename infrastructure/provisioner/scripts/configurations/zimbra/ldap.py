@@ -13,12 +13,25 @@ from lib.utilities.auto_configuration import (
     get_command_args,
     log,
     extract_subdomain,
+    concatenate_domain
 )
 
 
 def main(args):
     # zimbra
     zimbra_reference = args.reference
+    zimbra_state = get_resources_state(args.config_reference)["data"]
+    zimbra_domain = zimbra_state["State"]["ovh_domain_zone_record"]["values"]
+    zimbra_domain = concatenate_domain(
+        sub_domain=zimbra_domain["subdomain"],
+        root_domain=zimbra_domain["zone"],
+    )
+    # zimbra MX
+    zimbra_mx_domain = zimbra_state["Job"]["PostBody"]["mx_domain_value"]
+    zimbra_mx_domain_value = concatenate_domain(
+        sub_domain=zimbra_mx_domain["subdomain"],
+        root_domain=zimbra_mx_domain["zone"],
+    )
 
     # FreeIPA
     freeipa_state = get_resources_state(args.config_reference)["data"]
@@ -39,6 +52,8 @@ def main(args):
         "platform": {
             "name": args.platform,
             "metadata": {
+                "zimbra_fqdn": zimbra_domain,
+                "zimbra_domain": zimbra_mx_domain_value,
                 "configuration_type": args.type,
                 "configuration": {
                     "ldap_filter_username": "uid=%u",

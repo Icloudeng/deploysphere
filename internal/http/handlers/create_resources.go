@@ -79,6 +79,13 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 		json.MxDomainValue = mxDomain
 	}
 
+	if json.Platform != nil && mxDomain != nil {
+		json.Platform.Metadata["mx_domain"] = utilities.Helpers.ConcatenateSubdomain(
+			mxDomain.Subdomain,
+			mxDomain.Zone,
+		)
+	}
+
 	task := jobs.ResourcesJob{
 		Ref:           json.Ref,
 		PostBody:      json,
