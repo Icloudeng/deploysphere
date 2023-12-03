@@ -20,10 +20,12 @@ var ResourceState resourceState
 func (resourceState) ResourceStateCreate(ref string, job entities.Job) *entities.ResourcesState {
 	rep := entities.ResourcesStateRepository{}
 
-	// Use credentials of the last ref object
+	// Use credentials and state of the last ref object
 	var credentials datatypes.JSON
+	var state datatypes.JSON
 	if last_rs := rep.GetByRef(ref); last_rs != nil {
 		credentials = last_rs.Credentials
+		state = last_rs.State
 	}
 
 	resource_state := &entities.ResourcesState{
@@ -31,6 +33,7 @@ func (resourceState) ResourceStateCreate(ref string, job entities.Job) *entities
 		JobID:       job.ID,
 		Job:         job,
 		Credentials: credentials,
+		State:       state,
 	}
 
 	rep.Create(resource_state)
