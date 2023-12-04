@@ -1,0 +1,18 @@
+- ansible.builtin.wait_for:
+    timeout: 10
+
+- name: Unconditionally reboot the machine with all defaults
+  ansible.builtin.reboot:
+
+- name: Pause play until a URL is reachable from this host
+  ignore_errors: true
+  ansible.builtin.uri:
+    url: "{{ url_ping }}"
+    follow_redirects: none
+    validate_certs: no
+    method: GET
+  register: _result
+  until: _result.status >= 200
+  retries: 30
+  delay: 10
+  when: url_ping is defined and url_ping != ''
