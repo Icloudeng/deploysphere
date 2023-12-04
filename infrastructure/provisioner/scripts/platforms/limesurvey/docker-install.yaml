@@ -1,0 +1,33 @@
+# Install Docker
+- include_tasks: ../../tasks/docker.yaml
+
+- set_fact:
+    repo_name: "docker-limesurvey"
+    repo_tag: "6.3.6-231120"
+    limesurvey_path: "{{ project_path }}/{{ repo_name }}-{{ repo_tag }}"
+
+- name: Extract LimeSurvey
+  ansible.builtin.unarchive:
+    src: https://github.com/martialblog/{{ repo_name }}/archive/refs/tags/{{ repo_tag }}.zip
+    dest: "{{ project_path }}"
+    remote_src: yes
+
+- name: Run Docker compose
+  command: "docker compose -f docker-compose.pgsql.yml up -d --force-recreate"
+  args:
+    chdir: "{{ limesurvey_path }}"
+
+- set_fact:
+    url_ping: "http://127.0.0.1:8080"
+
+- name: Pause play until a URL is reachable from this host
+  ignore_errors: true
+  ansible.builtin.uri:
+    url: "{{ url_ping }}"
+    follow_redirects: none
+    validate_certs: no
+    method: GET
+  register: _result
+  until: _result.status >= 200
+  retries: 30
+  delay: 10

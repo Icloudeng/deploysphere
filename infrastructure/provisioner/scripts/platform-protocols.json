@@ -70,5 +70,9 @@
     "penpot": {
         "port": 9001,
         "protocol": "http"
+    },
+    "limesurvey": {
+        "port": 8080,
+        "protocol": "http"
     }
 }
