@@ -25,6 +25,12 @@
       vars:
         domain_var: "{{ domain }}"
 
+    # Validate email variables
+    - include_tasks: ../../tasks/validator/email-regex.yaml
+      vars:
+        email_var: "{{ admin_email }}"
+      when: admin_email != ''
+
     # docker install
     - include_tasks: docker-install.yaml
 
