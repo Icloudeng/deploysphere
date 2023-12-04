@@ -18,6 +18,8 @@
     state: started
   ignore_errors: true
 
+###### Variable Debug ######
+# Decode Metadata
 - include_tasks: variables.yaml
 
 - name: Create root path

@@ -81,7 +81,7 @@ logs_lines=$(wc -l <$ansible_log_file | tr -d '[:space:]')
 
 ################ Ansible extra-vars ################
 ansible_extra_vars="platform_metadata=$metadata platform_name=$platform"
-ansible_extra_vars+=" random_secret=$random_secret admin_email=$admin_email" # Must start with empty space
+ansible_extra_vars+=" random_secret=$random_secret global_admin_email=$admin_email" # Must start with empty space
 ansible_extra_vars+=" static_secret=$static_secret"                          # Must start with empty space
 ansible_extra_vars+=" vm_ip=$vm_ip"                                          # Must start with empty space
 

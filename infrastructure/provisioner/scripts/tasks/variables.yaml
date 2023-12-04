@@ -17,3 +17,7 @@
 - name: Fact | App Secret
   set_fact:
     app_secret: "{{ random_secret }}"
+
+- name: "Fact | Admin Email"
+  set_fact:
+    admin_email: "{{ decoded_metadata | json_query('admin_email') | default(global_admin_email, true) }}"
