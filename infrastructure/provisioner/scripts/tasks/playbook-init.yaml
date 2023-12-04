@@ -9,6 +9,7 @@
     name:
       - bash
       - qemu-guest-agent
+      - unzip
     state: present
 
 - name: Started qemu-guest-agent
