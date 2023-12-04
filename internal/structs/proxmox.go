@@ -48,7 +48,7 @@ type ProxmoxVmQemu struct {
 	Numa    bool   `json:"numa" binding:"boolean"`
 	Tags    string `json:"tags"`
 
-	DefineConnectionInfo bool `json:"define_connection_info"`
+	// DefineConnectionInfo bool `json:"define_connection_info"`
 
 	Network   []*PmVmQemuNetwork     `json:"network"`
 	Lifecycle []*PmResourceLifecycle `json:"lifecycle"`
@@ -95,21 +95,21 @@ type ResetProxmoxVmQemuFields struct {
 
 func NewProxmoxVmQemu(ref string) *ProxmoxVmQemu {
 	vm := ProxmoxVmQemu{
-		Vmid:                 0,
-		FullClone:            true,
-		OsType:               "cloud-init",
-		OnBoot:               true,
-		Agent:                1,
-		Memory:               4096,
-		Scsihw:               "virtio-scsi-pci",
-		Cores:                4,
-		Sockets:              1,
-		Cpu:                  "host",
-		Numa:                 true,
-		Tags:                 "platform-installer",
-		IpConfig0:            "ip6=auto,ip=dhcp",
-		IpConfig1:            "ip6=auto,ip=dhcp",
-		DefineConnectionInfo: true,
+		Vmid:      0,
+		FullClone: true,
+		OsType:    "cloud-init",
+		OnBoot:    true,
+		Agent:     1,
+		Memory:    4096,
+		Scsihw:    "virtio-scsi-pci",
+		Cores:     4,
+		Sockets:   1,
+		Cpu:       "host",
+		Numa:      true,
+		Tags:      "platform-installer",
+		IpConfig0: "ip6=auto,ip=dhcp",
+		IpConfig1: "ip6=auto,ip=dhcp",
+		// DefineConnectionInfo: true,
 	}
 
 	vm.Network = append(vm.Network, &PmVmQemuNetwork{
