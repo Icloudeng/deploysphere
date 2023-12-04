@@ -109,7 +109,7 @@ func NewProxmoxVmQemu(ref string) *ProxmoxVmQemu {
 		Tags:                 "platform-installer",
 		IpConfig0:            "ip6=auto,ip=dhcp",
 		IpConfig1:            "ip6=auto,ip=dhcp",
-		DefineConnectionInfo: false,
+		DefineConnectionInfo: true,
 	}
 
 	vm.Network = append(vm.Network, &PmVmQemuNetwork{
