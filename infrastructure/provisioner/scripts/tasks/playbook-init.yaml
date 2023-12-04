@@ -52,7 +52,8 @@
     var: vm_ip
 
 # Ping Domain
-- block:
+- name: "Ping domain"
+  block:
     - set_fact:
         domain_ping: "{{ decoded_metadata | json_query('domain') }}"
 
