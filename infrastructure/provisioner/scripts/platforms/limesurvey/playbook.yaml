@@ -26,3 +26,13 @@
 
     # docker install
     - include_tasks: docker-install.yaml
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        text: |
+          Login
+          Username: admin
+          Password: {{ app_secret }}
+        credentials:
+          username: "admin"
+          password: "{{ app_secret }}"
