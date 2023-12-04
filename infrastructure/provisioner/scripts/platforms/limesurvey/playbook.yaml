@@ -9,7 +9,7 @@
     - include_tasks: ../../tasks/cloud-init.yaml
 
     # Playbook init (with decoded_metadata, project_path)
-    - include_tasks: ../../tasks/playbook-init.yaml
+    - import_tasks: ../../tasks/playbook-init.yaml
 
     - name: Fact | Database Password
       set_fact:
