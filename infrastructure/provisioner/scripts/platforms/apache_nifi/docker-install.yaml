@@ -116,10 +116,13 @@
 
   when: copy_conf_cmd is defined and copy_conf_cmd.rc == 0
 
+- set_fact:
+    url_ping: "https://{{ vm_ip }}:8443"
+
 - name: Pause play until a URL is reachable from this host
   ignore_errors: true
   ansible.builtin.uri:
-    url: "https://{{ vm_ip }}:8443"
+    url: "{{ url_ping }}"
     follow_redirects: none
     validate_certs: no
     method: GET
@@ -127,3 +130,5 @@
   until: _result.status >= 200
   retries: 30
   delay: 10
+
+- include_tasks: ../../tasks/reboot.yaml
