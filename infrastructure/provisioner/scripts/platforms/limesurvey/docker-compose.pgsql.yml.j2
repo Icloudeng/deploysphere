@@ -12,6 +12,7 @@ services:
       - lime-db
     depends_on:
       - lime-db
+    restart: unless-stopped
     ports:
       # Hint: Change it to 80:8080 if you are using LimeSurvey 3.*
       - "8080:8080"
@@ -27,6 +28,7 @@ services:
 
   lime-db:
     image: docker.io/postgres:10
+    restart: unless-stopped
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:

@@ -3,9 +3,7 @@ version: "3"
 services:
   backend:
     image: frappe/erpnext:v14.29.1
-    deploy:
-      restart_policy:
-        condition: on-failure
+    restart: unless-stopped
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
@@ -76,9 +74,7 @@ services:
       test: mysqladmin ping -h localhost --password=admin
       interval: 1s
       retries: 15
-    deploy:
-      restart_policy:
-        condition: on-failure
+    restart: unless-stopped
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
@@ -91,9 +87,7 @@ services:
 
   frontend:
     image: frappe/erpnext:v14.29.1
-    deploy:
-      restart_policy:
-        condition: on-failure
+    restart: unless-stopped
     command:
       - nginx-entrypoint.sh
     environment:
@@ -113,9 +107,7 @@ services:
 
   queue-default:
     image: frappe/erpnext:v14.29.1
-    deploy:
-      restart_policy:
-        condition: on-failure
+    restart: unless-stopped
     command:
       - bench
       - worker
@@ -127,9 +119,7 @@ services:
 
   queue-long:
     image: frappe/erpnext:v14.29.1
-    deploy:
-      restart_policy:
-        condition: on-failure
+    restart: unless-stopped
     command:
       - bench
       - worker
@@ -141,9 +131,7 @@ services:
 
   queue-short:
     image: frappe/erpnext:v14.29.1
-    deploy:
-      restart_policy:
-        condition: on-failure
+    restart: unless-stopped
     command:
       - bench
       - worker
@@ -155,33 +143,25 @@ services:
 
   redis-queue:
     image: redis:6.2-alpine
-    deploy:
-      restart_policy:
-        condition: on-failure
+    restart: unless-stopped
     volumes:
       - redis-queue-data:/data
 
   redis-cache:
     image: redis:6.2-alpine
-    deploy:
-      restart_policy:
-        condition: on-failure
+    restart: unless-stopped
     volumes:
       - redis-cache-data:/data
 
   redis-socketio:
     image: redis:6.2-alpine
-    deploy:
-      restart_policy:
-        condition: on-failure
+    restart: unless-stopped
     volumes:
       - redis-socketio-data:/data
 
   scheduler:
     image: frappe/erpnext:v14.29.1
-    deploy:
-      restart_policy:
-        condition: on-failure
+    restart: unless-stopped
     command:
       - bench
       - schedule
@@ -191,9 +171,7 @@ services:
 
   websocket:
     image: frappe/erpnext:v14.29.1
-    deploy:
-      restart_policy:
-        condition: on-failure
+    restart: unless-stopped
     command:
       - node
       - /home/frappe/frappe-bench/apps/frappe/socketio.js

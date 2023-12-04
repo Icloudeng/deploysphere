@@ -28,7 +28,7 @@
         - set_facts:
             c_ports: "-p 3478:3478 -p 3478:3478/udp -p 50000-50500:50000-50500/udp"
             c_envs: "-e ETURNAL_RELAY_MIN_PORT=50000 -e ETURNAL_RELAY_MAX_PORT=50500"
-            c_params: "--name eturnal --read-only --cap-drop=ALL --security-opt no-new-privileges"
+            c_params: "--name eturnal --read-only --cap-drop=ALL --security-opt no-new-privileges --restart unless-stopped"
 
         - name: Stop eturnal container
           command: "docker stop eturnal"

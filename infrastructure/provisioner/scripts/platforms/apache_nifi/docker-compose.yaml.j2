@@ -4,6 +4,7 @@ services:
     hostname: zookeeper
     container_name: zookeeper
     image: "zookeeper:latest"
+    restart: unless-stopped
     ports:
       - 2181
     environment:
