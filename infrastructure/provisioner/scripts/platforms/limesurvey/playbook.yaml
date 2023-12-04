@@ -19,7 +19,6 @@
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
         admin_email: "{{ decoded_metadata | json_query('admin_email') | default('admin@changeme.com', true) }}"
-      run_once: true
 
     # Validate domain variables
     - include_tasks: ../../tasks/validator/domain-regex.yaml
@@ -30,7 +29,6 @@
     - include_tasks: ../../tasks/validator/email-regex.yaml
       vars:
         email_var: "{{ admin_email }}"
-      when: admin_email != ''
 
     # docker install
     - include_tasks: docker-install.yaml

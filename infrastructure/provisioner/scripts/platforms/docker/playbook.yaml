@@ -8,7 +8,7 @@
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
 
-    # Playbook init (with decoded_metadata, project_path, app_secret)
+    # Playbook init (with decoded_metadata, project_path, app_secret, admin_email)
     - include_tasks: ../../tasks/playbook-init.yaml
 
     # Install Docker

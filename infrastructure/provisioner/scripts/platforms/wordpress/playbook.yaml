@@ -34,7 +34,7 @@
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
 
-    # Playbook init (with decoded_metadata, project_path, app_secret)
+    # Playbook init (with decoded_metadata, project_path, app_secret, admin_email)
     - include_tasks: ../../tasks/playbook-init.yaml
 
     - name: Fact | Database Password
@@ -46,7 +46,6 @@
         domain: "{{ decoded_metadata | json_query('domain') }}"
         site_title: "{{ decoded_metadata | json_query('site_title') }}"
         admin_username: "{{ decoded_metadata | json_query('admin_username') }}"
-        admin_email: "{{ decoded_metadata | json_query('admin_email') }}"
         civicrm_plugin: "{{ decoded_metadata | json_query('civicrm_plugin') }}"
 
     - name: Extract Variable Dkr install variable

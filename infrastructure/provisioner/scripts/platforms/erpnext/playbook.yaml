@@ -12,7 +12,7 @@
     - include_tasks: ../../tasks/cloud-init.yaml
       tags: [init]
 
-    # Playbook init (with decoded_metadata, project_path, app_secret)
+    # Playbook init (with decoded_metadata, project_path, app_secret, admin_email)
     - include_tasks: ../../tasks/playbook-init.yaml
       tags: [init]
 
