@@ -29,10 +29,13 @@
   args:
     chdir: "{{ project_path }}"
 
+- set_fact:
+    url_ping: "http://127.0.0.1:5080"
+
 - name: Pause play until a URL is reachable from this host
   ignore_errors: true
   ansible.builtin.uri:
-    url: "http://127.0.0.1:5080"
+    url: "{{ url_ping }}"
     follow_redirects: none
     validate_certs: no
     method: GET
@@ -40,3 +43,5 @@
   until: _result.status >= 200
   retries: 30
   delay: 5
+
+- include_tasks: ../../tasks/reboot.yaml
