@@ -14,6 +14,12 @@
     dest: "{{ project_path }}"
     remote_src: yes
 
+- name: "Copy docker-compose.pgsql.yml template"
+  template:
+    src: docker-compose.pgsql.yml.j2
+    dest: "{{ project_path }}/docker-compose.pgsql.yml"
+    force: yes
+
 - name: Run Docker compose
   command: "docker compose -f docker-compose.pgsql.yml up -d --force-recreate"
   args:
