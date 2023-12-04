@@ -51,6 +51,20 @@
   debug:
     var: vm_ip
 
+# Ping Domain
+- block:
+    - set_fact:
+        domain_ping: "{{ decoded_metadata | json_query('domain') }}"
+
+    - name: "Ping the domain"
+      command: "ping -c 1 {{ domain_ping }}"
+      register: result
+      until: result.rc == 0
+      retries: 10
+      delay: 30
+      ignore_errors: true
+      when: domain_ping != ''
+
 # DB or File secret
 - name: App Secret | Check if file exists
   stat:
