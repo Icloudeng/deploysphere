@@ -4,6 +4,8 @@
 - set_fact:
     repo_name: "docker-limesurvey"
     repo_tag: "6.3.6-231120"
+
+- set_fact:
     limesurvey_path: "{{ project_path }}/{{ repo_name }}-{{ repo_tag }}"
 
 - name: Extract LimeSurvey
