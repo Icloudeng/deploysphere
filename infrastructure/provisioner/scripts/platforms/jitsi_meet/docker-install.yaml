@@ -83,7 +83,7 @@
     chdir: "{{ jitsi_path }}"
 
 - set_fact:
-    url_ping: "http://127.0.0.1"
+    url_ping: "http://{{ vm_ip }}"
 
 - name: Pause play until a URL is reachable from this host
   ignore_errors: true
