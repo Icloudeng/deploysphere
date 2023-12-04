@@ -18,6 +18,7 @@
     - name: Extract Required Variables
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
+        admin_email: "{{ decoded_metadata | json_query('domain') | default('admin@changeme.com', true) }}"
 
     # Validate domain variables
     - include_tasks: ../../tasks/validator/domain-regex.yaml

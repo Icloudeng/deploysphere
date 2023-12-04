@@ -24,7 +24,7 @@ services:
       - "ADMIN_PASSWORD={{ app_secret }}"
       - "ADMIN_USER=admin"
       - "ADMIN_NAME=LimeSurvey Admin"
-      - "ADMIN_EMAIL=admin@changeme.com"
+      - "ADMIN_EMAIL={{ admin_email }}"
 
   lime-db:
     image: docker.io/postgres:10
