@@ -49,6 +49,10 @@
 
         nextcloud_trusted_proxies: ["{{ domain }}"]
 
+    - include_tasks: ../../tasks/reboot.yaml
+      vars:
+        url_ping: "https://{{ vm_ip }}"
+
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
         text: |
