@@ -8,7 +8,7 @@
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
 
-    # Playbook init (with decoded_metadata, project_path)
+    # Playbook init (with decoded_metadata, project_path, admin_email)
     - import_tasks: ../../tasks/playbook-init.yaml
 
     - name: Fact | Database Password
@@ -18,7 +18,6 @@
     - name: Extract Required Variables
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
-        admin_email: "{{ decoded_metadata | json_query('admin_email') | default('admin@changeme.com', true) }}"
 
     # Validate domain variables
     - include_tasks: ../../tasks/validator/domain-regex.yaml
