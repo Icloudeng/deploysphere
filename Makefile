@@ -77,3 +77,11 @@ queue-status:
 .PHONY: ansible-logs
 ansible-logs:
 	tail -n -0 -f infrastructure/provisioner/logs/ansible_log.txt
+
+
+.PHONY: yamllint
+yamllint:
+	yamllint "infrastructure/provisioner/scripts/**/*.(yaml|yml)"
+
+
+
