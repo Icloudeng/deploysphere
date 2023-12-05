@@ -24,7 +24,7 @@ func (resourcesHandler) CreateResourcesFromTemplate(ctx *gin.Context) {
 		return
 	}
 
-	// Platform name must be fulfilled
+	// Environment must be fulfilled
 	if len(tmpBody.Environment) == 0 {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "Environment cannot be empty",
@@ -117,10 +117,6 @@ func (resourcesHandler) CreateResourcesFromTemplate(ctx *gin.Context) {
 	}
 
 	job := createResourceJob(ctx, &body)
-
-	// if job == nil {
-	// 	return
-	// }
 
 	ctx.JSON(http.StatusOK, gin.H{"data": body, "job": job})
 }

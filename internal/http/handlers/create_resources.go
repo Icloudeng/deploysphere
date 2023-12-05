@@ -61,7 +61,6 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 	// 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 	// 			"error": "VM ID already exists !",
 	// 		})
-
 	// 		return nil
 	// 	}
 	// }
@@ -70,7 +69,7 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 	// then selected automatic node based on resourse Availability
 	if json.Vm.TargetNode == "auto" {
 		nodeStatus, err := proxmox.SelectNodeWithMostResources()
-		if err != nil {
+		if err != nil || nodeStatus == nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": "No enough proxmox resources",
 			})
