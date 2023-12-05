@@ -56,7 +56,7 @@ func (provisioningHandler) CreatePlatformProvisioning(c *gin.Context) {
 		ResourceState: len(body.Ref) > 0,
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context, job entities.Job) error {
+		Task: func(ctx context.Context, job *entities.Job) error {
 			provisioning.CreatePlatformProvisioning(*body, job.ID)
 
 			return nil
@@ -100,7 +100,7 @@ func (provisioningHandler) CreateConfigurationProvisioning(c *gin.Context) {
 		ResourceState: false,
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context, job entities.Job) error {
+		Task: func(ctx context.Context, job *entities.Job) error {
 			provisioning.CreateConfigurationProvisioning(*body, job.ID)
 
 			return nil

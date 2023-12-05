@@ -77,6 +77,20 @@ func (jobs) JobUpdateStatus(job *entities.Job, Status string) *entities.Job {
 	return job
 }
 
+func (jobs) JobUpdatePostBody(job *entities.Job, PostBody interface{}) *entities.Job {
+	rep := entities.JobRepository{}
+	// refresh the job
+	job = rep.Get(job.ID)
+
+	// Update PostBody
+	postBodyJson, _ := json.Marshal(PostBody)
+	job.PostBody = datatypes.JSON(postBodyJson)
+
+	rep.UpdateOrCreate(job)
+
+	return job
+}
+
 func (jobs) JobGetByID(ID uint) *entities.Job {
 	rep := entities.JobRepository{}
 	return rep.Get(ID)

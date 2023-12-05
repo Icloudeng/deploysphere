@@ -9,7 +9,7 @@ import (
 	"github.com/icloudeng/platform-installer/internal/resources/websocket"
 )
 
-type TaskFunc func(context.Context, entities.Job) error
+type TaskFunc func(context.Context, *entities.Job) error
 
 type ResourcesJob struct {
 	Ref           string
@@ -54,7 +54,7 @@ func ResourcesJobTask(task ResourcesJob) *entities.Job {
 		}
 
 		// Run task
-		err := task.Task(ctx, *job)
+		err := task.Task(ctx, job)
 
 		if err == nil && task.ResourceState {
 			db.ResourceState.ResourceStatePutTerraformState(res_state)

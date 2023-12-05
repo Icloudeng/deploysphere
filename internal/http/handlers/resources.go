@@ -77,7 +77,7 @@ func (resourcesHandler) DeleteResources(c *gin.Context) {
 		ResourceState: false, // Disable on resource deletion
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context, job entities.Job) error {
+		Task: func(ctx context.Context, job *entities.Job) error {
 			// Remove resources
 			terraform.Resources.DeleteOvhDomainZoneResource(uri.Ref)
 			terraform.Resources.DeleteOvhDomainZoneResource(fmt.Sprintf("mx-%s", uri.Ref))

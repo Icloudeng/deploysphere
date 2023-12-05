@@ -40,7 +40,7 @@ func (proxyHostHandler) CreateProxyHost(c *gin.Context) {
 		ResourceState: false,
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context, job entities.Job) error {
+		Task: func(ctx context.Context, job *entities.Job) error {
 			proxyhost.CreateProxyHost(json)
 			return nil
 		},
@@ -66,7 +66,7 @@ func (proxyHostHandler) DeleteProxyHost(c *gin.Context) {
 		ResourceState: false,
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context, job entities.Job) error {
+		Task: func(ctx context.Context, job *entities.Job) error {
 			proxyhost.DeleteProxyHost(json.Domain)
 
 			pubsub.BusEvent.Publish(pubsub.RESOURCES_NOTIFIER_EVENT, structs.Notifier{

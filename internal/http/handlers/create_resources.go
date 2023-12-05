@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/icloudeng/platform-installer/internal/database/entities"
 	"github.com/icloudeng/platform-installer/internal/http/validators"
+	"github.com/icloudeng/platform-installer/internal/resources/db"
 	"github.com/icloudeng/platform-installer/internal/resources/jobs"
 	"github.com/icloudeng/platform-installer/internal/resources/proxmox"
 	"github.com/icloudeng/platform-installer/internal/resources/terraform"
@@ -98,9 +99,15 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 		Description:   "Resources creation",
 		Handler:       ctx.Request.URL.String(),
 		Method:        ctx.Request.Method,
-		Task: func(ctx context.Context, job entities.Job) error {
+		Task: func(ctx context.Context, job *entities.Job) error {
 			if should_skip_apply {
 				return nil
+			}
+
+			// Reselect Targe node
+			if nodeStatus, err := proxmox.SelectNodeWithMostResources(); nodeStatus != nil && err == nil {
+				json.Vm.TargetNode = nodeStatus.Node
+				db.Jobs.JobUpdatePostBody(job, json)
 			}
 
 			// Reset unmutable vm fields

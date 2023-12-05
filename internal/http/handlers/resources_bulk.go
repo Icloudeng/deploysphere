@@ -34,7 +34,7 @@ func (resourcesHandler) DeleteResourcesBulk(c *gin.Context) {
 		ResourceState: false, // Disable on resource deletion
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context, job entities.Job) error {
+		Task: func(ctx context.Context, job *entities.Job) error {
 			for _, ref := range reqBody.Refs {
 				// Remove resources
 				terraform.Resources.DeleteOvhDomainZoneResource(ref)

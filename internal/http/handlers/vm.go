@@ -91,7 +91,7 @@ func (vmHandler) CreateVm(c *gin.Context) {
 		ResourceState: true,
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context, job entities.Job) error {
+		Task: func(ctx context.Context, job *entities.Job) error {
 			// Reset unmutable vm fields
 			structs.ResetUnmutableProxmoxVmQemu(structs.ResetProxmoxVmQemuFields{
 				Vm:       json.Vm,
@@ -126,7 +126,7 @@ func (vmHandler) DeleteVm(c *gin.Context) {
 		ResourceState: false, // Disable on resource deletion
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
-		Task: func(ctx context.Context, job entities.Job) error {
+		Task: func(ctx context.Context, job *entities.Job) error {
 			// Remove resources
 			terraform.Resources.DeleteProxmoxVmQemuResource(data.Ref)
 
