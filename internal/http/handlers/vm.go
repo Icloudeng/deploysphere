@@ -8,6 +8,7 @@ import (
 	"github.com/icloudeng/platform-installer/internal/database/entities"
 	"github.com/icloudeng/platform-installer/internal/http/validators"
 	"github.com/icloudeng/platform-installer/internal/pubsub"
+	"github.com/icloudeng/platform-installer/internal/resources/db"
 	"github.com/icloudeng/platform-installer/internal/resources/jobs"
 	"github.com/icloudeng/platform-installer/internal/resources/proxmox"
 	"github.com/icloudeng/platform-installer/internal/resources/terraform"
@@ -65,7 +66,6 @@ func (vmHandler) CreateVm(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": "VM ID already exists !",
 			})
-
 			return
 		}
 	}
@@ -92,6 +92,12 @@ func (vmHandler) CreateVm(c *gin.Context) {
 		Handler:       c.Request.URL.String(),
 		Method:        c.Request.Method,
 		Task: func(ctx context.Context, job *entities.Job) error {
+			// Reselect Targe node
+			if nodeStatus, err := proxmox.SelectNodeWithMostResources(); nodeStatus != nil && err == nil {
+				json.Vm.TargetNode = nodeStatus.Node
+				db.Jobs.JobUpdatePostBody(job, json)
+			}
+
 			// Reset unmutable vm fields
 			structs.ResetUnmutableProxmoxVmQemu(structs.ResetProxmoxVmQemuFields{
 				Vm:       json.Vm,
