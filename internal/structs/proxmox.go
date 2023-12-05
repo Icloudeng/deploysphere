@@ -20,6 +20,7 @@ var IGNORE_CHANGES []string = []string{
 	"vmid",
 	"clone",
 	"agent",
+	"target_node",
 }
 
 type ProxmoxVmQemu struct {
