@@ -31,11 +31,17 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 		return nil
 	}
 
-	// Check if Resource when post request
-	if ctx.Request.Method == "POST" {
-		_vm := terraform.Resources.GetProxmoxVmQemuResource(json.Ref)
-		_domain := terraform.Resources.GetOvhDomainZoneResource(json.Ref)
+	// Skip apply when both resources exist
+	var should_skip_apply = false
+	_vm := terraform.Resources.GetProxmoxVmQemuResource(json.Ref)
+	_domain := terraform.Resources.GetOvhDomainZoneResource(json.Ref)
 
+	if _vm != nil && _domain != nil {
+		should_skip_apply = true
+	}
+
+	// Failure when resources exists on POST request
+	if ctx.Request.Method == "POST" {
 		if _vm != nil || _domain != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": ResourceExistsError,
@@ -94,6 +100,10 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 		Handler:       ctx.Request.URL.String(),
 		Method:        ctx.Request.Method,
 		Task: func(ctx context.Context, job entities.Job) error {
+			if should_skip_apply {
+				return nil
+			}
+
 			// Reset unmutable vm fields
 			structs.ResetUnmutableProxmoxVmQemu(structs.ResetProxmoxVmQemuFields{
 				Vm:       json.Vm,
