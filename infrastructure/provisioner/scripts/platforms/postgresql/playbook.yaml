@@ -1,0 +1,50 @@
+---
+- name: PostgresSQL
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path, admin_email)
+    - include_tasks: ../../tasks/playbook-init.yaml
+
+    - set_fact:
+        database_password: "{{ app_secret }}"
+
+    - name: Extract Required Variables
+      set_fact:
+        domain: "{{ decoded_metadata | json_query('domain') }}"
+        pg_version: "{{ decoded_metadata | json_query('pg_version') | default('15', true) }}"
+
+    # Validate domain variable
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ domain }}"
+
+    # Validate email variable
+    - include_tasks: ../../tasks/validator/email-regex.yaml
+      vars:
+        email_var: "{{ admin_email }}"
+
+    - include_tasks: docker-install.yaml
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        text: |
+          Login Server
+          PG Username: postgres
+          PG Password: {{ database_password }}
+
+          Login PG Admin
+          PG Admin Email: {{ admin_email }}
+          PG Admin Password: {{ app_secret }}
+
+        credentials:
+          username: "postgres"
+          password: "{{ database_password }}"
+          # pgadmin
+          pgadmin_username: "{{ admin_email }}"
+          pgadmin_password: "{{ app_secret }}"

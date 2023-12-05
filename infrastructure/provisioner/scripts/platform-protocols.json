@@ -74,5 +74,9 @@
     "limesurvey": {
         "port": 8080,
         "protocol": "http"
+    },
+    "postgresql": {
+        "port": 8080,
+        "protocol": "http"
     }
 }
