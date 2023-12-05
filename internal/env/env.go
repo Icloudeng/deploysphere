@@ -2,6 +2,7 @@ package env
 
 import (
 	"log"
+	"strings"
 
 	"github.com/caarlos0/env"
 	"github.com/joho/godotenv"
@@ -9,9 +10,10 @@ import (
 
 type config struct {
 	// LDAP Auth
-	LDAP_AUTH          bool   `env:"LDAP_AUTH" envDefault:"false"`
-	LDAP_SERVER_URL    string `env:"LDAP_SERVER_URL"`
-	LDAP_BIND_TEMPLATE string `env:"LDAP_BIND_TEMPLATE"`
+	LDAP_AUTH                 bool   `env:"LDAP_AUTH" envDefault:"false"`
+	LDAP_SERVER_URL           string `env:"LDAP_SERVER_URL"`
+	LDAP_BIND_TEMPLATE        string `env:"LDAP_BIND_TEMPLATE"`
+	LDAP_AUTHORIZED_USERNAMES string `env:"LDAP_AUTHORIZED_USERNAMES"`
 
 	// DB
 	DB_TYPE        string `env:"DB_TYPE"`
@@ -40,6 +42,28 @@ type config struct {
 }
 
 var Config config
+
+func (c config) getLdapAuthorizedUsernames() []string {
+	var usernames []string
+
+	for _, v := range strings.Split(c.LDAP_AUTHORIZED_USERNAMES, " ") {
+		usernames = append(usernames, strings.TrimSpace(v))
+	}
+
+	return usernames
+}
+
+func (c config) ExistsLdapAuthorizedUsername(username string) bool {
+	usernames := c.getLdapAuthorizedUsernames()
+
+	for _, v := range usernames {
+		if v == username {
+			return true
+		}
+	}
+
+	return false
+}
 
 func init() {
 	// Loading the environment variables from '.env' file.

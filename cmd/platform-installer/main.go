@@ -66,7 +66,7 @@ func basicAuth(c *gin.Context) {
 	// Get the Basic Authentication credentials
 	username, password, hasAuth := c.Request.BasicAuth()
 
-	if hasAuth && ldap.LDAPExistBindUser(username, password) {
+	if hasAuth && env.Config.ExistsLdapAuthorizedUsername(username) && ldap.LDAPExistBindUser(username, password) {
 		c.Next()
 	} else {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Authentication required"})
