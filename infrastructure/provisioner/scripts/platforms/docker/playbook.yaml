@@ -14,7 +14,7 @@
     # Install Docker
     - include_tasks: ../../tasks/docker.yaml
 
-    - include_tasks: ../../tasks/reboot.yaml
+    # - include_tasks: ../../tasks/reboot.yaml
 
     - name: Read Docker version
       become: true

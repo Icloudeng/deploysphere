@@ -76,7 +76,7 @@
 
     - include_tasks: initial-account.yaml
 
-    - include_tasks: ../../tasks/reboot.yaml
+    # - include_tasks: ../../tasks/reboot.yaml
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:

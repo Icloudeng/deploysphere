@@ -131,4 +131,4 @@
   retries: 30
   delay: 10
 
-- include_tasks: ../../tasks/reboot.yaml
+# - include_tasks: ../../tasks/reboot.yaml
