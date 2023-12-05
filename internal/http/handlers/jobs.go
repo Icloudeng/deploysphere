@@ -29,7 +29,7 @@ func (jobsHandler) GetJobsByID(c *gin.Context) {
 	job := db.Jobs.JobGetByID(data.ID)
 
 	if job == nil {
-		c.AbortWithStatus(404)
+		c.AbortWithStatusJSON(404, gin.H{"msg": "Job Not Found"})
 		return
 	}
 
