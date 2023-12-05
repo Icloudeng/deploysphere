@@ -72,7 +72,8 @@ func (vmHandler) CreateVm(c *gin.Context) {
 
 	// If Target Node is set to auto,
 	// then selected automatic node based on resourse Availability
-	if json.Vm.TargetNode == "auto" {
+	target_node := json.Vm.TargetNode
+	if target_node == "auto" {
 		nodeStatus, err := proxmox.SelectNodeWithMostResources()
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -93,9 +94,11 @@ func (vmHandler) CreateVm(c *gin.Context) {
 		Method:        c.Request.Method,
 		Task: func(ctx context.Context, job *entities.Job) error {
 			// Reselect Targe node
-			if nodeStatus, err := proxmox.SelectNodeWithMostResources(); nodeStatus != nil && err == nil {
-				json.Vm.TargetNode = nodeStatus.Node
-				db.Jobs.JobUpdatePostBody(job, json)
+			if target_node == "auto" {
+				if nodeStatus, err := proxmox.SelectNodeWithMostResources(); nodeStatus != nil && err == nil {
+					json.Vm.TargetNode = nodeStatus.Node
+					db.Jobs.JobUpdatePostBody(job, json)
+				}
 			}
 
 			// Reset unmutable vm fields
