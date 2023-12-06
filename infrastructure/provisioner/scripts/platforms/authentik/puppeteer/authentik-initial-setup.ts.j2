@@ -25,6 +25,8 @@ const ADMIN_PASSWORD = "{{ app_secret }}";
 
   await page.waitForNetworkIdle();
 
+  await wait(30);
+
   /**
    * ===========================
    * Authentik Initial Setup
@@ -51,7 +53,7 @@ const ADMIN_PASSWORD = "{{ app_secret }}";
 
   await Promise.all([request, page.waitForNetworkIdle()]);
 
-  await wait(10);
+  await wait(30);
 
   await browser.close();
 })();
