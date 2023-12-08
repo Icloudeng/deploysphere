@@ -75,7 +75,7 @@ const baseUrl = "{{ limesurvey_url }}";
     const CSRF_TOKEN_NAME = window.LS.data.csrfTokenName;
     const CSRF_TOKEN_VALUE = window.LS.data.csrfTokenData[CSRF_TOKEN_NAME];
 
-    return async () => {
+    return (async () => {
       /**
        * ================================
        * Active LDAP Plugin
@@ -124,7 +124,7 @@ const baseUrl = "{{ limesurvey_url }}";
           credentials: "same-origin",
         }
       );
-    };
+    })();
   }, pluginId);
 
   await wait(10);
