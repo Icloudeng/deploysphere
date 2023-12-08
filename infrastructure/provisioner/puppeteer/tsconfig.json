@@ -10,10 +10,12 @@
             "esnext",
             "es2015",
         ],
+        "target": "ES6",
         "moduleResolution": "node",
         "allowJs": true,
         "checkJs": true,
         "skipLibCheck": true,
+        "noEmitHelpers": false
     },
     "exclude": [
         "node_modules",
