@@ -1,0 +1,133 @@
+import puppeteer from "puppeteer";
+import { wait } from "./utils";
+
+declare global {
+  interface Window {
+    LS: {
+      data: {
+        csrfTokenData: {
+          [name: string]: string;
+        };
+        csrfTokenName: string;
+      };
+    };
+  }
+}
+
+const baseUrl = "{{ limesurvey_url }}";
+
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+    timeout: 60_000,
+  });
+
+  const page = await browser.newPage();
+
+  // Navigate the page to a URL
+  await page.goto(baseUrl + "/index.php/admin/pluginmanager?sa=index");
+
+  // Set screen size
+  await page.setViewport({ width: 1200, height: 1024 });
+
+  /**
+   * ===========================
+   * LOGIN
+   */
+  const lusername = await page.waitForSelector("#loginform input[name=user]");
+  await lusername.type("{{ admin_username }}");
+
+  const lpassword = await page.waitForSelector(
+    "#loginform input[name=password]"
+  );
+  await lpassword.type("{{ admin_password }}");
+
+  const loginbtn = await page.waitForSelector(
+    "#loginform button[name=login_submit]"
+  );
+  await Promise.all([page.waitForNavigation(), loginbtn.click()]);
+
+  await wait(1);
+
+  /**
+   * ================================
+   * Get plugin id
+   */
+  const pluginsTable = await page.waitForSelector("#plugins-grid table");
+  const pluginId = await pluginsTable.evaluate((element) => {
+    const tbody = element.querySelector("tbody");
+    const children: Element[] = Array.from(tbody.children);
+
+    return children.reduce((acc, el: Element) => {
+      if (el.textContent?.includes("AuthLDAP")) {
+        return el.getAttribute("data-id") || acc;
+      }
+      return acc;
+    }, "5");
+  });
+
+  /**
+   * ================================
+   * Configuration
+   */
+  await page.evaluate((pluginId) => {
+    const CSRF_TOKEN_NAME = window.LS.data.csrfTokenName;
+    const CSRF_TOKEN_VALUE = window.LS.data.csrfTokenData[CSRF_TOKEN_NAME];
+
+    return async () => {
+      /**
+       * ================================
+       * Active LDAP Plugin
+       */
+      const form1 = new FormData();
+      form1.set("pluginId", pluginId);
+      form1.set(CSRF_TOKEN_NAME, CSRF_TOKEN_VALUE);
+      await fetch("/index.php/admin/pluginmanager?sa=activate", {
+        method: "post",
+        body: form1,
+        credentials: "same-origin",
+      });
+
+      /**
+       * ================================
+       * Post LDAP configuration
+       */
+      const form2 = new FormData();
+      form2.set(CSRF_TOKEN_NAME, CSRF_TOKEN_VALUE);
+
+      form2.set("server", "{{ configuration['ldap_server_host'] }}");
+      form2.set("ldapport", "{{ configuration['ldap_server_port'] }}");
+      form2.set("ldapversion", "3");
+      form2.set("ldaptls", "0");
+      form2.set("ldapmode", "simplebind");
+      form2.set("userprefix", "uid=");
+      form2.set("domainsuffix", ",{{ configuration['ldap_search_base'] }}");
+      form2.set("searchuserattribute", "uid");
+      form2.set("usersearchbase", "{{ configuration['ldap_search_base'] }}");
+      form2.set("extrauserfilter", "");
+      form2.set("mailattribute", "mail");
+      form2.set("fullnameattribute", "cn");
+      form2.set("is_default", "");
+      form2.set("autocreate", "1");
+      form2.set("automaticsurveycreation", "1");
+      form2.set("groupsearchbase", "");
+      form2.set("groupsearchfilter", "");
+      form2.set("allowInitialUser", "");
+      form2.set("save", "");
+
+      await fetch(
+        "/index.php/admin/pluginmanager?sa=configure&id=" + pluginId,
+        {
+          method: "post",
+          body: form2,
+          credentials: "same-origin",
+        }
+      );
+    };
+  }, pluginId);
+
+  await wait(10);
+
+  await browser.close();
+})();

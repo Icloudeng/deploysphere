@@ -1,0 +1,18 @@
+- name: Extract Required Variables
+  set_fact:
+    limesurvey_url: "{{ decoded_metadata | json_query('limesurvey_url') }}"
+    admin_username: "{{ decoded_metadata | json_query('limesurvey_admin_username') }}"
+    admin_password: "{{ decoded_metadata | json_query('limesurvey_admin_password') }}"
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+# Validate domain variable
+- include_tasks: "{{ scripts_dir }}/tasks/validator/url-ws-regex.yaml"
+  vars:
+    url_var: "{{ limesurvey_url }}"
+
+- import_tasks: ldap-configuration.yaml
+
+- include_tasks: "{{ scripts_dir }}/tasks/expose-variable.yaml"
+  vars:
+    text: |
+      Configuration Type: Limesurvey LDAP

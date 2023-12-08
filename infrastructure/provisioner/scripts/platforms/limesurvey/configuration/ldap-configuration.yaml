@@ -1,0 +1,23 @@
+# Variable output (puppeteer_folder)
+- include_tasks: "../../tasks/puppeteer-localhost.yaml"
+
+- name: limesurvey-ldap file
+  set_fact:
+    limesurvey_ldap_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-limesurvey-ldap.ts"
+
+- name: "Copy ldap-config.ts template"
+  become: false
+  template:
+    src: "puppeteer/ldap-config.ts.j2"
+    dest: "{{ limesurvey_ldap_file }}"
+    force: yes
+
+- name: "Run limesurvey-ldap.ts"
+  become: false
+  command: "pnpm ts-node {{ limesurvey_ldap_file }}"
+  args:
+    chdir: "{{ puppeteer_folder }}"
+
+- name: "Remove {{ limesurvey_ldap_file }}"
+  become: false
+  command: "rm -rf {{ limesurvey_ldap_file }}"

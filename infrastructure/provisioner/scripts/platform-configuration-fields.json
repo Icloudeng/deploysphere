@@ -245,5 +245,19 @@
                 "authentik_password"
             ]
         }
+    },
+    "limesurvey": {
+        "ldap": {
+            "fields": [
+                "limesurvey_url",
+                "limesurvey_admin_username",
+                "limesurvey_admin_password"
+            ],
+            "configuration": [
+                "ldap_server_host",
+                "ldap_server_port",
+                "ldap_search_base"
+            ]
+        }
     }
 }
