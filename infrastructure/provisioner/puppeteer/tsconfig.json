@@ -10,13 +10,16 @@
             "esnext",
             "es2015",
         ],
-        "target": "ES6",
+        "target": "ES2017",
         "moduleResolution": "node",
         "allowJs": true,
         "checkJs": true,
         "skipLibCheck": true,
         "noEmitHelpers": false
     },
+    "include": [
+        "./src/**/*"
+    ],
     "exclude": [
         "node_modules",
         "**/node_modules/*"
