@@ -9,6 +9,11 @@ build:
 	GOARCH=amd64 GOOS=windows go build -o ./bin/${BINARY_NAME}-windows ${MAIN_PACKAGE_PATH}
 
 
+.PHONY: build-linux
+build-linux:
+	GOARCH=amd64 GOOS=linux go build -o ./bin/${BINARY_NAME}-linux ${MAIN_PACKAGE_PATH}
+
+
 .PHONY: dev
 dev:
 	go run ${MAIN_PACKAGE_PATH}
@@ -67,6 +72,10 @@ lint:
 
 .PHONY: prod-build
 prod-build: build service-restart
+
+
+.PHONY: prod-build-linux
+prod-build-linux: build-linux service-restart
 
 
 .PHONY: queue-status
