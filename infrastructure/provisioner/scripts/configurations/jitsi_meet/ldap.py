@@ -7,12 +7,10 @@ parent_dir = os.getcwd()
 sys.path.append(parent_dir)
 
 from lib.utilities.auto_configuration import (
-    get_resources_state,
+    freeipa_resources_state,
     post_provisioning_configuration,
-    domain_to_ldap_dc,
     get_command_args,
     log,
-    extract_subdomain,
 )
 
 
@@ -21,18 +19,9 @@ def main(args):
     jitsi_reference = args.reference
 
     # FreeIPA
-    freeipa_state = get_resources_state(args.config_reference)["data"]
-    metadata = freeipa_state["Job"]["PostBody"]["platform"]["metadata"]
-    ipa_domain = metadata.get("ipa_domain")
-
-    if not ipa_domain:
-        ipa_domain = extract_subdomain(metadata.get("domain"))
-
-    ipa_domain_dc = domain_to_ldap_dc(ipa_domain)
-    freeipa_credentials = freeipa_state["Credentials"][0]
-    freeipa_ipv4_address = freeipa_state["State"]["proxmox_vm_qemu"]["values"][
-        "default_ipv4_address"
-    ]
+    ipa_domain_dc, freeipa_credentials, freeipa_ipv4_address = freeipa_resources_state(
+        args.config_reference
+    )
 
     body = {
         "ref": jitsi_reference,

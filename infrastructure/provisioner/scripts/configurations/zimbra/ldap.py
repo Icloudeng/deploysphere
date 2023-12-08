@@ -9,10 +9,9 @@ sys.path.append(parent_dir)
 from lib.utilities.auto_configuration import (
     get_resources_state,
     post_provisioning_configuration,
-    domain_to_ldap_dc,
+    freeipa_resources_state,
     get_command_args,
     log,
-    extract_subdomain,
     concatenate_domain,
     remove_first_segment,
 )
@@ -44,18 +43,9 @@ def main(args):
             zimbra_mx_domain = remove_first_segment(zimbra_domain)
 
     # FreeIPA
-    freeipa_state = get_resources_state(args.config_reference)["data"]
-    freeipa_metadata = freeipa_state["Job"]["PostBody"]["platform"]["metadata"]
-    ipa_domain = freeipa_metadata.get("ipa_domain")
-
-    if not ipa_domain:
-        ipa_domain = extract_subdomain(freeipa_metadata.get("domain"))
-
-    ipa_domain_dc = domain_to_ldap_dc(ipa_domain)
-    freeipa_credentials = freeipa_state["Credentials"][0]
-    freeipa_ipv4_address = freeipa_state["State"]["proxmox_vm_qemu"]["values"][
-        "default_ipv4_address"
-    ]
+    ipa_domain_dc, freeipa_credentials, freeipa_ipv4_address = freeipa_resources_state(
+        args.config_reference
+    )
 
     body = {
         "ref": zimbra_reference,
