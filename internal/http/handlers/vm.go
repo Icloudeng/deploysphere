@@ -102,7 +102,7 @@ func (vmHandler) CreateVm(c *gin.Context) {
 			}
 
 			// Reset unmutable vm fields
-			structs.ResetUnmutableProxmoxVmQemu(structs.ResetProxmoxVmQemuFields{
+			structs.ResetUnmutableProxmoxVmQemu(&structs.ResetProxmoxVmQemuFields{
 				Vm:       json.Vm,
 				Platform: *json.Platform,
 				Ref:      json.Ref,

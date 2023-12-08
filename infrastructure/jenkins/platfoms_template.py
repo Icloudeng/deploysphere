@@ -50,7 +50,8 @@ platforms = {
     "grafana": "96",
     "wikijs": "33",
     "apache_nifi": "55",
-    "penpot": "56"
+    "penpot": "56",
+    "limesurvey": "34",
 }
 
 
@@ -74,12 +75,13 @@ platforms_subdomain = {
     "nifi": "etl",
     "prometheus": "monitor",
     "elastic": "indexer",
-    "postgresql": "postgres",
+    "postgresql": "pgdb",
     "mariadb": "mysql",
     "redash": "analytics",
     "grafana": "metrics",
     "apache_nifi": "flow",
     "penpot": "draw",
+    "limesurvey": "survey",
 }
 
 cloud_init_templates = {

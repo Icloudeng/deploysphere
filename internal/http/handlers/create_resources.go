@@ -93,6 +93,8 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 		)
 	}
 
+	json.Vm.Description = fmt.Sprintf("https://%s", domain)
+
 	task := jobs.ResourcesJob{
 		Ref:           json.Ref,
 		PostBody:      json,
@@ -114,7 +116,7 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 			}
 
 			// Reset unmutable vm fields
-			structs.ResetUnmutableProxmoxVmQemu(structs.ResetProxmoxVmQemuFields{
+			structs.ResetUnmutableProxmoxVmQemu(&structs.ResetProxmoxVmQemuFields{
 				Vm:       json.Vm,
 				Platform: *json.Platform,
 				Ref:      json.Ref,
