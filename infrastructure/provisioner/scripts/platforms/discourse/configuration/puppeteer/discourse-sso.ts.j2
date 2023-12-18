@@ -1,0 +1,81 @@
+import puppeteer from "puppeteer";
+import { wait } from "./utils";
+
+const baseUrl = "{{ discourse_url }}";
+const USERNAME = "{{ admin_username }}";
+const PASSWORD = "{{ admin_password }}";
+
+const configuration = {
+  ldap_enabled: "false",
+  openid_connect_enabled: "true",
+  openid_connect_overrides_email: "true",
+  openid_connect_discovery_document:
+    process.env.DISCOURSE_SSO_DISCOVERY_DOCUMENT,
+  openid_connect_client_id: process.env.DISCOURSE_SSO_CLIENT_ID,
+  openid_connect_client_secret: process.env.DISCOURSE_SSO_CLIENT_SECRET,
+  openid_connect_authorize_scope:
+    process.env.DISCOURSE_SSO_AUTHORIZE_SCOPE || "openid email profile",
+};
+
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+    timeout: 60_000,
+  });
+
+  const page = await browser.newPage();
+
+  // Navigate the page to a URL
+  await page.goto(baseUrl + "/");
+
+  // Set screen size
+  await page.setViewport({ width: 1200, height: 1024 });
+
+  /**
+   * ===========================
+   * LOGIN
+   */
+  const loginModalButton = await page.waitForSelector(".login-button");
+  await loginModalButton.click();
+
+  await wait(2);
+
+  const lusername = await page.waitForSelector("#login-account-name");
+  await lusername.type(USERNAME);
+
+  const lpassword = await page.waitForSelector("#login-account-password");
+  await lpassword.type(PASSWORD);
+
+  const loginbtn = await page.waitForSelector("#login-button");
+  await Promise.all([page.waitForNavigation(), loginbtn.click()]);
+
+  // After Login
+  page.evaluate(async (configuration) => {
+    const csrf = document.querySelector<HTMLMetaElement>(
+      "meta[name=csrf-token]"
+    )?.content;
+
+    if (!csrf) {
+      throw new Error("CSRF token not found");
+    }
+
+    for (const key in configuration) {
+      const body = new URLSearchParams();
+      body.set(key, configuration[key]);
+
+      await fetch("/admin/site_settings/" + key, {
+        method: "PUT",
+        credentials: "same-origin",
+        headers: {
+          "X-Csrf-Token": csrf,
+          "X-Requested-With": "XMLHttpRequest",
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        },
+        body: body,
+      }).catch();
+    }
+  }, configuration);
+
+  await browser.close();
+})();

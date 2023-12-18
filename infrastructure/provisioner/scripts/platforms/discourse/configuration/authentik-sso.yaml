@@ -1,0 +1,54 @@
+- name: Extract Required Variables
+  set_fact:
+    discourse_url: "{{ decoded_metadata | json_query('discourse_url') }}"
+    admin_username: "{{ decoded_metadata | json_query('discourse_admin_username') }}"
+    admin_password: "{{ decoded_metadata | json_query('discourse_admin_password') }}"
+    configuration: "{{ decoded_metadata | json_query('configuration') }}"
+
+# Validate domain variable
+- include_tasks: "{{ scripts_dir }}/tasks/validator/url-ws-regex.yaml"
+  vars:
+    url_var: "{{ item }}"
+  loop:
+    - "{{ discourse_url }}"
+    - "{{ configuration['authentik_url'] }}"
+
+# -> vars: authentik_data
+- import_tasks: authentik-sso-configuration.yaml
+  delegate_to: 127.0.0.1
+
+- name: Configure Discourse SSO OIDC
+  become: false
+  block:
+    - include_tasks: "../../tasks/puppeteer-localhost.yaml"
+
+    - name: discourse-client file
+      set_fact:
+        discourse_sso_file: "{{ puppeteer_folder }}/src/{{ random_secret }}-discourse.ts"
+
+    - name: "Copy discourse-sso.ts template"
+      become: false
+      template:
+        src: puppeteer/discourse-sso.ts.j2
+        dest: "{{ discourse_sso_file }}"
+        force: yes
+
+    - name: "Run discourse-sso.ts"
+      become: false
+      command: "pnpm ts-node {{ discourse_sso_file }}"
+      args:
+        chdir: "{{ puppeteer_folder }}"
+      environment:
+        DISCOURSE_SSO_DISCOVERY_DOCUMENT: "{{ authentik_data['provider_info'] }}"
+        DISCOURSE_SSO_CLIENT_ID: "{{ authentik_data['client_id'] }}"
+        DISCOURSE_SSO_CLIENT_SECRET: "{{ authentik_data['client_secret'] }}"
+        DISCOURSE_SSO_AUTHORIZE_SCOPE: "openid email profile"
+
+    - name: "Remove discourse-sso.ts"
+      become: false
+      command: "rm -rf {{ discourse_sso_file }}"
+      args:
+        chdir: "{{ puppeteer_folder }}"
+
+  delegate_to: 127.0.0.1
+  run_once: true

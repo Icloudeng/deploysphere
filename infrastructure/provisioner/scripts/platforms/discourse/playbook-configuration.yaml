@@ -17,3 +17,6 @@
 
     - include_tasks: configuration/smtp.yaml
       when: configuration_type == "smtp"
+
+    - include_tasks: configuration/authentik-sso.yaml
+      when: configuration_type == "authentik_sso"

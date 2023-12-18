@@ -211,6 +211,18 @@
                 "smtp_password",
                 "smtp_email_from"
             ]
+        },
+        "authentik_sso": {
+            "fields": [
+                "discourse_url",
+                "discourse_admin_username",
+                "discourse_admin_password"
+            ],
+            "configuration": [
+                "authentik_url",
+                "authentik_admin",
+                "authentik_password"
+            ]
         }
     },
     "penpot": {
