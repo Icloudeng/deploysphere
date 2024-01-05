@@ -37,6 +37,7 @@
     AUTHENTIK_URL: "{{ configuration['authentik_url'] }}"
     PROVIDER_NAME: "{{ platform_name }}"
     LAUNCH_URL: "{{ discourse_url }}"
+    REDIRECT_URL: ".*"
   register: script_output
 
 - name: Decode base64 authentik-oidc-provider output variable
