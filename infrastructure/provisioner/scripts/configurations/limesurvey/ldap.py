@@ -28,7 +28,7 @@ def main(args):
     limesurvey_credentials = limesurvey_state["Credentials"][0]
 
     # FreeIPA
-    ipa_domain_dc, freeipa_ipv4_address = freeipa_resources_state(args.config_reference)
+    ipa_domain_dc, freeipa_credentials, freeipa_ipv4_address = freeipa_resources_state(args.config_reference)
 
     body = {
         "ref": limesurvey_reference,
