@@ -89,5 +89,8 @@
     ],
     "postgresql": [
         "domain"
+    ],
+    "matomo": [
+        "domain"
     ]
 }

@@ -40,6 +40,7 @@
         "docker": 36,
         "eturnal": 37,
         "penpot": 38,
-        "limesurvey": 39
+        "limesurvey": 39,
+        "matomo": 40
     }
 }

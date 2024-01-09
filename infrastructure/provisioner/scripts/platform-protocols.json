@@ -78,5 +78,9 @@
     "postgresql": {
         "port": 8080,
         "protocol": "http"
+    },
+    "matomo": {
+        "port": 8080,
+        "protocol": "http"
     }
 }
