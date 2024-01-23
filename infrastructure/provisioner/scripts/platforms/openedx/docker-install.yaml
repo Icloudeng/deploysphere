@@ -20,10 +20,6 @@
   become: false
   command: "tutor plugins install indigo"
 
-- name: Tutor plugins install indigo
-  become: false
-  command: "tutor plugins install indigo"
-
 - name: Generate Turso Configuration file
   become: false
   ansible.builtin.shell: |
