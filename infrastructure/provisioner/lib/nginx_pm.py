@@ -1,3 +1,4 @@
+import re
 import json
 import base64
 import argparse
@@ -28,6 +29,18 @@ def clean_domain(url: str):
 def remove_none_values(input_list):
     # Filter out all None values from the input_list
     return [item for item in input_list if item is not None]
+
+
+def filter_domains(domains):
+    # Regular expression pattern for matching valid domain names
+    pattern = r"^(?=.{1,255}$)([A-Za-z0-9](?:(?:[A-Za-z0-9\-]){0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,}$"
+    # Compile the pattern for better performance
+    regex = re.compile(pattern)
+
+    # Use list comprehension to filter the domains
+    matched_domains = [domain for domain in domains if regex.match(domain)]
+
+    return matched_domains
 
 
 def get_api_token():
@@ -80,6 +93,7 @@ def get_decoded_domain(metadata: str):
             )
 
     domains = remove_none_values(domains)
+    domains = filter_domains(domains)
 
     return domains if len(domains) > 0 else None
 
