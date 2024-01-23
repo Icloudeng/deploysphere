@@ -1,0 +1,57 @@
+---
+- name: Open edX
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
+    # Playbook init (with decoded_metadata, project_path, app_secret, admin_email)
+    - include_tasks: ../../tasks/playbook-init.yaml
+
+    - name: Fact | Database Password
+      set_fact:
+        database_password: "{{ app_secret }}"
+
+    - name: Extract Required Variables
+      set_fact:
+        lms_domain: "{{ decoded_metadata | json_query('domain') }}"
+        cms_domain: "{{ decoded_metadata | json_query('studio_domain') }}"
+        apps_domain: "{{ decoded_metadata | json_query('apps_domain') }}"
+
+        site_title: "{{ decoded_metadata | json_query('site_title') }}"
+        contact_email: "{{ decoded_metadata | json_query('contact_email') }}"
+        language_code: "{{ decoded_metadata | json_query('language_code') | default('en', true) }}"
+
+    # Validate domain variable
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        domain_var: "{{ item }}"
+      loop:
+        - "{{ lms_domain }}"
+        - "{{ cms_domain }}"
+        - "{{ apps_domain }}"
+
+    # Validate email variable
+    - include_tasks: ../../tasks/validator/domain-regex.yaml
+      vars:
+        email_var: "{{ item }}"
+      loop:
+        - "{{ admin_email }}"
+        - "{{ contact_email }}"
+
+    # docker install
+    - include_tasks: docker-install.yaml
+
+    - include_tasks: ../../tasks/expose-variable.yaml
+      vars:
+        text: |
+          Login
+          Username: admin
+          Email: {{ admin_email }}
+          Password: {{ app_secret }}
+        credentials:
+          username: "{{ admin_email }}"
+          password: "{{ app_secret }}"

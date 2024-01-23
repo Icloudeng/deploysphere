@@ -82,5 +82,9 @@
     "matomo": {
         "port": 8080,
         "protocol": "http"
+    },
+    "openedx": {
+        "port": 81,
+        "protocol": "http"
     }
 }

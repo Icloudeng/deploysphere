@@ -92,5 +92,12 @@
     ],
     "matomo": [
         "domain"
+    ],
+    "openedx": [
+        "domain",
+        "studio_domain",
+        "apps_domain",
+        "site_title",
+        "contact_email"
     ]
 }

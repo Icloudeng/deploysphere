@@ -1,0 +1,80 @@
+# Install Docker
+- include_tasks: ../../tasks/docker.yaml
+
+- name: Install dependencies
+  ansible.builtin.package:
+    name:
+      - expect
+      - python3-pip
+    state: present
+
+- name: Install the latest stable release of Tutor from pip (Root User)
+  ansible.builtin.pip:
+    name: "tutor[full]"
+
+- name: Tutor plugins update
+  become: false
+  command: "tutor plugins update"
+
+- name: Tutor plugins install indigo
+  become: false
+  command: "tutor plugins install indigo"
+
+- name: Tutor plugins install indigo
+  become: false
+  command: "tutor plugins install indigo"
+
+- name: Generate Turso Configuration file
+  become: false
+  ansible.builtin.shell: |
+    set timeout 300
+
+    spawn tutor config save --set ENABLE_WEB_PROXY=false --set CADDY_HTTP_PORT=81 --interactive
+
+    expect "Are you configuring a production platform?"
+    send "Y\r"
+
+    expect "Your website domain name for students"
+    send "{{ lms_domain }}\r"
+
+    expect "Your website domain name for teachers"
+    send "{{ cms_domain }}\r"
+
+    expect "Your platform name/title"
+    send "{{ site_title }}\r"
+
+    expect "Your public contact email address"
+    send "{{ contact_email }}\r"
+
+    expect "The default language code for the platform"
+    send "{{ language_code }}\r"
+
+    expect "Activate SSL/TLS certificates"
+    send "Y\r"
+
+    expect eof
+
+    exit 0
+  args:
+    executable: /usr/bin/expect
+
+- name: Tutor launch
+  become: false
+  command: "tutor local launch --non-interactive"
+
+- name: Creating a new user with staff and admin rights
+  ignore_errors: true
+  become: false
+  ansible.builtin.shell: |
+    set timeout 300
+
+    spawn tutor local do createuser --staff --superuser admin {{ admin_email }}
+
+    expect "Password:"
+    send "{{ app_secret }}\r"
+
+    expect eof
+
+    exit 0
+  args:
+    executable: /usr/bin/expect
