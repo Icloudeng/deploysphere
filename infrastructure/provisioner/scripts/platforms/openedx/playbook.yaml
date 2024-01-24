@@ -31,7 +31,7 @@
         - "{{ apps_domain }}"
 
     # Validate email variable
-    - include_tasks: ../../tasks/validator/domain-regex.yaml
+    - include_tasks: ../../tasks/validator/email-regex.yaml
       vars:
         email_var: "{{ item }}"
       loop:
