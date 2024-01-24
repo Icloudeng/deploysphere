@@ -12,14 +12,6 @@
   ansible.builtin.pip:
     name: "tutor[full]"
 
-- name: Tutor plugins update
-  become: false
-  command: "tutor plugins update"
-
-- name: Tutor plugins install indigo
-  become: false
-  command: "tutor plugins install indigo"
-
 - name: Generate Turso Configuration file
   become: false
   ansible.builtin.shell: |
@@ -53,6 +45,14 @@
     exit 0
   args:
     executable: /usr/bin/expect
+
+- name: Tutor plugins install indigo
+  become: false
+  command: "tutor plugins install indigo"
+
+- name: Tutor plugins update
+  become: false
+  command: "tutor plugins update"
 
 - name: Tutor launch
   become: false
