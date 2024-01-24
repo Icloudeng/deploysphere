@@ -50,13 +50,19 @@
   become: false
   command: "tutor plugins update"
 
-- name: Tutor plugins install indigo
+- name: Tutor Install plugins
   become: false
-  command: "tutor plugins install indigo"
+  command: "tutor plugins install {{ item }}"
+  loop:
+    - "indigo"
+    - "android"
 
-- name: tutor plugins enable indigo
+- name: tutor enable plugins
   become: false
-  command: "tutor plugins enable indigo"
+  command: "tutor plugins enable {{ item }}"
+  loop:
+    - "indigo"
+    - "android"
 
 - name: Tutor launch
   become: false

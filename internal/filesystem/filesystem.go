@@ -69,7 +69,7 @@ func CreateIfNotExistsWithContent(filePath string, content string) {
 	}
 }
 
-func ExistsProvisionerPlaformReadDir(platform string) bool {
+func ExistsProvisionerPlatformReadDir(platform string) bool {
 	entries, err := os.ReadDir(path.Join(ProvisionerDir, "scripts/platforms"))
 	if err != nil {
 		log.Panicln("failed reading directory:", err)

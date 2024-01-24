@@ -27,9 +27,9 @@ func (proxyHostHandler) CreateProxyHost(c *gin.Context) {
 		return
 	}
 
-	// Check if plaform exists
-	if !filesystem.ExistsProvisionerPlaformReadDir(json.Platform) {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Cannot found the correspoding platform"})
+	// Check if platform exists
+	if !filesystem.ExistsProvisionerPlatformReadDir(json.Platform) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Cannot found the corresponding platform"})
 		return
 	}
 

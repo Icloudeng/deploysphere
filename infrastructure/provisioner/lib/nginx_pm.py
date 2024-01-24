@@ -106,7 +106,7 @@ def delete_proxy_hosts(pHost: Any, url: str):
         )
 
 
-def find_existing_proxy_host(domains: list[str], url: str):
+def find_existing_proxy_host(domains: List[str], url: str):
     fDomain = domains[0]
 
     res = requests.get(f"{url}/api/nginx/proxy-hosts?query={fDomain}", headers=headers)
@@ -140,7 +140,7 @@ def find_existing_proxy_host(domains: list[str], url: str):
     return None
 
 
-def find_existing_certificate(domains: list[str], url: str):
+def find_existing_certificate(domains: List[str], url: str):
     fDomain = domains[0]
 
     res = requests.get(f"{url}/api/nginx/certificates?query={fDomain}", headers=headers)

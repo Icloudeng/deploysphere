@@ -15,7 +15,7 @@ import (
 func ValidatePlatformMetadata(c *gin.Context, platform structs.Platform) bool {
 	if len(platform.Name) > 0 {
 		// Check if plaform has provisionner script
-		if !filesystem.ExistsProvisionerPlaformReadDir(platform.Name) {
+		if !filesystem.ExistsProvisionerPlatformReadDir(platform.Name) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Cannot found the correspoding platform"})
 			return false
 		}
@@ -46,7 +46,7 @@ func ValidatePlatformMetadata(c *gin.Context, platform structs.Platform) bool {
 func ValidateConfigurationMetadata(c *gin.Context, platform structs.Platform) bool {
 	if len(platform.Name) > 0 {
 		// Check if plaform has provisionner script
-		if !filesystem.ExistsProvisionerPlaformReadDir(platform.Name) {
+		if !filesystem.ExistsProvisionerPlatformReadDir(platform.Name) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Cannot found the correspoding platform"})
 			return false
 		}
