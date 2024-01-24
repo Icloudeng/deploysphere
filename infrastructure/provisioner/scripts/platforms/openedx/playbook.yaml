@@ -49,7 +49,7 @@
       vars:
         text: |
           Login
-          Username: admin
+          Username: {{ email_username }}
           Email: {{ admin_email }}
           Password: {{ app_secret }}
         credentials:

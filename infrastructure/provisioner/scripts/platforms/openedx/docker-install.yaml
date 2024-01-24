@@ -69,18 +69,5 @@
   command: "tutor local launch --non-interactive"
 
 - name: Creating a new user with staff and admin rights
-  ignore_errors: true
   become: false
-  ansible.builtin.shell: |
-    set timeout 300
-
-    spawn tutor local do createuser --staff --superuser {{ email_username }} {{ admin_email }}
-
-    expect "Password"
-    send "{{ app_secret }}\r"
-
-    expect eof
-
-    exit 0
-  args:
-    executable: /usr/bin/expect
+  command: "tutor local do createuser --staff --superuser {{ email_username }} {{ admin_email }} -p {{ app_secret }}"
