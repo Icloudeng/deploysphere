@@ -75,10 +75,10 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 		}
 	}**/
 
-	/**
+	/*
 	 * If Target Node is set to auto,
 	 * then selected automatic node based on resource Availability
-	**/
+	 */
 	target_node := json.Vm.TargetNode
 	if target_node == "auto" {
 		nodeStatus, err := proxmox.SelectNodeWithMostResources()
@@ -169,8 +169,8 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 				}
 			}
 
-			// Reset unmutable vm fields
-			structs.ResetUnmutableProxmoxVmQemu(&structs.ResetProxmoxVmQemuFields{
+			// Reset Immutable vm fields
+			structs.ResetImmutableProxmoxVmQemu(&structs.ResetProxmoxVmQemuFields{
 				Vm:       json.Vm,
 				Platform: *json.Platform,
 				Ref:      json.Ref,

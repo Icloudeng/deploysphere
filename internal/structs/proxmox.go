@@ -119,7 +119,7 @@ func NewProxmoxVmQemu(ref string) *ProxmoxVmQemu {
 		Tag:    -1,
 	})
 
-	ResetUnmutableProxmoxVmQemu(&ResetProxmoxVmQemuFields{
+	ResetImmutableProxmoxVmQemu(&ResetProxmoxVmQemuFields{
 		Vm:       &vm,
 		Platform: Platform{},
 		Ref:      ref,
@@ -173,7 +173,7 @@ func newProxmoxProvisioner(platform Platform, ref string, jobid uint) [1]interfa
 	return [1]interface{}{local_exec}
 }
 
-func ResetUnmutableProxmoxVmQemu(data *ResetProxmoxVmQemuFields) {
+func ResetImmutableProxmoxVmQemu(data *ResetProxmoxVmQemuFields) {
 	data.Vm.Lifecycle = nil
 	data.Vm.Lifecycle = append(data.Vm.Lifecycle, newProxmoxResourceLifecycle())
 
