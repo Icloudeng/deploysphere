@@ -13,9 +13,10 @@ import (
 // Store resources and apply
 type (
 	templateBody struct {
-		Domain   *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
-		Vm       *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
-		Platform *structs.Platform         `json:"platform" binding:"required,json"`
+		Domain     *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
+		Subdomains []string                  `json:"subdomains" binding:"dive,alpha"`
+		Vm         *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
+		Platform   *structs.Platform         `json:"platform" binding:"required,json"`
 	}
 
 	templateURI struct {
@@ -52,6 +53,7 @@ func (templateHandler) CreateResourcesTemplate(c *gin.Context) {
 
 	entity := &entities.ResourcesTemplate{
 		PlatformName: body.Platform.Name,
+		Subdomains:   datatypes.NewJSONType(body.Subdomains),
 		Domain:       datatypes.NewJSONType(body.Domain),
 		Vm:           datatypes.NewJSONType(body.Vm),
 		Platform:     datatypes.NewJSONType(body.Platform),

@@ -50,6 +50,7 @@ func (resourcesHandler) CreateResourcesFromTemplate(ctx *gin.Context) {
 	body := resourcesBody{
 		Client:      client,
 		Environment: tmpBody.Environment,
+		Subdomains:  template.Subdomains.Data(),
 		Domain:      template.Domain.Data(),
 		Vm:          template.Vm.Data(),
 		Platform:    template.Platform.Data(),

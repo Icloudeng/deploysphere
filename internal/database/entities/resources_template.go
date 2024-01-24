@@ -11,6 +11,7 @@ import (
 type ResourcesTemplate struct {
 	gorm.Model
 	PlatformName string `gorm:"index,unique"`
+	Subdomains   datatypes.JSONType[[]string]
 	Domain       datatypes.JSONType[*structs.DomainZoneRecord]
 	Vm           datatypes.JSONType[*structs.ProxmoxVmQemu]
 	Platform     datatypes.JSONType[*structs.Platform]
