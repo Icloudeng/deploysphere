@@ -34,62 +34,8 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 	_, domain_exists := metadata["domain"]
 	if !domain_exists {
 		json.Platform.Metadata["domain"] = domainStr
-	}
-
-	// Check if platform the password correspond to an existing platform folder
-	if !validators.ValidatePlatformMetadata(ctx, *json.Platform) {
-		return nil
-	}
-
-	// Skip apply when both resources exist
-	var shouldSkipApply = false
-	eVm := terraform.Resources.GetProxmoxVmQemuResource(json.Ref)
-	eDomain := terraform.Resources.GetOvhDomainZoneResource(json.Ref)
-
-	if eVm != nil && eDomain != nil {
-		shouldSkipApply = true
-	}
-
-	// Failure when resources exists on POST request
-	if ctx.Request.Method == "POST" {
-		if eVm != nil || eDomain != nil {
-			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error": ResourceExistsError,
-				"resource": map[string]interface{}{
-					"vm":     eVm,
-					"domain": eDomain,
-				},
-			})
-
-			return nil
-		}
-	}
-
-	/** Check if VM Id doesn't exist
-	if json.Vm.Vmid != 0 {
-		if exists := proxmox.VmQemuIDExists(json.Vm.Vmid); exists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error": "VM ID already exists !",
-			})
-			return nil
-		}
-	}**/
-
-	/*
-	 * If Target Node is set to auto,
-	 * then selected automatic node based on resource Availability
-	 */
-	target_node := json.Vm.TargetNode
-	if target_node == "auto" {
-		nodeStatus, err := proxmox.SelectNodeWithMostResources()
-		if err != nil || nodeStatus == nil {
-			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error": "No enough proxmox resources",
-			})
-			return nil
-		}
-
-		json.Vm.TargetNode = nodeStatus.Node
+	} else {
+		domainStr = metadata["domain"].(string)
 	}
 
 	/** Domain resource **/
@@ -144,6 +90,66 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 				record.Zone,
 			)
 		}
+	}
+
+	/*
+	 * Check if platform the password correspond to an existing platform folder
+	 */
+	if !validators.ValidatePlatformMetadata(ctx, *json.Platform) {
+		return nil
+	}
+
+	// Skip apply when both resources exist
+	var shouldSkipApply = false
+	eVm := terraform.Resources.GetProxmoxVmQemuResource(json.Ref)
+	eDomain := terraform.Resources.GetOvhDomainZoneResource(json.Ref)
+
+	if eVm != nil && eDomain != nil {
+		shouldSkipApply = true
+	}
+
+	// Failure when resources exists on POST request
+	if ctx.Request.Method == "POST" {
+		if eVm != nil || eDomain != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": ResourceExistsError,
+				"resource": map[string]interface{}{
+					"vm":     eVm,
+					"domain": eDomain,
+				},
+			})
+
+			return nil
+		}
+	}
+
+	/** Check if VM Id doesn't exist
+	if json.Vm.Vmid != 0 {
+		if exists := proxmox.VmQemuIDExists(json.Vm.Vmid); exists {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": "VM ID already exists !",
+			})
+			return nil
+		}
+	}
+	**/
+
+	/*
+	 * If Target Node is set to auto,
+	 * then selected automatic node based on resource Availability
+	 */
+	target_node := json.Vm.TargetNode
+	if target_node == "auto" {
+		nodeStatus, err := proxmox.SelectNodeWithMostResources()
+		if err != nil || nodeStatus == nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error":   "No enough proxmox resources",
+				"message": err.Error(),
+			})
+			return nil
+		}
+
+		json.Vm.TargetNode = nodeStatus.Node
 	}
 
 	json.Vm.Description = fmt.Sprintf("https://%s", domainStr)

@@ -20,7 +20,7 @@ type (
 	resourcesBody struct {
 		Ref           string                    `json:"ref" binding:"required,resourceref"`
 		Domain        *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
-		Subdomains    []string                  `json:"subdomains" binding:"drive,alpha"`
+		Subdomains    []string                  `json:"subdomains" binding:"dive,alpha"`
 		Vm            *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
 		Platform      *structs.Platform         `json:"platform" binding:"omitempty,json"`
 		Client        *clientBody               `json:"client" binding:"omitempty,json"`
@@ -139,5 +139,5 @@ func (resourcesHandler) GetResourcesByReference(c *gin.Context) {
 }
 
 func (resourcesHandler) GetPlatforms(c *gin.Context) {
-	c.JSON(http.StatusOK, filesystem.ReadProvisionerPlaforms())
+	c.JSON(http.StatusOK, filesystem.ReadProvisionerPlatforms())
 }

@@ -97,7 +97,7 @@ func ReadConfigurationMetadataFields() []byte {
 	return ReadFile(path.Join(ProvisionerDir, "scripts/platform-configuration-fields.json"))
 }
 
-func ReadProvisionerPlaforms() []string {
+func ReadProvisionerPlatforms() []string {
 	entries, err := os.ReadDir(path.Join(ProvisionerDir, "scripts/platforms"))
 	if err != nil {
 		log.Panicf("failed reading directory: %s", err)

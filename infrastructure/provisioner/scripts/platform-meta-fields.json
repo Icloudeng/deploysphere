@@ -95,8 +95,8 @@
     ],
     "openedx": [
         "domain",
-        "studio_domain",
-        "apps_domain",
+        "studio_subdomain",
+        "apps_subdomain",
         "site_title",
         "contact_email"
     ]
