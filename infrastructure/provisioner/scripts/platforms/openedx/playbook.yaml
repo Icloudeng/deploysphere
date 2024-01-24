@@ -38,6 +38,10 @@
         - "{{ admin_email }}"
         - "{{ contact_email }}"
 
+    - name: Split the email address and get the username
+      set_fact:
+        email_username: "{{ admin_email | split('@') | first }}"
+
     # docker install
     - include_tasks: docker-install.yaml
 

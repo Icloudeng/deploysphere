@@ -74,9 +74,9 @@
   ansible.builtin.shell: |
     set timeout 300
 
-    spawn tutor local do createuser --staff --superuser admin {{ admin_email }}
+    spawn tutor local do createuser --staff --superuser {{ email_username }} {{ admin_email }}
 
-    expect "Password:"
+    expect "Password"
     send "{{ app_secret }}\r"
 
     expect eof
