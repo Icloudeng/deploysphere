@@ -11,10 +11,6 @@
     # Playbook init (with decoded_metadata, project_path, app_secret, admin_email)
     - include_tasks: ../../tasks/playbook-init.yaml
 
-    - name: Fact | Database Password
-      set_fact:
-        database_password: "{{ app_secret }}"
-
     - name: Extract Required Variables
       set_fact:
         lms_domain: "{{ decoded_metadata | json_query('domain') }}"
