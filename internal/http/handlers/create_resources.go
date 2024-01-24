@@ -12,7 +12,6 @@ import (
 	"github.com/icloudeng/platform-installer/internal/resources/jobs"
 	"github.com/icloudeng/platform-installer/internal/resources/proxmox"
 	"github.com/icloudeng/platform-installer/internal/resources/terraform"
-	"github.com/icloudeng/platform-installer/internal/resources/utilities"
 	util "github.com/icloudeng/platform-installer/internal/resources/utilities"
 	"github.com/icloudeng/platform-installer/internal/structs"
 )
@@ -111,7 +110,7 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 	}
 
 	if json.Platform != nil && mxDomain != nil {
-		json.Platform.Metadata["mx_domain"] = utilities.Helpers.ConcatenateSubdomain(
+		json.Platform.Metadata["mx_domain"] = util.Helpers.ConcatenateSubdomain(
 			mxDomain.Subdomain,
 			mxDomain.Zone,
 		)
