@@ -93,7 +93,7 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 	}
 
 	/*
-	 * Check if platform the password correspond to an existing platform folder
+	 * Validate platform metadata
 	 */
 	if !validators.ValidatePlatformMetadata(ctx, *json.Platform) {
 		return nil
