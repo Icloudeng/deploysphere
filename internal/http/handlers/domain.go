@@ -95,7 +95,7 @@ func (domainHandler) DeleteDomain(c *gin.Context) {
 		ResourceState: false, // Disable on resource deletion
 		Task: func(ctx context.Context, job *entities.Job) error {
 			// Remove resources
-			terraform.Resources.DeleteOvhDomainZoneResource(data.Ref)
+			deleteResourcesDomain(data.Ref)
 
 			// Terraform Apply changes
 			err := terraform.Exec.Apply(true)

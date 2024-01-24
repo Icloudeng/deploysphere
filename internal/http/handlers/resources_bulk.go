@@ -37,8 +37,7 @@ func (resourcesHandler) DeleteResourcesBulk(c *gin.Context) {
 		Task: func(ctx context.Context, job *entities.Job) error {
 			for _, ref := range reqBody.Refs {
 				// Remove resources
-				terraform.Resources.DeleteOvhDomainZoneResource(ref)
-				terraform.Resources.DeleteOvhDomainZoneResource(fmt.Sprintf("mx-%s", ref))
+				deleteResourcesDomain(ref)
 				terraform.Resources.DeleteProxmoxVmQemuResource(ref)
 			}
 

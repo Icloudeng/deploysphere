@@ -80,8 +80,7 @@ func (resourcesHandler) DeleteResources(c *gin.Context) {
 		Method:        c.Request.Method,
 		Task: func(ctx context.Context, job *entities.Job) error {
 			// Remove resources
-			terraform.Resources.DeleteOvhDomainZoneResource(uri.Ref)
-			terraform.Resources.DeleteOvhDomainZoneResource(fmt.Sprintf("mx-%s", uri.Ref))
+			deleteResourcesDomain(uri.Ref)
 			terraform.Resources.DeleteProxmoxVmQemuResource(uri.Ref)
 
 			// Terraform Apply changes

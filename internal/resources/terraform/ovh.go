@@ -2,6 +2,8 @@ package terraform
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/icloudeng/platform-installer/internal/resources/terraform/ovh"
 	"github.com/icloudeng/platform-installer/internal/resources/utilities"
@@ -29,22 +31,36 @@ func (resources) WriteOvhDomainZoneResource(ref string, domain *structs.DomainZo
 func (resources) DeleteOvhDomainZoneResource(ref string) {
 	ovh_resource := ovh.NewResourceJSONData()
 	// Add domain to the resource
-	ovh_resource.GetResource().DeleteDomainZoneRerord(ref)
+	ovh_resource.GetResource().DeleteDomainZoneRecord(ref)
 	// Write resource data
 	ovh_resource.WriteResources()
 }
 
 func (r resources) GetOvhDomainZoneFromUrl(fqdn string) (string, *structs.DomainZoneRecord, error) {
-	subdomain, rootdomain := utilities.Helpers.ExtractSubdomainAndRootDomain(fqdn)
-	resouces := r.GetOvhResource().GetOVHDomainZoneRecord()
+	subdomain, rootDomain := utilities.Helpers.ExtractSubdomainAndRootDomain(fqdn)
+	resources := r.GetOvhResource().GetOVHDomainZoneRecord()
 
-	for ref, value := range resouces {
-		if value.Subdomain == subdomain && value.Zone == rootdomain {
+	for ref, value := range resources {
+		if value.Subdomain == subdomain && value.Zone == rootDomain {
 			return ref, value, nil
 		}
 	}
 
 	return "", nil, errors.New("unable to find the resource associated with this URL")
+}
+
+func (r resources) GetOvhDomainZoneRefsLinkedSubdomains(ref string) []string {
+	var refs []string
+	resources := r.GetOvhResource().GetOVHDomainZoneRecord()
+
+	for resourceRef := range resources {
+		suffix := fmt.Sprintf("-subdomain-%s", ref)
+		if strings.HasSuffix(resourceRef, suffix) {
+			refs = append(refs, resourceRef)
+		}
+	}
+
+	return refs
 }
 
 func init() {

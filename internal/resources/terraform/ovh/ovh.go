@@ -97,7 +97,7 @@ func (r *Resource) AddDomainZoneRerord(ref string, domain *structs.DomainZoneRec
 	ovh_dzr[ref] = domain
 }
 
-func (r *Resource) DeleteDomainZoneRerord(ref string) {
+func (r *Resource) DeleteDomainZoneRecord(ref string) {
 	ozr := r.GetOVHDomainZoneRecord()
 	delete(ozr, ref)
 
