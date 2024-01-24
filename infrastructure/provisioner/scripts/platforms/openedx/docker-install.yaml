@@ -50,6 +50,10 @@
   become: false
   command: "tutor plugins install indigo"
 
+- name: tutor plugins enable indigo
+  become: false
+  command: "tutor plugins enable indigo"
+
 - name: Tutor plugins update
   become: false
   command: "tutor plugins update"
