@@ -13,42 +13,52 @@ import (
 	"github.com/icloudeng/platform-installer/internal/resources/proxmox"
 	"github.com/icloudeng/platform-installer/internal/resources/terraform"
 	"github.com/icloudeng/platform-installer/internal/resources/utilities"
+	util "github.com/icloudeng/platform-installer/internal/resources/utilities"
 	"github.com/icloudeng/platform-installer/internal/structs"
 )
 
+type domainStruct struct {
+	ref    string
+	record *structs.DomainZoneRecord
+}
+
+type domains []domainStruct
+
 func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
+	domains := make(domains, 0)
+
 	// If domain key doesn't exist in metadata platform
 	// then auto fill with the passed domain resource
 	metadata := json.Platform.Metadata
-	domain := fmt.Sprintf("%s.%s", json.Domain.Subdomain, json.Domain.Zone)
+	domainStr := fmt.Sprintf("%s.%s", json.Domain.Subdomain, json.Domain.Zone)
 
 	_, domain_exists := metadata["domain"]
 	if !domain_exists {
-		json.Platform.Metadata["domain"] = domain
+		json.Platform.Metadata["domain"] = domainStr
 	}
 
-	// Chech if platform the password corresponse to an existing platform folder
+	// Check if platform the password correspond to an existing platform folder
 	if !validators.ValidatePlatformMetadata(ctx, *json.Platform) {
 		return nil
 	}
 
 	// Skip apply when both resources exist
-	var should_skip_apply = false
-	_vm := terraform.Resources.GetProxmoxVmQemuResource(json.Ref)
-	_domain := terraform.Resources.GetOvhDomainZoneResource(json.Ref)
+	var shouldSkipApply = false
+	eVm := terraform.Resources.GetProxmoxVmQemuResource(json.Ref)
+	eDomain := terraform.Resources.GetOvhDomainZoneResource(json.Ref)
 
-	if _vm != nil && _domain != nil {
-		should_skip_apply = true
+	if eVm != nil && eDomain != nil {
+		shouldSkipApply = true
 	}
 
 	// Failure when resources exists on POST request
 	if ctx.Request.Method == "POST" {
-		if _vm != nil || _domain != nil {
+		if eVm != nil || eDomain != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": ResourceExistsError,
 				"resource": map[string]interface{}{
-					"vm":     _vm,
-					"domain": _domain,
+					"vm":     eVm,
+					"domain": eDomain,
 				},
 			})
 
@@ -56,18 +66,20 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 		}
 	}
 
-	// Check if VM Id doesn't exist
-	// if json.Vm.Vmid != 0 {
-	// 	if exists := proxmox.VmQemuIDExists(json.Vm.Vmid); exists {
-	// 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-	// 			"error": "VM ID already exists !",
-	// 		})
-	// 		return nil
-	// 	}
-	// }
+	/** Check if VM Id doesn't exist
+	if json.Vm.Vmid != 0 {
+		if exists := proxmox.VmQemuIDExists(json.Vm.Vmid); exists {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": "VM ID already exists !",
+			})
+			return nil
+		}
+	}**/
 
-	// If Target Node is set to auto,
-	// then selected automatic node based on resourse Availability
+	/**
+	 * If Target Node is set to auto,
+	 * then selected automatic node based on resource Availability
+	**/
 	target_node := json.Vm.TargetNode
 	if target_node == "auto" {
 		nodeStatus, err := proxmox.SelectNodeWithMostResources()
@@ -81,9 +93,21 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 		json.Vm.TargetNode = nodeStatus.Node
 	}
 
-	mxDomain := autoComposeMxDomain(domain, json)
+	/** Domain resource **/
+	domains = append(domains, domainStruct{
+		ref:    json.Ref,
+		record: json.Domain,
+	})
+
+	/** Mx Domain resource **/
+	mxDomain := autoComposeMxDomain(domainStr, json)
 	if mxDomain != nil {
 		json.MxDomainValue = mxDomain
+
+		domains = append(domains, domainStruct{
+			ref:    fmt.Sprintf("mx-%s", json.Ref),
+			record: mxDomain,
+		})
 	}
 
 	if json.Platform != nil && mxDomain != nil {
@@ -93,8 +117,39 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 		)
 	}
 
-	json.Vm.Description = fmt.Sprintf("https://%s", domain)
+	/** Subdomains resources **/
+	if json.Subdomains == nil {
+		json.Subdomains = make([]string, 0)
+	}
 
+	subdomains := util.Helpers.RemoveDuplicates(json.Subdomains)
+	for _, subdomain := range subdomains {
+		record := &structs.DomainZoneRecord{
+			Zone:      json.Domain.Zone,
+			Subdomain: fmt.Sprintf("%s.%s", subdomain, json.Domain.Subdomain),
+			Fieldtype: json.Domain.Fieldtype,
+			Ttl:       json.Domain.Ttl,
+			Target:    json.Domain.Target,
+		}
+
+		domains = append(domains, domainStruct{
+			ref:    fmt.Sprintf("%s-subdomain-%s", subdomain, json.Ref),
+			record: record,
+		})
+
+		// Add subdomain to platform metadata
+		if json.Platform != nil {
+			metadataKey := fmt.Sprintf("%s_subdomain", subdomain)
+			json.Platform.Metadata[metadataKey] = util.Helpers.ConcatenateSubdomain(
+				record.Subdomain,
+				record.Zone,
+			)
+		}
+	}
+
+	json.Vm.Description = fmt.Sprintf("https://%s", domainStr)
+
+	/** Create job task **/
 	task := jobs.ResourcesJob{
 		Ref:           json.Ref,
 		PostBody:      json,
@@ -103,7 +158,7 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 		Handler:       ctx.Request.URL.String(),
 		Method:        ctx.Request.Method,
 		Task: func(ctx context.Context, job *entities.Job) error {
-			if should_skip_apply {
+			if shouldSkipApply {
 				return nil
 			}
 
@@ -122,15 +177,13 @@ func createResourceJob(ctx *gin.Context, json *resourcesBody) *entities.Job {
 				Ref:      json.Ref,
 				JobID:    job.ID,
 			})
-			// Create or update resources
-			terraform.Resources.WriteOvhDomainZoneResource(json.Ref, json.Domain)
-			// MX Domain
-			if mxDomain != nil {
-				terraform.Resources.WriteOvhDomainZoneResource(
-					fmt.Sprintf("mx-%s", json.Ref),
-					mxDomain,
-				)
+
+			/** Domain resources **/
+			for _, v := range domains {
+				terraform.Resources.WriteOvhDomainZoneResource(v.ref, v.record)
 			}
+
+			/** Proxmox resources **/
 			terraform.Resources.WriteProxmoxVmQemuResource(json.Ref, json.Vm)
 
 			// Terraform Apply changes
@@ -146,16 +199,16 @@ func autoComposeMxDomain(resourceDomain string, json *resourcesBody) *structs.Do
 	if json.MxDomain != nil && len(*json.MxDomain) > 1 {
 		mx_value := *json.MxDomain
 		if mx_value == "auto" || mx_value == resourceDomain {
-			subdomain, rootDomain := utilities.Helpers.ExtractSubdomainAndRootDomain(resourceDomain)
+			subdomain, rootDomain := util.Helpers.ExtractSubdomainAndRootDomain(resourceDomain)
 			return &structs.DomainZoneRecord{
 				Zone:      rootDomain,
-				Subdomain: utilities.RemoveFirstSegment(subdomain),
+				Subdomain: util.Helpers.RemoveFirstSegment(subdomain),
 				Fieldtype: "MX",
 				Ttl:       3600,
 				Target:    fmt.Sprintf("1 %s.", resourceDomain),
 			}
 		} else {
-			subdomain, rootDomain := utilities.Helpers.ExtractSubdomainAndRootDomain(mx_value)
+			subdomain, rootDomain := util.Helpers.ExtractSubdomainAndRootDomain(mx_value)
 			return &structs.DomainZoneRecord{
 				Zone:      rootDomain,
 				Subdomain: subdomain,

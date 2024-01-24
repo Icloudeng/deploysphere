@@ -20,6 +20,7 @@ type (
 	resourcesBody struct {
 		Ref           string                    `json:"ref" binding:"required,resourceref"`
 		Domain        *structs.DomainZoneRecord `json:"domain" binding:"required,json"`
+		Subdomains    []string                  `json:"subdomains" binding:"drive,alpha"`
 		Vm            *structs.ProxmoxVmQemu    `json:"vm" binding:"required,json"`
 		Platform      *structs.Platform         `json:"platform" binding:"omitempty,json"`
 		Client        *clientBody               `json:"client" binding:"omitempty,json"`

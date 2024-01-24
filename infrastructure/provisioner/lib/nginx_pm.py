@@ -87,7 +87,8 @@ def get_decoded_domain(metadata: str):
     domains = [clean_domain(domain_main) if domain_main else None]
 
     for key in data.keys():
-        if key.endswith("_domain") and data.get(key):
+        SUBDOMAIN_FILTER = "_subdomain"
+        if key.endswith(SUBDOMAIN_FILTER) and data.get(key):
             domains.append(
                 clean_domain(data.get(key)),
             )
@@ -107,18 +108,23 @@ def delete_proxy_hosts(pHost: Any, url: str):
 
 def find_existing_proxy_host(domains: list[str], url: str):
     fDomain = domains[0]
+
     res = requests.get(f"{url}/api/nginx/proxy-hosts?query={fDomain}", headers=headers)
     if res.status_code != 200:
         return None
     # Check for the API Schema
     # (https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/backend/schema/endpoints/proxy-hosts.json)
 
-    data: List[Any] = res.json()
+    hosts: List[Any] = res.json()
 
-    for pHost in data:
+    for host in hosts:
         validHost = True
 
-        domain_names: List[str] = pHost.get("domain_names")
+        domain_names: List[str] = host.get("domain_names")
+
+        if len(domain_names) != len(domains):
+            validHost = False
+            continue
 
         for domain in domains:
             try:
@@ -129,25 +135,26 @@ def find_existing_proxy_host(domains: list[str], url: str):
                 continue
 
         if validHost:
-            return pHost
+            return host
 
     return None
 
 
 def find_existing_certificate(domains: list[str], url: str):
     fDomain = domains[0]
+
     res = requests.get(f"{url}/api/nginx/certificates?query={fDomain}", headers=headers)
     if res.status_code != 200:
         return None
     # Check for the API Schema
     # (https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/backend/schema/endpoints/certificates.json)
 
-    data: List[Any] = res.json()
+    certificates: List[Any] = res.json()
 
-    for pCert in data:
+    for certificate in certificates:
         validCert = True
 
-        domain_names: List[str] = pCert.get("domain_names")
+        domain_names: List[str] = certificate.get("domain_names")
 
         for domain in domains:
             try:
@@ -158,7 +165,7 @@ def find_existing_certificate(domains: list[str], url: str):
                 continue
 
         if validCert:
-            return pCert
+            return certificate
 
     return None
 

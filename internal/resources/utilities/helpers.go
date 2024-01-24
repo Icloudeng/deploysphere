@@ -125,10 +125,31 @@ func (helpers) ExtractCommandKeyValuePairs(command string) map[string]string {
 	return keyValueMap
 }
 
-func RemoveFirstSegment(domain string) string {
+func (helpers) RemoveFirstSegment(domain string) string {
 	parts := strings.Split(domain, ".")
 	if len(parts) > 1 {
 		return strings.Join(parts[1:], ".")
 	}
 	return ""
+}
+
+// removeDuplicates removes all duplicate strings from a given slice.
+func (helpers) RemoveDuplicates(strings []string) []string {
+	// Create a map to store unique strings.
+	unique := make(map[string]bool)
+	// Create a slice to hold the result.
+	var result []string
+
+	// Iterate over the input slice.
+	for _, str := range strings {
+		// Check if the string is already in the map.
+		if _, exists := unique[str]; !exists {
+			// If not, add it to the map and the result slice.
+			unique[str] = true
+			result = append(result, str)
+		}
+	}
+
+	// Return the result slice with no duplicates.
+	return result
 }

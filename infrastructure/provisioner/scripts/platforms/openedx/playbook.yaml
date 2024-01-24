@@ -18,8 +18,8 @@
     - name: Extract Required Variables
       set_fact:
         lms_domain: "{{ decoded_metadata | json_query('domain') }}"
-        cms_domain: "{{ decoded_metadata | json_query('studio_domain') }}"
-        apps_domain: "{{ decoded_metadata | json_query('apps_domain') }}"
+        cms_domain: "{{ decoded_metadata | json_query('studio_subdomain') }}"
+        apps_domain: "{{ decoded_metadata | json_query('apps_subdomain') }}"
 
         site_title: "{{ decoded_metadata | json_query('site_title') }}"
         contact_email: "{{ decoded_metadata | json_query('contact_email') }}"
