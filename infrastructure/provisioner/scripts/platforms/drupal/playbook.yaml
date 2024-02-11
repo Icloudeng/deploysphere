@@ -3,6 +3,14 @@
   hosts: all
   become: true
   gather_facts: true
+  vars:
+    drupal_install_site: true
+    drupal_build_composer_project: true
+    drupal_composer_install_dir: "/var/www/drupal"
+    drupal_core_path: "{{ drupal_composer_install_dir }}/web"
+    drupal_domain: "{{ domain }}"
+    drupal_account_name: admin
+    drupal_account_pass: "{{ app_secret }}"
 
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
@@ -19,15 +27,6 @@
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
         domain_var: "{{ domain }}"
-
-    - set_fact:
-        drupal_install_site: true
-        drupal_build_composer_project: true
-        drupal_composer_install_dir: "/var/www/drupal"
-        drupal_core_path: "{{ drupal_composer_install_dir }}/web"
-        drupal_domain: "{{ domain }}"
-        drupal_account_name: admin
-        drupal_account_pass: "{{ app_secret }}"
 
     - name: Deploy Dupral and dependencies
       include_role:
