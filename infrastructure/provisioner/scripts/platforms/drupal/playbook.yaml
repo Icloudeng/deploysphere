@@ -20,21 +20,7 @@
       vars:
         domain_var: "{{ domain }}"
 
-    - name: Deploy Dupral and dependencies
-      include_role:
-        name: "{{ roleinput }}"
-      loop:
-        - geerlingguy.apache
-        - geerlingguy.mysql
-        - geerlingguy.php-versions
-        - geerlingguy.php
-        - geerlingguy.php-mysql
-        - geerlingguy.composer
-        - geerlingguy.drush
-        - geerlingguy.drupal
-      loop_control:
-        loop_var: roleinput
-      vars:
+    - set_fact:
         drupal_install_site: true
         drupal_build_composer_project: true
         drupal_composer_install_dir: "/var/www/drupal"
@@ -42,6 +28,19 @@
         drupal_domain: "{{ domain }}"
         drupal_account_name: admin
         drupal_account_pass: "{{ app_secret }}"
+
+    - name: Deploy Dupral and dependencies
+      include_role:
+        name: "{{ item }}"
+      loop:
+        - "geerlingguy.apache"
+        - "geerlingguy.mysql"
+        - "geerlingguy.php-versions"
+        - "geerlingguy.php"
+        - "geerlingguy.php-mysql"
+        - "geerlingguy.composer"
+        - "geerlingguy.drush"
+        - "geerlingguy.drupal"
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
