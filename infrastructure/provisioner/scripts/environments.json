@@ -42,6 +42,7 @@
         "penpot": 38,
         "limesurvey": 39,
         "matomo": 40,
-        "openedx": 41
+        "openedx": 41,
+        "drupal": 42
     }
 }

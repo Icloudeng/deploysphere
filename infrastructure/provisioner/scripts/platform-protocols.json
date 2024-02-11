@@ -86,5 +86,9 @@
     "openedx": {
         "port": 81,
         "protocol": "http"
+    },
+    "drupal": {
+        "port": 80,
+        "protocol": "http"
     }
 }
