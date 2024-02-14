@@ -1,0 +1,7 @@
+# Install mysql
+- include_tasks: ../../tasks/mysql.yaml
+
+# Install mysql
+- include_tasks: ../../tasks/php.yaml
+  vars:
+    php_version: "8.2"

@@ -1,0 +1,87 @@
+- set_fact:
+  _install_composer: "{{ install_composer | default(true) }}"
+  _php_version: "{{ php_version | default('8.2') }}"
+  _php_extensions: "{{ php_extensions | default(['cli', 'pdo', 'zip', 'common', 'fileinfo', 'mysql', 'mbstring', 'xml', 'curl']) }}"
+
+- name: "PHP Version"
+  debug:
+    var: _php_version
+
+- name: "PHP Extensions"
+  debug:
+    var: _php_extensions
+
+- name: Install prerequisite packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+  loop:
+    - curl
+    - git
+    - software-properties-common
+    - ca-certificates
+    - lsb-release
+    - apt-transport-https
+    - unzip
+
+- name: Add repository for PHP from Ondřej Surý
+  become: true
+  ansible.builtin.apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+    update_cache: yes
+  environment:
+    LC_ALL: C.UTF-8
+
+- name: Update apt cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install PHP with a specific version
+  become: true
+  ansible.builtin.apt:
+    name: "php{{ _php_version }}"
+    state: present
+    update_cache: yes
+
+- name: Install PHP extensions
+  become: true
+  ansible.builtin.apt:
+    name: "php{{ _php_version }}-{{ item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ _php_extensions }}"
+
+- block:
+    - name: Check if Composer is already installed
+      ansible.builtin.command: composer --version
+      register: composer_installed
+      failed_when: composer_installed.rc not in [0, 1]
+      changed_when: false
+      check_mode: no
+
+    - name: Download Composer installer
+      become: true
+      ansible.builtin.get_url:
+        url: https://getcomposer.org/installer
+        dest: /tmp/composer-setup.php
+        mode: "0755"
+      when: composer_installed.rc != 0
+
+    - name: Run Composer installer
+      become: true
+      ansible.builtin.command: php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+      when: composer_installed.rc != 0
+
+    - name: Remove Composer installer
+      become: true
+      ansible.builtin.file:
+        path: /tmp/composer-setup.php
+        state: absent
+      when: composer_installed.rc != 0
+  when: _install_composer
