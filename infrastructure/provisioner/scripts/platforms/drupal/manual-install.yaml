@@ -1,5 +1,7 @@
 # Install mysql
 - include_tasks: ../../tasks/mysql.yaml
+  vars:
+    mysql_db_name: "{{ platform_name }}"
 
 # Install mysql
 - include_tasks: ../../tasks/php.yaml

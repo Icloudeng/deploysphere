@@ -61,9 +61,9 @@
     - name: Check if Composer is already installed
       ansible.builtin.command: composer --version
       register: composer_installed
-      failed_when: composer_installed.rc not in [0, 1]
       changed_when: false
       check_mode: no
+      ignore_errors: true
 
     - name: Download Composer installer
       become: true
