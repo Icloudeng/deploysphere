@@ -1,9 +1,88 @@
+- set_fact:
+    drupal_version: "10.2.3"
+    mysql_db_name: "{{ platform_name }}"
+    php_version: "8.2"
+
+- name: Install Tools
+  ansible.builtin.package:
+    name:
+      - curl
+      - git
+      - software-properties-common
+      - nginx
+      - unzip
+    state: present
+
 # Install mysql
 - include_tasks: ../../tasks/mysql.yaml
-  vars:
-    mysql_db_name: "{{ platform_name }}"
 
 # Install mysql
 - include_tasks: ../../tasks/php.yaml
-  vars:
-    php_version: "8.2"
+
+# Install Drupal
+- name: Download Drupal
+  ansible.builtin.get_url:
+    url: "https://www.drupal.org/download-latest/tar.gz"
+    dest: "/tmp/drupal-{{ drupal_version }}.tar.gz"
+    mode: "0644"
+
+- name: Extract Drupal archive
+  ansible.builtin.unarchive:
+    src: "/tmp/drupal-{{ drupal_version }}.tar.gz"
+    dest: "/var/www/html/"
+    remote_src: yes
+    creates: "/var/www/html/drupal-{{ drupal_version }}"
+
+- name: Rename Drupal directory to match domain
+  ansible.builtin.command:
+    cmd: mv /var/www/html/drupal-{{ drupal_version }} /var/www/html/{{ domain }}
+    creates: "/var/www/html/{{ domain }}"
+
+- name: Set permissions for Drupal
+  ansible.builtin.file:
+    path: "/var/www/html/{{ domain }}"
+    owner: www-data
+    group: www-data
+    recurse: yes
+
+- name: Copy default settings.php
+  ansible.builtin.copy:
+    src: "/var/www/html/{{ domain }}/sites/default/default.settings.php"
+    dest: "/var/www/html/{{ domain }}/sites/default/settings.php"
+    owner: www-data
+    group: www-data
+    mode: "0644"
+    force: no
+
+- name: Create files directory with correct permissions
+  ansible.builtin.file:
+    path: "/var/www/html/{{ domain }}/sites/default/files"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: "0775"
+
+# Nginx
+
+- name: Delete default Nginx site configuration
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+  become: true
+
+- name: Upload custom Nginx site configuration for PHP
+  ansible.builtin.template:
+    src: drupal_nginx.conf.j2
+    dest: /etc/nginx/sites-available/{{ domain }}
+    mode: "0644"
+  notify: restart nginx
+  become: true
+
+- name: Enable Nginx site configuration
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/{{ domain }}
+    dest: /etc/nginx/sites-enabled/{{ domain }}
+    state: link
+  notify: restart nginx
+  become: true

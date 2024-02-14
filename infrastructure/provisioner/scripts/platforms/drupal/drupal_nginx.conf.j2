@@ -1,0 +1,52 @@
+server {
+    listen 80 default_server;
+    server_name _;
+
+    root /var/www/html/{{ domain }};
+    index index.php;
+
+    location / {
+        try_files $uri /index.php?$query_string;
+    }
+
+    location @rewrite {
+        rewrite ^/(.*)$ /index.php?q=$1;
+    }
+
+    location ~ '\.php$|^/update.php' {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php{{ php_version }}-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~* /(?:\.htaccess|.*\.~|.*sw[op]|~)$ {
+        deny all;
+    }
+
+    location ~* \.(?:ico|gif|jpe?g|png|webp)$ {
+        expires max;
+        log_not_found off;
+    }
+
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|otf|webp)$ {
+        try_files $uri @rewrite;
+        expires max;
+        log_not_found off;
+    }
+
+    location ^~ /sites/default/files/ {
+        try_files $uri @rewrite;
+    }
+}

@@ -4,6 +4,13 @@
   become: true
   gather_facts: true
 
+  handlers:
+    - name: restart nginx
+      become: true
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+
   tasks:
     # Wait until all unable to acquire the dpkg frontend lock process finished
     - include_tasks: ../../tasks/cloud-init.yaml
