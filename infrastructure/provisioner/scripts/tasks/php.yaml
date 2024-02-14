@@ -58,10 +58,9 @@
   loop: "{{ _php_extensions }}"
 
 - name: Check if Composer is already installed
-  become: true
-  shell: "composer"
-  register: composer_installed
-  ignore_errors: true
+  stat:
+    path: "/usr/local/bin/composer"
+  register: composer_file
 
 - block:
     - name: Download Composer installer
@@ -70,17 +69,15 @@
         url: https://getcomposer.org/installer
         dest: /tmp/composer-setup.php
         mode: "0755"
-      when: composer_installed.rc != 0
 
     - name: Run Composer installer
       become: true
       ansible.builtin.command: php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
-      when: composer_installed.rc != 0
 
     - name: Remove Composer installer
       become: true
       ansible.builtin.file:
         path: /tmp/composer-setup.php
         state: absent
-      when: composer_installed.rc != 0
-  when: _install_composer and composer_installed.rc != 0
+
+  when: _install_composer and not composer_file.stat.exists
