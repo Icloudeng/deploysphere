@@ -58,7 +58,8 @@
   loop: "{{ _php_extensions }}"
 
 - name: Check if Composer is already installed
-  ansible.builtin.command: composer --version
+  become: true
+  shell: "composer --version"
   register: composer_installed
   ignore_errors: true
 
