@@ -51,6 +51,7 @@
     dest: "/var/www/html/{{ domain }}/sites/default/settings.php"
     owner: www-data
     group: www-data
+    remote_src: yes
     mode: "0644"
     force: no
 
