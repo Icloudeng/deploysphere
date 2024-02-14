@@ -59,7 +59,7 @@
 
 - name: Check if Composer is already installed
   become: true
-  shell: "composer --version"
+  shell: "composer"
   register: composer_installed
   ignore_errors: true
 
