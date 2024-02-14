@@ -57,14 +57,12 @@
     update_cache: yes
   loop: "{{ _php_extensions }}"
 
-- block:
-    - name: Check if Composer is already installed
-      ansible.builtin.command: composer --version
-      register: composer_installed
-      changed_when: false
-      check_mode: no
-      ignore_errors: true
+- name: Check if Composer is already installed
+  ansible.builtin.command: composer --version
+  register: composer_installed
+  ignore_errors: true
 
+- block:
     - name: Download Composer installer
       become: true
       ansible.builtin.get_url:
@@ -84,4 +82,4 @@
         path: /tmp/composer-setup.php
         state: absent
       when: composer_installed.rc != 0
-  when: _install_composer
+  when: _install_composer and composer_installed.rc != 0
