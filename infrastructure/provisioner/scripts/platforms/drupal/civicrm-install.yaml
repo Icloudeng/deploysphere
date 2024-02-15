@@ -41,6 +41,7 @@
         chdir: "/var/www/html/{{ domain }}"
       environment:
         COMPOSER_ALLOW_SUPERUSER: "1"
+        COMPOSER_COMPILE: all
       loop:
         - "civicrm/civicrm-{core,packages,drupal-8}"
         - "civicrm/cli-tools"
