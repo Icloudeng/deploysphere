@@ -20,6 +20,20 @@
   register: civicrm_file
 
 - block:
+    - name: Allow Plugins CiviCRM
+      shell: "composer config --no-interaction allow-plugins.{{ item }}"
+      args:
+        executable: /bin/bash
+        chdir: "/var/www/html/{{ domain }}"
+      environment:
+        COMPOSER_ALLOW_SUPERUSER: "1"
+      loop:
+        - "composer/installers"
+        - "cweagans/composer-patches"
+        - "civicrm/civicrm-asset-plugin"
+        - "civicrm/composer-downloads-plugin"
+        - "civicrm/composer-compile-plugin"
+
     - name: Install CiviCRM
       shell: "composer require {{ item }} -n"
       args:
