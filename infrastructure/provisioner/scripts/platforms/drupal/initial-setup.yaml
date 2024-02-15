@@ -17,11 +17,9 @@
   command: "pnpm ts-node {{ drupal_file }}"
   args:
     chdir: "{{ puppeteer_folder }}"
-  ignore_errors: true
 
 - name: "Remove {{ drupal_file }}"
   become: false
   command: "rm -rf {{ drupal_file }}"
   args:
     chdir: "{{ puppeteer_folder }}"
-  ignore_errors: true
