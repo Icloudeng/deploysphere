@@ -10,6 +10,7 @@
       - software-properties-common
       - nginx
       - unzip
+      - fail2ban
     state: present
 
 # Install mysql
@@ -75,15 +76,15 @@
   ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
     state: absent
-  notify: restart nginx
+  notify: nginx restart
   become: true
 
 - name: Upload custom Nginx site configuration for PHP
   ansible.builtin.template:
-    src: drupal_nginx.conf.j2
+    src: nginx/drupal_nginx.conf.j2
     dest: /etc/nginx/sites-available/{{ domain }}
     mode: "0644"
-  notify: restart nginx
+  notify: nginx restart
   become: true
 
 - name: Enable Nginx site configuration
@@ -91,5 +92,17 @@
     src: /etc/nginx/sites-available/{{ domain }}
     dest: /etc/nginx/sites-enabled/{{ domain }}
     state: link
-  notify: restart nginx
+  notify: nginx restart
   become: true
+# Fail2ban
+# - name: "Nginx | NginxReqLimit fail2ban filter"
+#   template:
+#     src: fail2ban/nginx-req-limit.conf.j2
+#     dest: /etc/fail2ban/filter.d/nginx-req-limit.conf
+#     force: yes
+
+# - name: "Nginx | fail2ban Jail"
+#   template:
+#     src: fail2ban/jail.local.j2
+#     dest: /etc/fail2ban/jail.local
+#   notify: fail2ban restart

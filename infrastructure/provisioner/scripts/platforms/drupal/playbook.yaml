@@ -5,10 +5,19 @@
   gather_facts: true
 
   handlers:
-    - name: restart nginx
-      become: true
-      ansible.builtin.service:
+    - name: nginx reload
+      service:
         name: nginx
+        state: reloaded
+
+    - name: nginx restart
+      service:
+        name: nginx
+        state: restarted
+
+    - name: fail2ban restart
+      service:
+        name: fail2ban
         state: restarted
 
   tasks:

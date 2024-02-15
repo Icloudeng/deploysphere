@@ -50,4 +50,9 @@
         recurse: yes
         mode: "0775"
 
+    - name: Create civicrm setup file
+      ansible.builtin.file:
+        path: "{{ project_path }}/.civicrm"
+        state: touch
+
   when: not civicrm_file.stat.exists
