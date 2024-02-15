@@ -95,6 +95,11 @@
     state: link
   notify: nginx restart
   become: true
+
+- name: Force Nginx Restart
+  service:
+    name: nginx
+    state: restarted
 # Fail2ban
 # - name: "Nginx | NginxReqLimit fail2ban filter"
 #   template:
