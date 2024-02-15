@@ -52,6 +52,16 @@
         executable: /bin/bash
         chdir: "/var/www/html/{{ domain }}"
 
+    - name: Publish assets CiviCRM
+      shell: "composer civicrm:publish"
+      ignore_errors: true
+      args:
+        executable: /bin/bash
+        chdir: "/var/www/html/{{ domain }}"
+      environment:
+        COMPOSER_ALLOW_SUPERUSER: "1"
+        COMPOSER_COMPILE: all
+
     - name: Set permissions for Drupal
       ansible.builtin.file:
         path: "/var/www/html/{{ domain }}"
