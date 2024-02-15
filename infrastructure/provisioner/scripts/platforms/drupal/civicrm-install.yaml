@@ -21,7 +21,7 @@
 
 - block:
     - name: Allow Plugins CiviCRM
-      shell: "composer config --no-interaction allow-plugins.{{ item }}"
+      shell: "composer config --no-interaction allow-plugins.{{ item }} true"
       args:
         executable: /bin/bash
         chdir: "/var/www/html/{{ domain }}"
