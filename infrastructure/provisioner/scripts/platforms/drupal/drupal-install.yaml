@@ -1,6 +1,5 @@
 - set_fact:
     drupal_version: "10.2.3"
-    mysql_db_name: "{{ platform_name }}"
     php_version: "8.2"
 
 - name: Install Tools
@@ -18,6 +17,13 @@
 
 # Install php
 - include_tasks: ../../tasks/php.yaml
+
+# Remove Apache if Exists
+- name: Remove Apache if Exists
+  ansible.builtin.package:
+    name:
+      - apache2
+    state: absent
 
 # Install Drupal
 - name: Download Drupal

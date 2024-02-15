@@ -1,7 +1,7 @@
 - set_fact:
     _install_composer: "{{ install_composer | default(true) }}"
     _php_version: "{{ php_version | default('8.2') }}"
-    _php_extensions: "{{ php_extensions | default(['cli', 'fpm', 'pdo', 'zip', 'common', 'fileinfo', 'mysql', 'mbstring', 'xml', 'curl']) }}"
+    _php_extensions: "{{ php_extensions | default(['cli', 'intl', 'bcmath', 'soap', 'fpm', 'pdo', 'gd', 'zip', 'common', 'fileinfo', 'mysql', 'mbstring', 'xml', 'curl']) }}"
 
 - name: "PHP Version"
   debug:

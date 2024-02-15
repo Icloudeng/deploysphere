@@ -1,0 +1,53 @@
+- name: Download cv.phar from civicrm
+  ansible.builtin.get_url:
+    url: https://download.civicrm.org/cv/cv.phar
+    dest: /usr/local/bin/cv
+    mode: "0755"
+    owner: root
+    group: root
+  become: true
+
+- name: Make cv.phar executable
+  ansible.builtin.file:
+    path: /usr/local/bin/cv
+    state: file
+    mode: "0755"
+  become: true
+
+- name: Check if CiviCRM has been already installed
+  stat:
+    path: "{{ project_path }}/.civicrm"
+  register: civicrm_file
+
+- block:
+    - name: Install CiviCRM
+      command: "composer require {{ item }} -n"
+      args:
+        chdir: "/var/www/html/{{ domain }}"
+      environment:
+        COMPOSER_ALLOW_SUPERUSER: "1"
+      loop:
+        - "civicrm/civicrm-{core,packages,drupal-8}"
+        - "civicrm/cli-tools"
+
+    - name: Setup CiviCRM Database
+      command: cv core:install --cms-base-url="{{ domain }}" --db="mysql://root:{{ mysql_root_password }}@localhost:3306/{{ mysql_db_name2 }}"
+      args:
+        chdir: "/var/www/html/{{ domain }}"
+
+    - name: Set permissions for Drupal
+      ansible.builtin.file:
+        path: "/var/www/html/{{ domain }}"
+        owner: www-data
+        group: www-data
+        recurse: yes
+
+    - name: Set files directory with correct permissions
+      ansible.builtin.file:
+        path: "/var/www/html/{{ domain }}/sites/default/files"
+        owner: www-data
+        group: www-data
+        recurse: yes
+        mode: "0775"
+
+  when: not civicrm_file.stat.exists

@@ -21,24 +21,56 @@
     - name: Fact | Mysql Password
       set_fact:
         mysql_root_password: "{{ app_secret }}"
+        mysql_db_name: "{{ platform_name }}"
+        mysql_db_name2: "{{ platform_name }}-civicrm"
 
     - name: Extract Required Variables
       set_fact:
         domain: "{{ decoded_metadata | json_query('domain') }}"
+        admin_username: "{{ decoded_metadata | json_query('admin_username') | default('admin', true) }}"
 
     # Validate domain variable
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
         domain_var: "{{ domain }}"
 
-    - include_tasks: manual-install.yaml
+    - include_tasks: ../../tasks/validator/username-regex.yaml
+      vars:
+        username_var: "{{ admin_username }}"
+
+    - include_tasks: ../../tasks/validator/email-regex.yaml
+      vars:
+        email_var: "{{ admin_email }}"
+
+    # Install Drupal
+    - include_tasks: drupal-install.yaml
+
+    # Initial Setup
+    - name: Check if Initial setup has been already completed
+      stat:
+        path: "{{ project_path }}/.initial-setup"
+      register: initial_setup
+
+    - import_tasks: initial-setup.yaml
+      ignore_errors: true
+      delegate_to: 127.0.0.1
+      when: not initial_setup.stat.exists
+
+    - name: Create initial setup file
+      ansible.builtin.file:
+        path: "{{ project_path }}/.initial-setup"
+        state: touch
+      when: not initial_setup.stat.exists
+
+    # Install civicrm
+    - include_tasks: civicrm-install.yaml
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
         text: |
           Login
-          Email: admin
+          Username: {{ admin_username }}
           Password: {{ app_secret }}
         credentials:
-          username: "admin"
+          username: "{{ admin_username }}"
           password: "{{ app_secret }}"

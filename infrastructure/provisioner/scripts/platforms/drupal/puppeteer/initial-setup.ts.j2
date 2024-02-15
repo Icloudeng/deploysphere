@@ -1,0 +1,109 @@
+import puppeteer from "puppeteer";
+import { wait } from "./utils";
+
+const baseUrl = "http://{{ vm_ip }}";
+const SITE_TITLE = "My Site";
+const ADMIN_USERNAME = "{{ admin_username }}";
+const ADMIN_EMAIL = "{{ admin_email }}";
+const ADMIN_PASSWORD = "{{ app_secret }}";
+
+const DB_NAME = "{{ mysql_db_name }}";
+const DB_USERNAME = "root";
+const DB_PASSWORD = "{{ mysql_root_password }}";
+
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+    timeout: 60_000,
+  });
+
+  const page = await browser.newPage();
+
+  // Navigate the page to a URL
+  await page.goto(baseUrl + "/core/install.php?langcode=en&profile=standard");
+
+  // Set screen size
+  await page.setViewport({ width: 1200, height: 1024 });
+
+  /**
+   * ===========================
+   * Drupal Database Setting
+   */
+  const dbname = await page.waitForSelector(
+    "#edit-drupalmysqldriverdatabasemysql-database"
+  );
+  await dbname.type(DB_NAME);
+
+  const dbusername = await page.waitForSelector(
+    "#edit-drupalmysqldriverdatabasemysql-username"
+  );
+  await dbusername.type(DB_USERNAME);
+
+  const dbpassword = await page.waitForSelector(
+    "#edit-drupalmysqldriverdatabasemysql-password"
+  );
+  await dbpassword.type(DB_PASSWORD);
+
+  const submitDb = await page.waitForSelector("form.install-settings-form");
+
+  await Promise.all([
+    page.waitForNavigation(),
+    submitDb.evaluate((el) => el.submit()),
+  ]);
+
+  await wait(2);
+
+  // Second reload
+  await page.waitForNavigation();
+
+  /**
+   * ===========================
+   * Drupal Site default settings
+   */
+
+  // SITE NAME
+  const site_name = await page.waitForSelector("input[name=site_name]");
+  await site_name.type(SITE_TITLE);
+
+  // SITE NAME
+  const site_mail = await page.waitForSelector("input[name=site_mail]");
+  await site_mail.type(ADMIN_EMAIL);
+
+  // ADMIN USERNAME
+  const account_name = await page.waitForSelector("#edit-account-name");
+  await account_name.type(ADMIN_USERNAME);
+
+  // ADMIN PASSWORD
+  const admin_password = await page.waitForSelector("#edit-account-pass-pass1");
+  await admin_password.evaluate((el, ADMIN_PASSWORD) => {
+    el.value = ADMIN_PASSWORD;
+  }, ADMIN_PASSWORD);
+
+  await wait(3);
+
+  // ADMIN PASSWORD CONFIRM
+  const admin_password2 = await page.waitForSelector(
+    "#edit-account-pass-pass2"
+  );
+  await admin_password2.evaluate((el, ADMIN_PASSWORD) => {
+    el.value = ADMIN_PASSWORD;
+  }, ADMIN_PASSWORD);
+
+  // ADMIN EMAIL
+  const account_mail = await page.waitForSelector("#edit-account-mail");
+  await account_mail.evaluate((el, ADMIN_EMAIL) => {
+    el.value = ADMIN_EMAIL;
+  }, ADMIN_EMAIL);
+
+  await wait(1);
+
+  const submitBtn = await page.waitForSelector("form.install-configure-form");
+
+  await Promise.all([
+    page.waitForNavigation(),
+    submitBtn.evaluate((el) => el.submit()),
+  ]);
+
+  await browser.close();
+})();
