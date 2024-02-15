@@ -35,7 +35,7 @@
         - "civicrm/composer-compile-plugin"
 
     - name: Install CiviCRM
-      shell: "composer require {{ item }} -n"
+      shell: "composer require --no-interaction {{ item }}"
       args:
         executable: /bin/bash
         chdir: "/var/www/html/{{ domain }}"
