@@ -47,7 +47,7 @@
         - "civicrm/cli-tools"
 
     - name: Setup CiviCRM Database
-      shell: cv core:install --cms-base-url="{{ domain }}" --db="mysql://root:{{ mysql_root_password }}@localhost:3306/{{ mysql_db_name2 }}"
+      shell: cv core:install --cms-base-url="https://{{ domain }}" --db="mysql://root:{{ mysql_root_password }}@localhost:3306/{{ mysql_db_name2 }}"
       args:
         executable: /bin/bash
         chdir: "/var/www/html/{{ domain }}"
