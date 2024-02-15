@@ -81,6 +81,7 @@
 
 - name: Upload custom Nginx site configuration for PHP
   ansible.builtin.template:
+    force: yes
     src: nginx/drupal_nginx.conf.j2
     dest: /etc/nginx/sites-available/{{ domain }}
     mode: "0644"
