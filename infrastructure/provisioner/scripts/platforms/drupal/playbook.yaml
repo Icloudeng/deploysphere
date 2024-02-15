@@ -61,7 +61,6 @@
       register: initial_setup
 
     - import_tasks: initial-setup.yaml
-      ignore_errors: true
       delegate_to: 127.0.0.1
       when: not initial_setup.stat.exists
 

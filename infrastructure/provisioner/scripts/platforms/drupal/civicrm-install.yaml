@@ -21,8 +21,9 @@
 
 - block:
     - name: Install CiviCRM
-      command: "composer require {{ item }} -n"
+      shell: "composer require {{ item }} -n"
       args:
+        executable: /bin/bash
         chdir: "/var/www/html/{{ domain }}"
       environment:
         COMPOSER_ALLOW_SUPERUSER: "1"
@@ -31,8 +32,9 @@
         - "civicrm/cli-tools"
 
     - name: Setup CiviCRM Database
-      command: cv core:install --cms-base-url="{{ domain }}" --db="mysql://root:{{ mysql_root_password }}@localhost:3306/{{ mysql_db_name2 }}"
+      shell: cv core:install --cms-base-url="{{ domain }}" --db="mysql://root:{{ mysql_root_password }}@localhost:3306/{{ mysql_db_name2 }}"
       args:
+        executable: /bin/bash
         chdir: "/var/www/html/{{ domain }}"
 
     - name: Set permissions for Drupal
