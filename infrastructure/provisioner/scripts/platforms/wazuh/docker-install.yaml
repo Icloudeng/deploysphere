@@ -1,0 +1,53 @@
+- name: Set vm.max_map_count runtime parameter
+  ansible.posix.sysctl:
+    name: vm.max_map_count
+    value: "262144"
+    state: present
+    reload: yes
+
+- name: Verify vm.max_map_count setting
+  command: sysctl vm.max_map_count
+  register: sysctl_output
+  changed_when: "'262144' not in sysctl_output.stdout"
+
+- name: Reboot the system if vm.max_map_count was not set
+  reboot:
+    msg: "Rebooting to apply vm.max_map_count changes"
+    connect_timeout: 5
+    reboot_timeout: 300
+    pre_reboot_delay: 0
+    post_reboot_delay: 60
+  when: sysctl_output.changed
+
+# Install Docker
+- include_tasks: ../../tasks/docker.yaml
+
+- name: Clone Wazuh Docker repo from GitHub
+  git:
+    repo: "https://github.com/wazuh/wazuh-docker.git"
+    dest: "{{ project_path }}"
+    version: "v4.7.2"
+
+- name: "Copy .env template"
+  template:
+    src: .env.j2
+    dest: "{{ project_path }}/single-node/.env"
+    force: yes
+
+- name: Generate self-signed certificates for each cluster node
+  command: docker compose -f generate-indexer-certs.yml run --rm generator
+  args:
+    chdir: "{{ project_path }}/single-node"
+    creates: "{{ project_path }}/single-node/config/wazuh_indexer_ssl_certs/root-ca.pem"
+
+- name: Ensure lines containing INDEXER_PASSWORD or DASHBOARD_PASSWORD are absent
+  lineinfile:
+    path: "{{ project_path }}/single-node/docker-compose.yml"
+    regexp: "^(.*)(INDEXER_PASSWORD|DASHBOARD_PASSWORD)(.*)$"
+    state: absent
+    backup: true
+
+- name: Start the Wazuh single-node deployment
+  command: docker compose up -d --force-recreate
+  args:
+    chdir: "{{ project_path }}/single-node"

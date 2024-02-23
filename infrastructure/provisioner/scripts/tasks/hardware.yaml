@@ -1,0 +1,44 @@
+- name: Ensure min_cores variable is set
+  assert:
+    that:
+      - min_cores is defined and min_cores != ''
+    fail_msg: "min_cores variable is not set or is empty."
+    quiet: yes
+
+- name: Ensure min_ram variable is set
+  assert:
+    that:
+      - min_ram is defined and min_ram != ''
+    fail_msg: "min_ram variable is not set or is empty."
+    quiet: yes
+
+- name: Ensure min_storage variable is set
+  assert:
+    that:
+      - min_storage is defined and min_storage != ''
+    fail_msg: "min_storage variable is not set or is empty."
+    quiet: yes
+
+- name: Check OS type
+  assert:
+    that: ansible_os_family == "RedHat" or ansible_os_family == "Debian"
+    fail_msg: "The operating system is not Linux."
+    success_msg: "The operating system requirement is met."
+
+- name: Check CPU cores
+  assert:
+    that: ansible_processor_vcpus >= min_cores
+    fail_msg: "Insufficient CPU cores, {{ min_cores }} required."
+    success_msg: "CPU cores requirement is met."
+
+- name: Check RAM
+  assert:
+    that: (ansible_memtotal_mb // 1024) >= min_ram
+    fail_msg: "Insufficient RAM, {{ min_ram }}GB required."
+    success_msg: "RAM requirement is met."
+
+- name: Check Storage
+  assert:
+    that: (ansible_devices[ansible_mounts[0].device|basename].size_total | float / (1024 * 1024 * 1024)) >= min_storage
+    fail_msg: "Insufficient storage space, {{ min_storage }}GB required."
+    success_msg: "Storage space requirement is met."

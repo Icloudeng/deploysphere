@@ -7,9 +7,6 @@ roles:
   - name: geerlingguy.php-versions
     version: 5.0.1
 
-  - name: geerlingguy.drupal
-    version: 4.3.0
-
   - name: systemli.apt_repositories
     version: 2.1.0
 

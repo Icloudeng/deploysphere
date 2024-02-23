@@ -90,5 +90,9 @@
     "drupal": {
         "port": 8080,
         "protocol": "http"
+    },
+    "wazuh": {
+        "port": 443,
+        "protocol": "https"
     }
 }

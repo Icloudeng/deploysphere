@@ -102,5 +102,8 @@
     ],
     "drupal": [
         "domain"
+    ],
+    "wazuh": [
+        "domain"
     ]
 }
