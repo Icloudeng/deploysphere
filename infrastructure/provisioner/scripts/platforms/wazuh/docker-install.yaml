@@ -30,6 +30,7 @@
     repo: "https://github.com/wazuh/wazuh-docker.git"
     dest: "{{ wazuh_path }}"
     version: "{{ wazuh_version }}"
+    force: no
 
 - name: "Copy .env template"
   template:
