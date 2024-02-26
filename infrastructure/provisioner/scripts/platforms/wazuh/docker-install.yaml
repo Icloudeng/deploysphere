@@ -23,7 +23,7 @@
 - include_tasks: ../../tasks/docker.yaml
 
 - set_fact:
-    wazuh_path: "{{ wazuh_version }}/repository"
+    wazuh_path: "{{ project_path }}/repository"
 
 - name: Clone Wazuh Docker repo from GitHub
   git:
