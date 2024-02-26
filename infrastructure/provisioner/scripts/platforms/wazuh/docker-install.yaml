@@ -22,27 +22,30 @@
 # Install Docker
 - include_tasks: ../../tasks/docker.yaml
 
+- set_fact:
+    wazuh_path: "{{ wazuh_version }}/repository"
+
 - name: Clone Wazuh Docker repo from GitHub
   git:
     repo: "https://github.com/wazuh/wazuh-docker.git"
-    dest: "{{ project_path }}"
+    dest: "{{ wazuh_path }}"
     version: "{{ wazuh_version }}"
 
 - name: "Copy .env template"
   template:
     src: .env.j2
-    dest: "{{ project_path }}/single-node/.env"
+    dest: "{{ wazuh_path }}/single-node/.env"
     force: yes
 
 - name: Generate self-signed certificates for each cluster node
   command: docker compose -f generate-indexer-certs.yml run --rm generator
   args:
-    chdir: "{{ project_path }}/single-node"
-    creates: "{{ project_path }}/single-node/config/wazuh_indexer_ssl_certs/root-ca.pem"
+    chdir: "{{ wazuh_path }}/single-node"
+    creates: "{{ wazuh_path }}/single-node/config/wazuh_indexer_ssl_certs/root-ca.pem"
 
 - name: Ensure lines containing INDEXER_PASSWORD or DASHBOARD_PASSWORD are absent
   lineinfile:
-    path: "{{ project_path }}/single-node/docker-compose.yml"
+    path: "{{ wazuh_path }}/single-node/docker-compose.yml"
     regexp: "^(.*)(INDEXER_PASSWORD|DASHBOARD_PASSWORD)(.*)$"
     state: absent
     backup: true
@@ -50,4 +53,4 @@
 - name: Start the Wazuh single-node deployment
   command: docker compose up -d --force-recreate
   args:
-    chdir: "{{ project_path }}/single-node"
+    chdir: "{{ wazuh_path }}/single-node"
