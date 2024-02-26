@@ -71,7 +71,7 @@ lint:
 
 
 .PHONY: prod-build
-prod-build: build service-restart
+prod-build: build-linux service-restart
 
 
 .PHONY: prod-build-linux

@@ -91,3 +91,6 @@
     dest: "{{ project_path }}/.app_secret"
     content: "{{ random_secret }}"
   when: not file_stat.stat.exists or file_stat.stat.size == 0
+
+# Wazuh Agent
+- include_tasks: ../platforms/wazuh/agent/task.yaml

@@ -2,6 +2,10 @@
   set_fact:
     project_path: "/home/{{ ansible_user }}/projects/{{ platform_name }}"
 
+- name: Provisioner dir
+  set_fact:
+    provisioner_dir: "{{ playbook_dir | dirname | dirname | dirname }}"
+
 - name: Root path
   set_fact:
     vm_user: "{{ ansible_user }}"

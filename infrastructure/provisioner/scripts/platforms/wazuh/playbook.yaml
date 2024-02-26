@@ -5,15 +5,17 @@
   gather_facts: true
 
   tasks:
+    - include_tasks: version.yaml
+
+    # Wait until all unable to acquire the dpkg frontend lock process finished
+    - include_tasks: ../../tasks/cloud-init.yaml
+
     # System Requirements Validation
-    - import_tasks: ../../tasks/hardware.yaml
+    - import_tasks: ../../tasks/validator/hardware.yaml
       vars:
         min_cores: 4
         min_ram: 8
         min_storage: 30
-
-    # Wait until all unable to acquire the dpkg frontend lock process finished
-    - include_tasks: ../../tasks/cloud-init.yaml
 
     # Playbook init (with decoded_metadata, project_path, admin_email)
     - include_tasks: ../../tasks/playbook-init.yaml
@@ -26,6 +28,10 @@
     - include_tasks: ../../tasks/validator/domain-regex.yaml
       vars:
         domain_var: "{{ domain }}"
+
+    - name: Set a hostname
+      ansible.builtin.hostname:
+        name: "{{ domain }}"
 
     # docker install
     - include_tasks: docker-install.yaml

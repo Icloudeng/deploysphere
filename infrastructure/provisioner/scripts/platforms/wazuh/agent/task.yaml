@@ -1,0 +1,73 @@
+- name: Run script
+  become: false
+  command: lib/getenv.py WAZUH_MANAGER
+  delegate_to: 127.0.0.1
+  args:
+    chdir: "{{ provisioner_dir }}"
+    executable: python3
+  register: wazug_manager_ip
+
+- include_tasks: ../version.yaml
+
+- name: "Var | Debug wazug_manager_ip"
+  debug:
+    var: wazug_manager_ip
+
+- name: "Var | Debug wazuh_version"
+  debug:
+    var: wazuh_version
+
+- name: "Var | Debug wazuh_major_version"
+  debug:
+    var: wazuh_major_version
+
+- name: Ending the 1st play now
+  meta: end_play
+
+- name: "Wazuh Agent"
+  # when: wazug_manager_ip | trim | ansible.utils.ipaddr
+  when: false
+  block:
+    - name: Import Wazuh GPG key
+      become: true
+      ansible.builtin.apt_key:
+        url: "https://packages.wazuh.com/key/GPG-KEY-WAZUH"
+        state: present
+
+    - name: Add Wazuh repository
+      become: true
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/{{ wazuh_major_version }}.x/apt/ stable main"
+        state: present
+        filename: wazuh
+
+    - name: Update apt cache
+      become: true
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install wazuh-agent
+      become: true
+      ansible.builtin.apt:
+        name: wazuh-agent
+        state: present
+        update_cache: yes # This is optional since we updated the cache just before
+      environment:
+        WAZUH_MANAGER: "{{ wazug_manager_ip | trim }}" # Define the environment variable for the task
+
+    - name: Reload systemd daemon
+      become: true
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Enable wazuh-agent service
+      become: true
+      ansible.builtin.systemd:
+        name: wazuh-agent
+        enabled: yes
+
+    - name: Start wazuh-agent service
+      become: true
+      ansible.builtin.systemd:
+        name: wazuh-agent
+        state: started
