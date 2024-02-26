@@ -31,6 +31,9 @@
     fail_msg: "Insufficient CPU cores, {{ min_cores }} required."
     success_msg: "CPU cores requirement is met."
 
+- debug:
+    var: ansible_memtotal_mb // 1024
+
 - name: Check RAM
   assert:
     that: (ansible_memtotal_mb // 1024) >= min_ram
