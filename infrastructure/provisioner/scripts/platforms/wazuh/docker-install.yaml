@@ -38,7 +38,7 @@
     force: yes
 
 - name: Generate self-signed certificates for each cluster node
-  command: docker compose -f generate-indexer-certs.yml run --rm generator
+  command: docker compose --env-file=.env -f generate-indexer-certs.yml run --rm generator
   args:
     chdir: "{{ wazuh_path }}/single-node"
     creates: "{{ wazuh_path }}/single-node/config/wazuh_indexer_ssl_certs/root-ca.pem"
