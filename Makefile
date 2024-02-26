@@ -45,6 +45,14 @@ clean:
 	rm ./bin/${BINARY_NAME}-windows
 
 
+
+.PHONY: pull
+pull:
+	git pull origin main
+
+
+
+
 .PHONY: test
 test:
 	go test ./...
