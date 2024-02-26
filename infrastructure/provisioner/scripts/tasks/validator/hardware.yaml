@@ -32,7 +32,10 @@
     success_msg: "CPU cores requirement is met."
 
 - debug:
-    var: ansible_memtotal_mb // 1024
+    var: ansible_memtotal_mb // 1000
+
+- debug:
+    var: (ansible_devices[ansible_mounts[0].device|basename].size_total | float / (1024 * 1024 * 1024))
 
 - name: Check RAM
   assert:
