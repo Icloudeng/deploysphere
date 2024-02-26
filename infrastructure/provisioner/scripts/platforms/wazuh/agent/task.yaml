@@ -1,6 +1,6 @@
 - name: Run script
   become: false
-  command: lib/getenv.py WAZUH_MANAGER
+  script: lib/getenv.py WAZUH_MANAGER
   delegate_to: 127.0.0.1
   args:
     chdir: "{{ provisioner_dir }}"
