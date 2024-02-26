@@ -1,17 +1,16 @@
 - name: Run script
   become: false
   delegate_to: 127.0.0.1
-  script: "{{ provisioner_dir }}/lib/getenv.py WAZUH_MANAGER"
+  command: "python3 lib/getenv.py WAZUH_MANAGER"
   args:
     chdir: "{{ provisioner_dir }}"
-    executable: python3
   register: wazug_manager_ip
 
 - include_tasks: ../version.yaml
 
 - name: "Var | Debug wazug_manager_ip"
   debug:
-    var: wazug_manager_ip
+    var: wazug_manager_ip.stdout
 
 - name: "Var | Debug wazuh_version"
   debug:
@@ -25,7 +24,7 @@
   meta: end_play
 
 - name: "Wazuh Agent"
-  # when: wazug_manager_ip | trim | ansible.utils.ipaddr
+  # when: wazug_manager_ip.stdout | trim | ansible.utils.ipaddr
   when: false
   block:
     - name: Import Wazuh GPG key
@@ -53,7 +52,7 @@
         state: present
         update_cache: yes # This is optional since we updated the cache just before
       environment:
-        WAZUH_MANAGER: "{{ wazug_manager_ip | trim }}" # Define the environment variable for the task
+        WAZUH_MANAGER: "{{ wazug_manager_ip.stdout | trim }}" # Define the environment variable for the task
 
     - name: Reload systemd daemon
       become: true
