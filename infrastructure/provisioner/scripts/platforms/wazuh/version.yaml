@@ -2,4 +2,4 @@
     wazuh_version: v4.7.2
 
 - set_fact:
-    wazuh_major_version: "{{ wazuh_version | regex_search('v(\\d+)\\.') | first }}"
+    wazuh_major_version: "{{ wazuh_version | regex_search('v(\\d+)\\.', '\\1') | first }}"
