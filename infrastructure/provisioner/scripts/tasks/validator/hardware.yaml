@@ -31,17 +31,17 @@
     fail_msg: "Insufficient CPU cores, {{ min_cores }} required."
     success_msg: "CPU cores requirement is met."
 
-- debug:
-    var: ansible_memtotal_mb // 1000
-
-- debug:
-    var: (ansible_devices[ansible_mounts[0].device|basename].size_total | float / (1024 * 1024 * 1024))
-
 - name: Check RAM
   assert:
     that: (ansible_memtotal_mb // 1024) >= min_ram
     fail_msg: "Insufficient RAM, {{ min_ram }}GB required."
     success_msg: "RAM requirement is met."
+
+- debug:
+    var: ansible_devices
+
+- debug:
+    var: ansible_mounts
 
 - name: Check Storage
   assert:

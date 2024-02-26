@@ -14,7 +14,7 @@
     - import_tasks: ../../tasks/validator/hardware.yaml
       vars:
         min_cores: 4
-        min_ram: 8
+        min_ram: 7 # => 8GB
         min_storage: 30
 
     # Playbook init (with decoded_metadata, project_path, admin_email)
