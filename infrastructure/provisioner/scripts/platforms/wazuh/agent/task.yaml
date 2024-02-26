@@ -10,7 +10,7 @@
 
 - name: "Var | Debug wazug_manager_ip"
   debug:
-    var: wazug_manager_ip.stdout
+    var: wazug_manager_ip.stdout | trim | ansible.utils.ipaddr
 
 - name: "Var | Debug wazuh_version"
   debug:
@@ -25,7 +25,6 @@
 
 - name: "Wazuh Agent"
   # when: wazug_manager_ip.stdout | trim | ansible.utils.ipaddr
-  when: false
   block:
     - name: Import Wazuh GPG key
       become: true
