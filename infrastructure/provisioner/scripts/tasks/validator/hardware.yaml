@@ -37,14 +37,8 @@
     fail_msg: "Insufficient RAM, {{ min_ram }}GB required."
     success_msg: "RAM requirement is met."
 
-- debug:
-    var: ansible_devices
-
-- debug:
-    var: ansible_mounts
-
 - name: Check Storage
   assert:
-    that: (ansible_devices[ansible_mounts[0].device|basename].size_total | float / (1024 * 1024 * 1024)) >= min_storage
+    that: (ansible_mounts[0].size_total | float / (1024 * 1024 * 1024)) >= min_storage
     fail_msg: "Insufficient storage space, {{ min_storage }}GB required."
     success_msg: "Storage space requirement is met."

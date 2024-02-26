@@ -15,7 +15,7 @@
       vars:
         min_cores: 4
         min_ram: 7 # => 8GB
-        min_storage: 30
+        min_storage: 28 # => 30GB
 
     # Playbook init (with decoded_metadata, project_path, admin_email)
     - include_tasks: ../../tasks/playbook-init.yaml
