@@ -54,3 +54,18 @@
   command: docker compose up -d --force-recreate
   args:
     chdir: "{{ wazuh_path }}/single-node"
+
+- set_fact:
+    url_ping: "https://{{ vm_ip }}"
+
+- name: Pause play until a URL is reachable from this host
+  ignore_errors: true
+  ansible.builtin.uri:
+    url: "{{ url_ping }}"
+    follow_redirects: none
+    validate_certs: no
+    method: GET
+  register: _result
+  until: _result.status >= 200
+  retries: 30
+  delay: 5
