@@ -48,12 +48,14 @@
     path: "{{ wazuh_path }}/single-node/docker-compose.yml"
     regexp: "INDEXER_PASSWORD=SecretPassword"
     replace: "INDEXER_PASSWORD={{ app_secret }}"
+    backup: true
 
 - name: Replace old DASHBOARD_PASSWORD
   ansible.builtin.replace:
     path: "{{ wazuh_path }}/single-node/docker-compose.yml"
     regexp: "DASHBOARD_PASSWORD=kibanaserver"
     replace: "DASHBOARD_PASSWORD={{ app_secret }}"
+    backup: true
 
 # - name: Ensure lines containing INDEXER_PASSWORD or DASHBOARD_PASSWORD are absent
 #   lineinfile:
@@ -87,7 +89,7 @@
 
 - name: Download Wazuh template and upload to Elasticsearch
   uri:
-    url: "https://localhost:9200/_template/wazuh"
+    url: "https://{{ vm_ip }}:9200/_template/wazuh"
     method: PUT
     user: "admin"
     password: "{{ app_secret }}"
