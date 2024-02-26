@@ -51,7 +51,7 @@
     backup: true
 
 - name: Start the Wazuh single-node deployment
-  command: docker compose up -d --force-recreate
+  command: "docker compose --env-file=.env up -d --force-recreate"
   args:
     chdir: "{{ wazuh_path }}/single-node"
 
