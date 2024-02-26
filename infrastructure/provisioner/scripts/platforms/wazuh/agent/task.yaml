@@ -1,15 +1,18 @@
-- name: Run script
+- name: Get Env WAZUH MANAGER
   become: false
   delegate_to: 127.0.0.1
   command: "python3 lib/getenv.py WAZUH_MANAGER"
   args:
     chdir: "{{ provisioner_dir }}"
-  register: wazug_manager_ip
+  register: wazuh_manager_ip
+
+- set_fact:
+    wazuh_manager: "{{ decoded_metadata | json_query('wazuh_manager_ip') | default(wazuh_manager_ip.stdout, true) | trim }}"
 
 - include_tasks: ../version.yaml
 
 - name: "Wazuh Agent"
-  when: wazug_manager_ip.stdout | trim | ansible.utils.ipaddr
+  when: wazuh_manager | ansible.utils.ipaddr
   block:
     - name: Import Wazuh GPG key
       become: true
@@ -36,7 +39,7 @@
         state: present
         update_cache: yes # This is optional since we updated the cache just before
       environment:
-        WAZUH_MANAGER: "{{ wazug_manager_ip.stdout | trim }}" # Define the environment variable for the task
+        WAZUH_MANAGER: "{{ wazuh_manager }}" # Define the environment variable for the task
 
     - name: Reload systemd daemon
       become: true
