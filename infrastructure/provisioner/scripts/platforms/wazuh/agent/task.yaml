@@ -8,23 +8,8 @@
 
 - include_tasks: ../version.yaml
 
-- name: "Var | Debug wazug_manager_ip"
-  debug:
-    var: wazug_manager_ip.stdout | trim | ansible.utils.ipaddr
-
-- name: "Var | Debug wazuh_version"
-  debug:
-    var: wazuh_version
-
-- name: "Var | Debug wazuh_major_version"
-  debug:
-    var: wazuh_major_version
-
-- name: Ending the 1st play now
-  meta: end_play
-
 - name: "Wazuh Agent"
-  # when: wazug_manager_ip.stdout | trim | ansible.utils.ipaddr
+  when: wazug_manager_ip.stdout | trim | ansible.utils.ipaddr
   block:
     - name: Import Wazuh GPG key
       become: true
