@@ -45,25 +45,12 @@
     chdir: "{{ wazuh_path }}/single-node"
     creates: "{{ wazuh_path }}/single-node/config/wazuh_indexer_ssl_certs/root-ca.pem"
 
-# - name: Replace old INDEXER_PASSWORD
-#   ansible.builtin.replace:
-#     path: "{{ wazuh_path }}/single-node/docker-compose.yml"
-#     regexp: "INDEXER_PASSWORD=SecretPassword"
-#     replace: "INDEXER_PASSWORD={{ app_secret }}"
-#     backup: true
-#     owner: "{{ ansible_user }}"
-#     group: "{{ ansible_user }}"
-#     mode: "0644"
-
-- name: Replace old DASHBOARD_PASSWORD
-  ansible.builtin.replace:
+- name: Ensure lines containing INDEXER_PASSWORD or DASHBOARD_PASSWORD are absent
+  lineinfile:
     path: "{{ wazuh_path }}/single-node/docker-compose.yml"
-    regexp: "DASHBOARD_PASSWORD=kibanaserver"
-    replace: "DASHBOARD_PASSWORD={{ app_secret }}"
+    regexp: "^(.*)(INDEXER_PASSWORD|DASHBOARD_PASSWORD)(.*)$"
+    state: absent
     backup: true
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0644"
 
 - name: Start the Wazuh single-node deployment
   command: "docker compose up -d --force-recreate"
@@ -84,6 +71,41 @@
   until: _result.status >= 200
   retries: 30
   delay: 5
+
+- name: Stop the deployment stack if it's running
+  command: "docker compose down"
+  args:
+    chdir: "{{ wazuh_path }}/single-node"
+
+- name: Run docker command to get hashed password
+  ansible.builtin.shell: |
+    docker run --rm -ti wazuh/wazuh-indexer:4.7.2 bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/hash.sh -p {{ app_secret }} | tail -n1
+  args:
+    executable: /bin/bash
+  register: hash_output
+  changed_when: false
+
+- name: Set fact for the hashed password
+  ansible.builtin.set_fact:
+    hashed_password: "{{ hash_output.stdout_lines[0] }}"
+  when: hash_output.stdout_lines is defined and hash_output.stdout_lines | length > 0
+
+- name: Show the hashed password
+  ansible.builtin.debug:
+    msg: "The hashed password is: {{ hashed_password }}"
+
+- name: Replace User Password
+  ansible.builtin.replace:
+    path: "{{ wazuh_path }}/single-node/config/wazuh_indexer/internal_users.yml"
+    after: "admin\\:"
+    before: "kibanaro\\:"
+    regexp: 'hash: (.+)\\"$'
+    replace: 'hash: "{{ hashed_password }}"'
+
+- name: Recreate the Wazuh containers
+  command: "docker compose up -d --force-recreate"
+  args:
+    chdir: "{{ wazuh_path }}/single-node"
 
 - set_fact:
     indexer_template: "https://raw.githubusercontent.com/wazuh/wazuh/{{ wazuh_version }}/extensions/elasticsearch/7.x/wazuh-template.json"
