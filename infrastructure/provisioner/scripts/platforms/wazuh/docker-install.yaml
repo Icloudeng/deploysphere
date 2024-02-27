@@ -51,6 +51,9 @@
     regexp: "INDEXER_PASSWORD=SecretPassword"
     replace: "INDEXER_PASSWORD={{ app_secret }}"
     backup: true
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
 
 - name: Replace old DASHBOARD_PASSWORD
   ansible.builtin.replace:
@@ -58,6 +61,9 @@
     regexp: "DASHBOARD_PASSWORD=kibanaserver"
     replace: "DASHBOARD_PASSWORD={{ app_secret }}"
     backup: true
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
 
 # - name: Ensure lines containing INDEXER_PASSWORD or DASHBOARD_PASSWORD are absent
 #   lineinfile:
