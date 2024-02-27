@@ -97,7 +97,7 @@
 
 - name: Download Wazuh template and upload to Elasticsearch
   uri:
-    url: "https://{{ vm_ip }}:9200/_template/wazuh"
+    url: "https://localhost:9200/_template/wazuh"
     method: PUT
     user: "admin"
     password: "{{ app_secret }}"
