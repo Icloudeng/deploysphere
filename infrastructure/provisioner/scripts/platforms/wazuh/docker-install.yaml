@@ -45,15 +45,15 @@
     chdir: "{{ wazuh_path }}/single-node"
     creates: "{{ wazuh_path }}/single-node/config/wazuh_indexer_ssl_certs/root-ca.pem"
 
-- name: Replace old INDEXER_PASSWORD
-  ansible.builtin.replace:
-    path: "{{ wazuh_path }}/single-node/docker-compose.yml"
-    regexp: "INDEXER_PASSWORD=SecretPassword"
-    replace: "INDEXER_PASSWORD={{ app_secret }}"
-    backup: true
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0644"
+# - name: Replace old INDEXER_PASSWORD
+#   ansible.builtin.replace:
+#     path: "{{ wazuh_path }}/single-node/docker-compose.yml"
+#     regexp: "INDEXER_PASSWORD=SecretPassword"
+#     replace: "INDEXER_PASSWORD={{ app_secret }}"
+#     backup: true
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+#     mode: "0644"
 
 - name: Replace old DASHBOARD_PASSWORD
   ansible.builtin.replace:
@@ -64,13 +64,6 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: "0644"
-
-# - name: Ensure lines containing INDEXER_PASSWORD or DASHBOARD_PASSWORD are absent
-#   lineinfile:
-#     path: "{{ wazuh_path }}/single-node/docker-compose.yml"
-#     regexp: "^(.*)(INDEXER_PASSWORD|DASHBOARD_PASSWORD)(.*)$"
-#     state: absent
-#     backup: true
 
 - name: Start the Wazuh single-node deployment
   command: "docker compose up -d --force-recreate"
@@ -96,11 +89,15 @@
     indexer_template: "https://raw.githubusercontent.com/wazuh/wazuh/{{ wazuh_version }}/extensions/elasticsearch/7.x/wazuh-template.json"
 
 - name: Download Wazuh template and upload to Elasticsearch
+  retries: 5
+  delay: 5
+  register: _result1
+  until: _result1.status == 200 or _result1.status == 201
   uri:
     url: "https://localhost:9200/_template/wazuh"
     method: PUT
     user: "admin"
-    password: "{{ app_secret }}"
+    password: "SecretPassword"
     body_format: json
     headers:
       Content-Type: "application/json"
