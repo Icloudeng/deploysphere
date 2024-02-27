@@ -79,7 +79,7 @@
 
 - name: Run docker command to get hashed password
   ansible.builtin.shell: |
-    docker run --rm -ti wazuh/wazuh-indexer:4.7.2 bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/hash.sh -p {{ app_secret }} | tail -n1
+    docker run --rm -ti wazuh/wazuh-indexer:{{ wazuh_version_n }} bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/hash.sh -p {{ app_secret }} | tail -n1
   args:
     executable: /bin/bash
   register: hash_output
@@ -97,9 +97,9 @@
 - name: Replace User Password
   ansible.builtin.replace:
     path: "{{ wazuh_path }}/single-node/config/wazuh_indexer/internal_users.yml"
-    after: "admin\\:"
-    before: "kibanaro\\:"
-    regexp: 'hash: (.+)\\"$'
+    after: "admin:"
+    before: "kibanaro:"
+    regexp: 'hash:(.*)"$'
     replace: 'hash: "{{ hashed_password }}"'
 
 - name: Recreate the Wazuh containers

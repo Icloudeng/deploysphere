@@ -1,5 +1,8 @@
 - set_fact:
-    wazuh_version: v4.7.2
+    wazuh_version_n: 4.7.2
+
+- set_fact:
+    wazuh_version: "v{{ wazuh_version_n }}"
 
 - set_fact:
     wazuh_major_version: "{{ wazuh_version | regex_search('v(\\d+)\\.', '\\1') | first }}"
