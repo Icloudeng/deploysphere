@@ -42,9 +42,9 @@
           ⚠️ Please consider adding more storage to your VM (at least 50 GB)
 
           Login
-          Username: admin
+          Username: kibanaserver
           Password: {{ app_secret }}
 
         credentials:
-          username: "admin"
+          username: "kibanaserver"
           password: "{{ app_secret }}"
