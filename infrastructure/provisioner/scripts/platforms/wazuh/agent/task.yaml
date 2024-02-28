@@ -68,3 +68,8 @@
       ansible.builtin.systemd:
         name: wazuh-agent
         state: started
+
+# Only for debug purpose
+- name: Ending the 1st play now
+  when: wazuh_manager | ansible.utils.ipaddr
+  meta: end_play
