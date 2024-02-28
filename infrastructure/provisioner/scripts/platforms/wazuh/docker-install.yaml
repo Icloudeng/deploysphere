@@ -124,9 +124,13 @@
     replace: 'hash: "{{ hashed_password }}"'
 
 - name: Recreate the Wazuh containers
-  command: "docker compose up -d --force-recreate"
+  command: "docker compose up -d"
   args:
     chdir: "{{ wazuh_path }}/single-node"
+
+- name: Sleep for 15 seconds
+  ansible.builtin.wait_for:
+    timeout: 15
 
 - name: Run expect to wait for a successful PXE boot via out-of-band CIMC
   ansible.builtin.shell: |
