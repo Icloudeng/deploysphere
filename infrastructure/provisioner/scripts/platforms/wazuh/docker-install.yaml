@@ -140,17 +140,26 @@
 
     expect "wazuh-indexer@"
     send "export INSTALLATION_DIR=/usr/share/wazuh-indexer\r"
+
+    expect "wazuh-indexer@"
     send "CACERT=$INSTALLATION_DIR/certs/root-ca.pem\r"
+
+    expect "wazuh-indexer@"
     send "KEY=$INSTALLATION_DIR/certs/admin-key.pem\r"
+
+    expect "wazuh-indexer@"
     send "CERT=$INSTALLATION_DIR/certs/admin.pem\r"
+
+    expect "wazuh-indexer@"
     send "export JAVA_HOME=/usr/share/wazuh-indexer/jdk\r"
+
+    expect "wazuh-indexer@"
     send "bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/securityadmin.sh -cd /usr/share/wazuh-indexer/opensearch-security/ -nhnv -cacert  $CACERT -cert $CERT -key $KEY -p 9200 -icl\r"
 
     expect "wazuh-indexer@"
     send "exit\r"
 
     expect eof
-
     exit 0
   args:
     chdir: "{{ wazuh_path }}/single-node"
