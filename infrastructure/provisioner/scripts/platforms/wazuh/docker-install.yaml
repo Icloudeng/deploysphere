@@ -134,36 +134,16 @@
 
 - name: Run expect to wait for a successful PXE boot via out-of-band CIMC
   ansible.builtin.shell: |
-    set timeout 300
-
-    spawn docker exec -it single-node-wazuh.indexer-1 bash
-
-    expect "wazuh-indexer@"
-    send "export INSTALLATION_DIR=/usr/share/wazuh-indexer\r"
-
-    expect "wazuh-indexer@"
-    send "CACERT=$INSTALLATION_DIR/certs/root-ca.pem\r"
-
-    expect "wazuh-indexer@"
-    send "KEY=$INSTALLATION_DIR/certs/admin-key.pem\r"
-
-    expect "wazuh-indexer@"
-    send "CERT=$INSTALLATION_DIR/certs/admin.pem\r"
-
-    expect "wazuh-indexer@"
-    send "export JAVA_HOME=/usr/share/wazuh-indexer/jdk\r"
-
-    expect "wazuh-indexer@"
-    send "bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/securityadmin.sh -cd /usr/share/wazuh-indexer/opensearch-security/ -nhnv -cacert  $CACERT -cert $CERT -key $KEY -p 9200 -icl\r"
-
-    expect "wazuh-indexer@"
-    send "exit\r"
-
-    expect eof
-    exit 0
+    docker exec -it single-node-wazuh.indexer-1 bash -c "
+    export INSTALLATION_DIR=/usr/share/wazuh-indexer &&
+    export CACERT=$INSTALLATION_DIR/certs/root-ca.pem &&
+    export KEY=$INSTALLATION_DIR/certs/admin-key.pem &&
+    export CERT=$INSTALLATION_DIR/certs/admin.pem &&
+    export JAVA_HOME=$INSTALLATION_DIR/jdk &&
+    bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/securityadmin.sh -cd /usr/share/wazuh-indexer/opensearch-security/ -nhnv -cacert $CACERT -cert $CERT -key $KEY -p 9200 -icl"
   args:
     chdir: "{{ wazuh_path }}/single-node"
-    executable: /usr/bin/expect
+    executable: /usr/bin/bash
 
 - set_fact:
     indexer_template: "https://raw.githubusercontent.com/wazuh/wazuh/{{ wazuh_version }}/extensions/elasticsearch/7.x/wazuh-template.json"
