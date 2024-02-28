@@ -61,7 +61,6 @@
         name: wazuh-agent
         state: started
 
-# Only for debug purpose
 - name: Ending the 1st play now
   when: (wazuh_manager | ansible.utils.ipaddr) and wazuh_agent_only == true
   meta: end_play
