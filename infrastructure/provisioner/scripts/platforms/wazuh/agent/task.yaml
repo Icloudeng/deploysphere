@@ -14,18 +14,29 @@
 - name: "Wazuh Agent"
   when: wazuh_manager | ansible.utils.ipaddr
   block:
-    - name: Import Wazuh GPG key
-      become: true
-      ansible.builtin.apt_key:
-        url: "https://packages.wazuh.com/key/GPG-KEY-WAZUH"
-        state: present
+    - name: Download Wazuh GPG key and import it
+      ansible.builtin.shell: |
+        curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import
+      args:
+        executable: /bin/bash
+      register: gpg_import_result
+      changed_when: "'imported' in gpg_import_result.stdout or 'unchanged' in gpg_import_result.stdout"
 
-    - name: Add Wazuh repository
-      become: true
-      ansible.builtin.apt_repository:
-        repo: "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/{{ wazuh_major_version }}.x/apt/ stable main"
+    - name: Ensure correct permissions on the Wazuh GPG keyring
+      ansible.builtin.file:
+        path: /usr/share/keyrings/wazuh.gpg
+        owner: root
+        group: root
+        mode: "0644"
+      when: gpg_import_result.changed
+
+    - name: Add Wazuh repo to the apt sources list
+      ansible.builtin.blockinfile:
+        path: /etc/apt/sources.list.d/wazuh.list
+        block: |
+          deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/{{ wazuh_major_version }}.x/apt/ stable main
         state: present
-        filename: wazuh
+        create: yes
 
     - name: Update apt cache
       become: true
