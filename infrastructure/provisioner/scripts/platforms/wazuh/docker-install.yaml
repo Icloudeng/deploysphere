@@ -51,27 +51,6 @@
     chdir: "{{ wazuh_path }}/single-node"
     creates: "{{ wazuh_path }}/single-node/config/wazuh_indexer_ssl_certs/root-ca.pem"
 
-- name: Replace old INDEXER_PASSWORD
-  ansible.builtin.replace:
-    path: "{{ wazuh_path }}/single-node/docker-compose.yml"
-    regexp: "INDEXER_PASSWORD=SecretPassword"
-    replace: "INDEXER_PASSWORD={{ app_secret }}"
-    backup: true
-
-- name: Replace old DASHBOARD_PASSWORD
-  ansible.builtin.replace:
-    path: "{{ wazuh_path }}/single-node/docker-compose.yml"
-    regexp: "DASHBOARD_PASSWORD=kibanaserver"
-    replace: "DASHBOARD_PASSWORD={{ app_secret }}"
-    backup: true
-
-# - name: Ensure lines containing INDEXER_PASSWORD or DASHBOARD_PASSWORD are absent
-#   lineinfile:
-#     path: "{{ wazuh_path }}/single-node/docker-compose.yml"
-#     regexp: "^(.*)(INDEXER_PASSWORD|DASHBOARD_PASSWORD)(.*)$"
-#     state: absent
-#     backup: true
-
 - name: Start the Wazuh single-node deployment
   command: "docker compose up -d --force-recreate"
   args:
@@ -122,6 +101,27 @@
     before: "kibanaro:"
     regexp: 'hash:(.*)"$'
     replace: 'hash: "{{ hashed_password }}"'
+
+- name: Replace old INDEXER_PASSWORD
+  ansible.builtin.replace:
+    path: "{{ wazuh_path }}/single-node/docker-compose.yml"
+    regexp: "INDEXER_PASSWORD=SecretPassword"
+    replace: "INDEXER_PASSWORD={{ app_secret }}"
+    backup: true
+
+- name: Replace old DASHBOARD_PASSWORD
+  ansible.builtin.replace:
+    path: "{{ wazuh_path }}/single-node/docker-compose.yml"
+    regexp: "DASHBOARD_PASSWORD=kibanaserver"
+    replace: "DASHBOARD_PASSWORD={{ app_secret }}"
+    backup: true
+
+# - name: Ensure lines containing INDEXER_PASSWORD or DASHBOARD_PASSWORD are absent
+#   lineinfile:
+#     path: "{{ wazuh_path }}/single-node/docker-compose.yml"
+#     regexp: "^(.*)(INDEXER_PASSWORD|DASHBOARD_PASSWORD)(.*)$"
+#     state: absent
+#     backup: true
 
 - name: Recreate the Wazuh containers
   command: "docker compose up -d"
