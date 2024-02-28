@@ -16,19 +16,10 @@
   block:
     - name: Download Wazuh GPG key and import it
       ansible.builtin.shell: |
-        curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import
+        curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import && chmod 644 /usr/share/keyrings/wazuh.gpg
       args:
+        creates: /usr/share/keyrings/wazuh.gpg
         executable: /bin/bash
-      register: gpg_import_result
-      changed_when: "'imported' in gpg_import_result.stdout or 'unchanged' in gpg_import_result.stdout"
-
-    - name: Ensure correct permissions on the Wazuh GPG keyring
-      ansible.builtin.file:
-        path: /usr/share/keyrings/wazuh.gpg
-        owner: root
-        group: root
-        mode: "0644"
-      when: gpg_import_result.changed
 
     - name: Add Wazuh repo to the apt sources list
       ansible.builtin.blockinfile:
