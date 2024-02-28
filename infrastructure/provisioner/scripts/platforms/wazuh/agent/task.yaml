@@ -7,6 +7,7 @@
   register: wazuh_manager_ip
 
 - set_fact:
+    wazuh_agent_only: "{{ decoded_metadata | json_query('wazuh_agent_only') }}"
     wazuh_manager: "{{ decoded_metadata | json_query('wazuh_manager_ip') | default(wazuh_manager_ip.stdout, true) | trim }}"
 
 - include_tasks: ../version.yaml
@@ -62,5 +63,5 @@
 
 # Only for debug purpose
 - name: Ending the 1st play now
-  when: wazuh_manager | ansible.utils.ipaddr
+  when: (wazuh_manager | ansible.utils.ipaddr) and wazuh_agent_only == true
   meta: end_play
