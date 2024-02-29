@@ -44,6 +44,7 @@
         "matomo": 40,
         "openedx": 41,
         "drupal": 42,
-        "wazuh": 43
+        "wazuh": 43,
+        "ntfy": 44
     }
 }

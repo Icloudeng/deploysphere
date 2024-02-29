@@ -94,5 +94,9 @@
     "wazuh": {
         "port": 443,
         "protocol": "https"
+    },
+    "ntfy": {
+        "port": 8080,
+        "protocol": "http"
     }
 }
