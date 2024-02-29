@@ -8,7 +8,7 @@ services:
     environment:
       - TZ=UTC
     volumes:
-      - /var/gotify/config.yml:/app/config.yml
+      - /var/gotify/config.yml:/etc/gotify/config.yml
       - /var/gotify/data:/app/data
     ports:
       - 8080:80
