@@ -7,6 +7,24 @@
     dest: "{{ project_path }}/docker-compose.yaml"
     force: yes
 
+- name: Create a directory /var/gotify
+  ansible.builtin.file:
+    path: /var/gotify
+    state: directory
+    mode: "0755"
+
+- name: Download Gotify config example file
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/gotify/server/master/config.example.yml
+    dest: /var/gotify/config.yml
+    mode: "0644"
+
+- name: Replace admin pass
+  ansible.builtin.replace:
+    path: "/var/gotify/config.yml"
+    regexp: "pass\\: admin"
+    replace: "pass: {{ app_secret }}"
+
 - name: Install Gotify using Dkr Compose
   become: true
   command: docker compose up -d
