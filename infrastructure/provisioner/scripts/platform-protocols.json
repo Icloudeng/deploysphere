@@ -98,5 +98,9 @@
     "ntfy": {
         "port": 8080,
         "protocol": "http"
+    },
+    "gotify": {
+        "port": 8080,
+        "protocol": "http"
     }
 }

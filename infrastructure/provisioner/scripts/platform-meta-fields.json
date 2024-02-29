@@ -108,5 +108,8 @@
     ],
     "ntfy": [
         "domain"
+    ],
+    "gotify": [
+        "domain"
     ]
 }
