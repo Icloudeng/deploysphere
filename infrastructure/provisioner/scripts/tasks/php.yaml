@@ -1,4 +1,5 @@
 - set_fact:
+    _post_size: 200M
     _install_composer: "{{ install_composer | default(true) }}"
     _php_version: "{{ php_version | default('8.2') }}"
     _php_extensions: "{{ php_extensions | default(['cli', 'intl', 'bcmath', 'soap', 'fpm', 'pdo', 'gd', 'zip', 'common', 'fileinfo', 'mysql', 'mbstring', 'xml', 'curl']) }}"
@@ -56,6 +57,32 @@
     state: present
     update_cache: yes
   loop: "{{ _php_extensions }}"
+
+- stat:
+    path: "/etc/php/{{ _php_version }}/fpm/php.ini"
+  register: php_config_file
+
+- name: Block | Update PHP INIT File
+  block:
+    - name: Update PHP Post Size directive
+      lineinfile:
+        path: /etc/php/{{ _php_version }}/fpm/php.ini
+        regexp: "^{{ item.key }}"
+        line: "{{ item.key }} = {{ item.value }}"
+        state: present
+      loop:
+        - key: post_max_size
+          value: "{{ _post_size }}"
+        - key: upload_max_filesize
+          value: "{{ _post_size }}"
+        - key: max_file_uploads
+          value: "40"
+
+    - name: restart php-fpm
+      service:
+        name: php{{ _php_version }}-fpm
+        state: restarted
+  when: php_config_file.stat.exists
 
 - name: Check if Composer is already installed
   stat:
