@@ -38,7 +38,7 @@
     src: "/tmp/drupal-{{ drupal_version }}.tar.gz"
     dest: "/var/www/html/"
     remote_src: yes
-    creates: "/var/www/html/{{ domain }}"
+    creates: "/var/www/html/drupal-{{ drupal_version }}"
 
 - name: Rename Drupal directory to match domain
   ansible.builtin.command:
