@@ -1,5 +1,5 @@
 - set_fact:
-    drupal_version: "10.2.3"
+    drupal_version: "10.2.4"
     php_version: "8.2"
 
 - name: Install Tools
@@ -29,7 +29,7 @@
 # Install Drupal
 - name: Download Drupal
   ansible.builtin.get_url:
-    url: "https://www.drupal.org/download-latest/tar.gz"
+    url: "https://ftp.drupal.org/files/projects/drupal-{{ drupal_version }}.tar.gz"
     dest: "/tmp/drupal-{{ drupal_version }}.tar.gz"
     mode: "0644"
 
@@ -38,7 +38,7 @@
     src: "/tmp/drupal-{{ drupal_version }}.tar.gz"
     dest: "/var/www/html/"
     remote_src: yes
-    creates: "/var/www/html/drupal-{{ drupal_version }}"
+    creates: "/var/www/html/{{ domain }}"
 
 - name: Rename Drupal directory to match domain
   ansible.builtin.command:
