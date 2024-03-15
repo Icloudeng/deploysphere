@@ -1,6 +1,6 @@
 - set_fact:
     drupal_version: "10.2.4"
-    php_version: "8.2"
+    php_version: "8.1"
 
 - name: Install Tools
   ansible.builtin.package:
