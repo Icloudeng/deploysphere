@@ -59,6 +59,18 @@
       # Generate SSL Certificat
     - include_tasks: ssl-certificate.yaml
 
+    - name: Schedule system reboot every 3 months
+      ignore_errors: true
+      become: true
+      cron:
+        name: "Scheduled Reboot"
+        minute: "0"
+        hour: "0"
+        day: "1"
+        month: "3,6,9,12"
+        job: "/sbin/shutdown -r now"
+        state: present
+
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
         text: |
