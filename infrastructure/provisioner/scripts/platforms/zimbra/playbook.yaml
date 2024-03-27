@@ -59,17 +59,32 @@
       # Generate SSL Certificat
     - include_tasks: ssl-certificate.yaml
 
-    - name: Schedule system reboot every 3 months
+    - name: Ensure cron is installed (Debian/Ubuntu)
+      ignore_errors: true
+      become: true
+      apt:
+        name: cron
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Ensure cron is installed (RedHat/CentOS)
+      ignore_errors: true
+      become: true
+      yum:
+        name: cronie
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Schedule system reboot every two months
       ignore_errors: true
       become: true
       cron:
-        name: "Scheduled Reboot"
-        minute: "0"
-        hour: "0"
+        name: "Scheduled reboot"
+        user: root
+        special_time: reboot
         day: "1"
-        month: "3,6,9,12"
+        month: "*/2"
         job: "/sbin/shutdown -r now"
-        state: present
 
     - include_tasks: ../../tasks/expose-variable.yaml
       vars:
