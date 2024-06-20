@@ -43,6 +43,14 @@ def filter_domains(domains):
     return matched_domains
 
 
+def extract_root_domain(domain):
+    parts = domain.split(".")
+    if len(parts) <= 2:
+        return domain
+    else:
+        return ".".join(parts[-(len(parts) - 1) :])
+
+
 def get_api_token():
     url = config.get("NGINX_PM_URL")
     email = config.get("NGINX_PM_EMAIL")
@@ -140,10 +148,13 @@ def find_existing_proxy_host(domains: List[str], url: str):
     return None
 
 
-def find_existing_certificate(domains: List[str], url: str):
-    fDomain = domains[0]
+def find_existing_certificate(domain: str, url: str):
+    rootDomain = extract_root_domain(domain)
 
-    res = requests.get(f"{url}/api/nginx/certificates?query={fDomain}", headers=headers)
+    res = requests.get(
+        f"{url}/api/nginx/certificates?query={rootDomain}",
+        headers=headers,
+    )
     if res.status_code != 200:
         return None
     # Check for the API Schema
@@ -152,20 +163,11 @@ def find_existing_certificate(domains: List[str], url: str):
     certificates: List[Any] = res.json()
 
     for certificate in certificates:
-        validCert = True
-
         domain_names: List[str] = certificate.get("domain_names")
 
-        for domain in domains:
-            try:
-                domain_names.index(domain)
-            except Exception as err:
-                validCert = False
-                logging.error(err)
-                continue
-
-        if validCert:
-            return certificate
+        for domain_name in domain_names:
+            if domain_name == domain or domain_name == f"*.{rootDomain}":
+                return certificate
 
     return None
 
@@ -186,8 +188,11 @@ def get_platform_nginx_pm_config(platform: str):
     return data.get(platform)
 
 
-def create_domains_certificate(domains: List[str], url: str):
-    certificate = find_existing_certificate(domains, url)
+def create_domains_certificate(domains: List[str], iterateDomain: str, url: str):
+    certificate = find_existing_certificate(
+        domain=iterateDomain,
+        url=url,
+    )
     if certificate:
         return certificate
 
@@ -258,37 +263,43 @@ def main(action: str, metadata: str, platform: str, ip: str):
     if not url or not token:
         return
 
-    pHost = find_existing_proxy_host(domains, url)
-
-    # Check of delete action
     if action == "delete":
-        logging.info("Deleting... proxy host")
-        delete_proxy_hosts(pHost, url)
-        return
+        for domain in domains:
+            pHost = find_existing_proxy_host([domain], url)
+            logging.info("Deleting... proxy host")
+            delete_proxy_hosts(pHost, url)
 
-    # If pHost exists and delete it
-    if pHost:
-        delete_proxy_hosts(pHost, url)
+        return
 
     # Get platform proxy
     platform_protocol = get_platform_protocol(platform)
-
     if not platform_protocol:
         logging.info("Cannot found the corresponding platform protocol")
         return
 
-    # Generate domain certificate
-    certificate = create_domains_certificate(domains, url)
+    for domain in domains:
+        pHost = find_existing_proxy_host([domain], url)
 
-    # Finally create the proxy host
-    create_proxy_host(
-        url=url,
-        domains=domains,
-        certificate=certificate,
-        platform_protocol=platform_protocol,
-        ip=ip,
-        platform=platform,
-    )
+        # If pHost exists and delete it
+        if pHost:
+            delete_proxy_hosts(pHost, url)
+
+        # Generate domain certificate
+        certificate = create_domains_certificate(
+            domains=domains,
+            iterateDomain=domain,
+            url=url,
+        )
+
+        # Finally create the proxy host
+        create_proxy_host(
+            url=url,
+            domains=[domain],
+            certificate=certificate,
+            platform_protocol=platform_protocol,
+            ip=ip,
+            platform=platform,
+        )
 
 
 if __name__ == "__main__":
