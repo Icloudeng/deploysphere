@@ -44,7 +44,7 @@
         COMPOSER_COMPILE: all
       loop:
         - "civicrm/civicrm-{core,packages,drupal-8}"
-        - "civicrm/cli-tools"
+        - "civicrm/cli-tools -W"
 
     - name: Setup CiviCRM Database
       shell: cv core:install --cms-base-url="https://{{ domain }}" --db="mysql://root:{{ mysql_root_password }}@localhost:3306/{{ mysql_db_name2 }}"
