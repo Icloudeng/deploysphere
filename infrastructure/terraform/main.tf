@@ -1,5 +1,5 @@
 terraform {
-  backend "http" {
+  backend "local" {
   }
 }
 
