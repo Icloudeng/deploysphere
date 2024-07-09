@@ -1,5 +1,5 @@
 - set_fact:
-    drupal_version: "10.2.4"
+    drupal_version: "10.3.1"
     php_version: "8.2"
 
 - name: Install Tools
