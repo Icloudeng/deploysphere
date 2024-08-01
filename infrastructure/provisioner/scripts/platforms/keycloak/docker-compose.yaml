@@ -15,7 +15,7 @@ services:
       - .env
 
   keycloak:
-    image: quay.io/keycloak/keycloak:22.0
+    image: quay.io/keycloak/keycloak:25.0
     restart: unless-stopped
     command: "start"
     env_file:
