@@ -1,0 +1,5 @@
+# Mark all files with specific extensions as linguist-vendored
+*.py linguist-vendored
+
+# Explicitly mark Go files as Go
+*.go linguist-language=Go
